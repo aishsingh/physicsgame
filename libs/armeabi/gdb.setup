@@ -1,0 +1,2 @@
+set solib-search-path /data/Android/physicsgame/iteration_10/obj/local/armeabi
+directory /opt/android-ndk/platforms/android-5/arch-arm/usr/include /data/Android/physicsgame/iteration_10/jni/glm /opt/android-ndk/sources/cxx-stl/stlport/stlport /opt/android-ndk/sources/cxx-stl//gabi++/include
