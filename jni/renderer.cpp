@@ -17,18 +17,15 @@ const char Renderer::gVertexShader[] =
     "uniform mat4 mProj;\n"
     "uniform mat4 mModel;\n"
 
-
     "void main() {\n"
-
     "  float PI = 3.14159265358979323846264;\n"
-    // "  float angle = 45.0;\n"
     "  float rad_angle = fAngle*PI/180.0;\n"
-
     "  vec2 pos = vPos;\n"
     "  pos.x = vPos.x*cos(rad_angle) - vPos.y*sin(rad_angle);\n"
     "  pos.y = vPos.y*cos(rad_angle) + vPos.x*sin(rad_angle);\n"
-    "  mat4 mMVP = mProj * mModel;\n"
-    "  gl_Position = mMVP * vec4(pos, 0.0f, 1.0f);\n"
+
+    "  mat4 mMP = mProj * mModel;\n"
+    "  gl_Position = mMP * vec4(pos, 0.0f, 1.0f);\n"
 
     "  vFragColor = vColor;\n"
     "}\n";
@@ -133,46 +130,22 @@ bool Renderer::setupGraphics(int w, int h) {
     gmModelHandle = glGetUniformLocation(gProgram, "mModel");
     checkGlError("glGetUniformLocation(mModel)");
 
-    // gmTranslateHandle = glGetUniformLocation(gProgram, "mTranslate");
-    // checkGlError("glGetUniformLocation(mTranslate)");
-
-    // gmViewHandle = glGetUniformLocation(gProgram, "mView");
-    // checkGlError("glGetUniformLocation(mView)");
-
     /* Projection Matrix */
     GLfloat proj[] = { 2.0f/w, 0.0f,   0.0f, 0.0f,
                        0.0f,  -2.0f/h, 0.0f, 0.0f,
                        0.0f,   0.0f,   0.0f, 0.0f,
                       -1.0f,   1.0f,   0.0f, 1.0f };
 
-    /* View Matrix */
-    // GLfloat view[] = { 1.0f };
-
     /* Model Matrix */
-    float x = 45.0f;
-    float cosx = cos(x * (PI/180.0f));
-    float sinx = cos(x * (PI/180.0f));
-
-    GLfloat rotate[]    = { cosx,-sinx, 0.0f, 0.0f, 
-                            sinx, cosx, 0.0f, 0.0f, 
-                            0.0f, 0.0f, 1.0f, 0.0f, 
-                            0.0f, 0.0f, 0.0f, 1.0f };
-
-    // GLfloat rotate[]    = { 1.0f, 0.0f, 0.0f, 0.0f, 
-    //                         0.0f, cosx, sinx, 0.0f, 
-    //                         0.0f,-sinx, cosx, 0.0f, 
-    //                         0.0f, 0.0f, 0.0f, 1.0f };
-
-    // glm::mat4 model = glm::lookAt(glm::vec3(0.0f, 15.0f,40.0f), glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-
+    // Identity Matrix
     GLfloat model[] =     { 1.0f, 0.0f, 0.0f, 0.0f, 
                             0.0f, 1.0f, 0.0f, 0.0f, 
                             0.0f, 0.0f, 1.0f, 0.0f, 
                             0.0f, 0.0f, 0.0f, 1.0f };
 
 
-    /* VERY IMPORTANT
+    /* Pass uniforms to shader
+     * VERY IMPORTANT
      * glUseProgram() needs to be called before you setup a uniform 
      * but not needed before glGetUniformLocation() 
      * http://www.opengl.org/wiki/GLSL_:_common_mistakes */
@@ -185,44 +158,12 @@ bool Renderer::setupGraphics(int w, int h) {
     glUniformMatrix4fv(gmModelHandle, 1, GL_FALSE, &model[0]);
     checkGlError("glUniformMatrix4fv, mModel");
 
-    // glUniformMatrix4fv(gmTranslateHandle, 1, GL_FALSE, &translate[0]);
-    // checkGlError("glUniformMatrix4fv, mTranslate");
-
-    // glUniformMatrix4fv(gmViewHandle, 1, GL_FALSE, &view[0]);
-    // checkGlError("glUniformMatrix4fv, mView");
-
     glViewport(0, 0, w, h);
     checkGlError("glViewport");
 
     glDisable(GL_DEPTH_TEST);
     return true;
 }
-
-/*
-void drawBox(GLuint posHandle, GLfloat &aspect) {
-    static const GLfloat triVertices[]    = {  0.0f,  0.0f,
-                                               0.0f,  aspect * 0.1f,  
-                                               0.1f,  0.0f,        
-                                               0.1f,  aspect * 0.1f,
-                                               0.0f,  aspect * 0.1f, 
-                                               0.1f,  0.0f          }; 
-
-
-    // const GLfloat objVertices[]           = {  obj.getX(),                   obj.getY(),
-    //                                            obj.getX(),                   aspect * (obj.getY() + obj.getHeight()),
-    //                                           (obj.getX() + obj.getWidth()), obj.getY(),
-    //                                           (obj.getX() + obj.getWidth()), aspect * (obj.getY() + obj.getHeight()),
-    //                                            obj.getX(),                   aspect * (obj.getY() + obj.getHeight()),
-    //                                           (obj.getX() + obj.getWidth()), obj.getY()                               };
-
-    glVertexAttribPointer(posHandle, 2, GL_FLOAT, GL_FALSE, 0, triVertices);
-    checkGlError("glVertexAttribPointer");
-    glEnableVertexAttribArray(posHandle);
-    checkGlError("glEnableVertexAttribArray");
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    checkGlError("glDrawArrays");
-}
-*/
 
 void Renderer::renderFrame() {
     float bg = 0.0f;
@@ -274,7 +215,6 @@ void Renderer::renderBox(Box &box) {
     x -= (box.getWidth()/2);
     y -= (box.getHeight()/2);
     
-
     // Declare points (x,y)
     float p1[2] = { x                 , y                   };
     float p2[2] = { x                 , y + box.getHeight() };
