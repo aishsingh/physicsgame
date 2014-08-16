@@ -5,7 +5,7 @@ A poorly named game that will soon become a fully functional android app.
 The physics environment was originally derived from one of my comp science assignment.  
 
 ###Concept
-_\<Ideas will be placed here soon>_
+_<Ideas will be placed here soon>_
 
 ###Development
 The android app is running **native c++** code using JNI with the _android-ndk_.  
