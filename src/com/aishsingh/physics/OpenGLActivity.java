@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.view.MotionEvent;
-import android.support.v4.view.MotionEventCompat;
 
 import java.io.File;
 
@@ -41,7 +40,7 @@ public class OpenGLActivity extends Activity {
 
         boolean touchDown = true;
 
-        switch (MotionEventCompat.getActionMasked(e)) {
+        switch (e.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 OpenGLLib.touchMove(x,y);
                 break;
