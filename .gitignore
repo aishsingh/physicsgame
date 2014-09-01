@@ -65,3 +65,6 @@ proguard/
 # YCM vim binary
 .ycm_extra_conf.pyc
 
+# random files
+jni/src/utils.h
+jni/src/utils.cpp
