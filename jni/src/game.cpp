@@ -13,7 +13,7 @@ Game::Game() {
     // Initilise 
     _finished = false;
     _elapsed_time = 0.0f;
-    _time_speed = 0.48f;
+    _time_speed = 0.7f;
     
     // loadSDL();
     loadResources();
@@ -64,19 +64,9 @@ void Game::loadResources() {
 }
 
 void Game::handleInput(float x, float y) {
-    // Normalise input values
-    // float touch_x = (x/(_screen_width/2));
-    // float touch_y = (y/(_screen_height/2));
-
-
-    // Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-    // glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.0f);
-    // Or, for an ortho camera :
-
-    LOGI("Touch at (%.2f, %.2f)", x, y);
+    // LOGI("Touch at (%.2f, %.2f)", x, y);
 
     for (int i=1; i<=_BOXES_PER_PRESS; i++) {
-
         // TODO replace (x, y) touch pos with a position returned from a controller class
         // Player[0] is the main player (the user)
         players.at(0).update(x, y, _elapsed_time);

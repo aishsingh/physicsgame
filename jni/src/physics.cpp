@@ -13,7 +13,7 @@ PhysicsEngine::PhysicsEngine() {
     _MIN_INITIAL_VERT_VELOCITY = -20.0f;
     _MAX_INITIAL_HORI_VELOCITY = 4.0f;
     _MAX_G_SWITCH_MISCALC = 3.0f;
-    _gravity = 0.75f; //2.5f; // normal = 0.75f;
+    _gravity = 0.98f; //2.5f; // normal = 0.75f;
 }
 
 float PhysicsEngine::getGravity() {
@@ -78,7 +78,7 @@ Motion PhysicsEngine::calcMotion(Box &box, const Comp comp, const float &elapsed
         float offset = 1.5f;
         box.rot_angle += box.hori_motion.getVel() * offset;
 
-        LOGI("angle [%.2f]", box.rot_angle);
+        // LOGI("angle [%.2f]", box.rot_angle);
     }
 
     return calc;
