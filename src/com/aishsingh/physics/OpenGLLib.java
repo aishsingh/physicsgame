@@ -14,4 +14,5 @@ public class OpenGLLib {
      public static native void init(int width, int height);
      public static native void step();
      public static native void touchMove(float x, float y);
+     public static native void setAppName(String pkgname);
 }

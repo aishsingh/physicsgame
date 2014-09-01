@@ -8,6 +8,11 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 
+import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
@@ -38,15 +43,15 @@ class OpenGLView extends GLSurfaceView {
 
     public OpenGLView(Context context) {
         super(context);
-        init(false, 0, 0);
+        init(false, 0, 0, context);
     }
 
     public OpenGLView(Context context, boolean translucent, int depth, int stencil) {
         super(context);
-        init(translucent, depth, stencil);
+        init(translucent, depth, stencil, context);
     }
 
-    private void init(boolean translucent, int depth, int stencil) {
+    private void init(boolean translucent, int depth, int stencil, Context context) {
 
         /* By default, GLSurfaceView() creates a RGB_565 opaque surface.
          * If we want a translucent one, we should change the surface's
@@ -72,7 +77,7 @@ class OpenGLView extends GLSurfaceView {
                              new ConfigChooser(5, 6, 5, 0, depth, stencil) );
 
         /* Set the renderer responsible for frame rendering */
-        setRenderer(new Renderer());
+        setRenderer(new Renderer(context));
     }
 
     private static class ContextFactory implements GLSurfaceView.EGLContextFactory {
@@ -292,6 +297,11 @@ class OpenGLView extends GLSurfaceView {
     }
 
     private static class Renderer implements GLSurfaceView.Renderer {
+	private Context context;
+
+	public Renderer (Context context) {
+		this.context = context;
+	}
         public void onDrawFrame(GL10 gl) {
             OpenGLLib.step();
         }
@@ -301,7 +311,18 @@ class OpenGLView extends GLSurfaceView {
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            // Do nothing.
+            // return apk file path (or null on error)
+            String apkFilePath = null;
+            ApplicationInfo appInfo = null;
+            PackageManager packMgmr = context.getPackageManager();
+            try {
+                appInfo = packMgmr.getApplicationInfo("com.aishsingh.physics", 0);
+            } catch (NameNotFoundException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Unable to locate assets, aborting...");
+            }
+            apkFilePath = appInfo.sourceDir;
+            OpenGLLib.setAppName( apkFilePath );
         }
     }
 }

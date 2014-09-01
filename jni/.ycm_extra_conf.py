@@ -18,7 +18,10 @@ flags = [
 '-isystem',
 '/usr/include/SDL2',
 '-isystem',
-'/usr/include/SOIL',
+'libzip',
+'-isystem',
+'soil/include/SOIL',
+
 
 '-llog',
 '-lSDL2'
