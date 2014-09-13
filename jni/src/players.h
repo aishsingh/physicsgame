@@ -11,7 +11,6 @@ class Spaceman: public Object {
     private:
 
         PhysicsEngine _physics;
-        // TODO SDL_image here
         Action _action;
         Dir _facing;
         int _frame;
@@ -24,10 +23,12 @@ class Spaceman: public Object {
         Motion vert_motion, hori_motion;
 
         // Render player and trail
-        void Draw(Renderer &renderer, int time, int screen_width, int screen_height);
+        void draw(int time, int screen_width, int screen_height);
 
         // Do spaceman according to its current action
         void update(float x, float y, float time); 
+
+        void setup(int screen_width, int screen_height);
 
         /* Getters / Setters */
         Action getAction();

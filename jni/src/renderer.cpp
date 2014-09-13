@@ -7,46 +7,50 @@
 
 #include <stdlib.h>
 #include <math.h>
-// #include "SOIL.h"
 #include "renderer.h"
 #include "log.h"
 #include "jni.h"
+#include <string>
 
 #define PI 3.14159265358979323846264
+#define TEXTURE_LOAD_ERROR 0
 
-const char Renderer::gVertexShader[] = 
-    "attribute vec2 vPos;\n"
-    "attribute vec4 vColor;\n"
-    "attribute float fAngle;\n"
-    "varying vec4 vFragColor;\n"
-    "uniform mat4 mProj;\n"
-    "uniform mat4 mModel;\n"
 
-    "void main() {\n"
-    "  float PI = 3.14159265358979323846264;\n"
-    "  float rad_angle = fAngle*PI/180.0;\n"
-    "  vec2 pos = vPos;\n"
-    "  pos.x = vPos.x*cos(rad_angle) - vPos.y*sin(rad_angle);\n"
-    "  pos.y = vPos.y*cos(rad_angle) + vPos.x*sin(rad_angle);\n"
+Renderer::Renderer() {
+    shad_vertex =
+        "attribute vec2 vPos;\n"
+        "attribute vec4 vColor;\n"
+        "attribute float fAngle;\n"
+        "varying vec4 vFragColor;\n"
+        "uniform mat4 mProj;\n"
+        "uniform mat4 mModel;\n"
 
-    "  mat4 mMP = mProj * mModel;\n"
-    "  gl_Position = mMP * vec4(pos, 0.0f, 1.0f);\n"
+        "void main() {\n"
+        "  float PI = 3.14159265358979323846264;\n"
+        "  float rad_angle = fAngle*PI/180.0;\n"
+        "  vec2 pos = vPos;\n"
+        "  pos.x = vPos.x*cos(rad_angle) - vPos.y*sin(rad_angle);\n"
+        "  pos.y = vPos.y*cos(rad_angle) + vPos.x*sin(rad_angle);\n"
 
-    "  vFragColor = vColor;\n"
-    "}\n";
+        "  mat4 mMP = mProj * mModel;\n"
+        "  gl_Position = mMP * vec4(pos, 0.0f, 1.0f);\n"
 
-const char Renderer::gFragmentShader[] = 
-    "precision mediump float;\n"
-    "uniform sampler2D sTexture;\n"
-    "varying vec4 vFragColor;\n"
+        "  vFragColor = vColor;\n"
+        "}\n";
 
-    "void main() {\n"
-    "  vec2 texCoord = vec2(0.0f, 0.0f);\n"
-    "  vec4 baseTex = texture2D(sTexture, texCoord);\n"
-    "  vec4 lightCol = vFragColor;\n"
-    // "  gl_FragColor = baseTex * (lightCol + 0.25);\n"
-    "  gl_FragColor = lightCol;\n"
-    "}\n";
+    shad_fragment = 
+        "precision mediump float;\n"
+        "uniform sampler2D sTexture;\n"
+        "varying vec4 vFragColor;\n"
+
+        "void main() {\n"
+        "  vec2 texCoord = vec2(0.0f, 0.0f);\n"
+        "  vec4 baseTex = texture2D(sTexture, texCoord);\n"
+        "  vec4 lightCol = vFragColor;\n"
+        // "  gl_FragColor = baseTex * (lightCol + 0.25);\n"
+        "  gl_FragColor = lightCol;\n"
+        "}\n";
+}
 
 GLuint Renderer::loadShader(GLenum shaderType, const char* pSource) {
     GLuint shader = glCreateShader(shaderType);
@@ -73,7 +77,6 @@ GLuint Renderer::loadShader(GLenum shaderType, const char* pSource) {
     }
     return shader;
 }
-
 
 GLuint Renderer::createProgram(const char* pVertexSource, const char* pFragmentSource) {
     GLuint vertexShader = loadShader(GL_VERTEX_SHADER, pVertexSource);
@@ -113,16 +116,8 @@ GLuint Renderer::createProgram(const char* pVertexSource, const char* pFragmentS
     return program;
 }
 
-bool Renderer::setupGraphics(int w, int h) {
-    LOGI("--------------------");
-    LOGI("Loading OpenGL");
-    printGLString("Version", GL_VERSION);
-    printGLString("Vendor", GL_VENDOR);
-    printGLString("Renderer", GL_RENDERER);
-    printGLString("Extensions", GL_EXTENSIONS);
-
-    LOGI("setupGraphics(%d, %d)", w, h);
-    gProgram = createProgram(gVertexShader, gFragmentShader);
+bool Renderer::setup(int screen_w, int screen_h) {
+    gProgram = createProgram(shad_vertex.c_str(), shad_fragment.c_str());
     if (!gProgram) {
         LOGE("Could not create program.");
         return false;
@@ -146,10 +141,10 @@ bool Renderer::setupGraphics(int w, int h) {
     checkGlError("glGetUniformLocation(sTexture)");
 
     /* Projection Matrix */
-    GLfloat proj[] = { 2.0f/w, 0.0f,   0.0f, 0.0f,
-                       0.0f,  -2.0f/h, 0.0f, 0.0f,
-                       0.0f,   0.0f,   0.0f, 0.0f,
-                      -1.0f,   1.0f,   0.0f, 1.0f };
+    GLfloat proj[] = { 2.0f/screen_w, 0.0f,          0.0f, 0.0f,
+                       0.0f,         -2.0f/screen_h, 0.0f, 0.0f,
+                       0.0f,          0.0f,          0.0f, 0.0f,
+                      -1.0f,          1.0f,          0.0f, 1.0f };
 
     /* Model Matrix */
     // Identity Matrix
@@ -159,8 +154,8 @@ bool Renderer::setupGraphics(int w, int h) {
                         0.0f, 0.0f, 0.0f, 1.0f };
 
 
-    /* Pass uniforms to shader
-     * VERY IMPORTANT
+    // Pass uniforms to shader
+    /* VERY IMPORTANT
      * glUseProgram() needs to be called before you setup a uniform 
      * but not needed before glGetUniformLocation() 
      * http://www.opengl.org/wiki/GLSL_:_common_mistakes */
@@ -173,7 +168,7 @@ bool Renderer::setupGraphics(int w, int h) {
     glUniformMatrix4fv(gmModelHandle, 1, GL_FALSE, &model[0]);
     checkGlError("glUniformMatrix4fv, mModel");
 
-    glViewport(0, 0, w, h);
+    glViewport(0, 0, screen_w, screen_h);
     checkGlError("glViewport");
 
     glDisable(GL_DEPTH_TEST);
@@ -201,66 +196,20 @@ bool Renderer::setupGraphics(int w, int h) {
     // Generate a texture object
     glGenTextures(1, &tex);
 
-    // Load assets
-    int tex_w, tex_h; // get value from SOIL
-    GLubyte *img_pixels = getBytesFromPNG("assets/player.png", tex_w, tex_h);
-    // GLubyte *img_pixels = SOIL_load_image("assets/player.png", &tex_w, &tex_h, 0, SOIL_LOAD_RGBA);
-    if (img_pixels == NULL)
-        LOGI("Failed to load tex");
-    LOGI("TEX Width:%i, TEX Height:%i", tex_w, tex_h);
-    LOGI("BYTEZ->%s", (char*)&img_pixels);
-    tex = createSimpleTexture2D(tex, img_pixels, tex_w, tex_h, 4);
+    // // Load assets
+    // int tex_w, tex_h; // Value init by libpng
+    // GLubyte *img_pixels = getBytesFromPNG("assets/player.png", APKArchive, tex_w, tex_h);
+    // if (img_pixels == NULL)
+    //     LOGI("Failed to load tex");
+    // LOGI("TEX Width:%i, TEX Height:%i", tex_w, tex_h);
+    // LOGI("BYTEZ->%s", (char*)&img_pixels);
+    // tex = createSimpleTexture2D(tex, img_pixels, tex_w, tex_h, 4);
 
     // delete[] &img_pixels;
 
     return true;
 }
 
-zip *APKArchive = NULL;
-void Renderer::loadAPK (const char *packageName) {
-    LOGI("Loading APK %s", packageName);
-    APKArchive = zip_open(packageName, 0, NULL);
-    if (APKArchive == NULL) {
-        LOGE("Error loading APK");
-        return;
-    }
-
-    //Just for debug, print APK contents
-    int numFiles = zip_get_num_files(APKArchive);
-    for (int i=0; i<numFiles; i++) {
-        const char* name = zip_get_name(APKArchive, i, 0);
-        if (name == NULL) {
-            LOGE("Error reading zip file name at index %i : %s", i, zip_strerror(APKArchive));
-            return;
-        }
-        LOGI("File %i : %s\n", i, name);
-    }
-}
-
-GLuint Renderer::createSimpleTexture2D(GLuint _textureid, GLubyte* pixels, int width, int height, int channels) {
-
-    GLenum format;
-    switch (channels) {
-        case 3:
-            format = GL_RGB;
-            break;
-        case 1:
-            format = GL_LUMINANCE;
-            break;
-        case 4:
-            format = GL_RGBA;
-            break;
-    }
-    // Load the texture
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, (GLvoid*) pixels);
-    checkGlError("glTexImage2D");
-
-    // Set the filtering mode
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-
-    return _textureid;
-}
 
 void Renderer::renderFrame() {
     float bg = 0.0f;
@@ -382,17 +331,15 @@ void Renderer::renderBox(Box &box) {
     checkGlError("glDrawArrays");
 }
 
-
-#define TEXTURE_LOAD_ERROR 0
-zip_file* file;
-
+//----------------
+zip_file* file = NULL;
 void Renderer::png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length) {
-  zip_fread(file, data, length);
+    zip_fread(file, data, length);
 }
-GLubyte* Renderer::getBytesFromPNG(const char* filename, int &width, int &height) {
+GLubyte* Renderer::getBytesFromPNG(const char* filename, zip *APKArchive, int &width, int &height) {
     file = zip_fopen(APKArchive, filename, 0);
     if (!file) {
-        LOGE("Error opiiening %s from APK", filename);
+        LOGE("Error opening %s from APK", filename);
         return TEXTURE_LOAD_ERROR;
     }
 
@@ -516,4 +463,29 @@ GLubyte* Renderer::getBytesFromPNG(const char* filename, int &width, int &height
 
     // return texture;
     return image_data;
+}
+
+GLuint Renderer::createSimpleTexture2D(GLuint _textureid, GLubyte* pixels, int width, int height, int channels) {
+
+    GLenum format;
+    switch (channels) {
+        case 3:
+            format = GL_RGB;
+            break;
+        case 1:
+            format = GL_LUMINANCE;
+            break;
+        case 4:
+            format = GL_RGBA;
+            break;
+    }
+    // Load the texture
+    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, (GLvoid*) pixels);
+    checkGlError("glTexImage2D");
+
+    // Set the filtering mode
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
+
+    return _textureid;
 }

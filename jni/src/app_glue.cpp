@@ -34,8 +34,8 @@ JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_init(JNIEnv * env, j
     //
     // static Game tmpGame;
 
-    // Unzip apk
-    game.renderer.loadAPK(&packageName);
+    // Unzip apk using libzip
+    game.loadAPK(&packageName);
 
     game.setup(width, height, packageName);
     // game = &tmpGame;

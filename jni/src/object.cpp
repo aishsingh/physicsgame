@@ -6,7 +6,6 @@ Object::Object(float x, float y, float width, float height) {
     _y      = y;
     _width  = width;
     _height = height;
-    LOGI("x:%.2f, y:%.2f, w:%.2f, h:%.2f", _x, _y, _width, _height);
 }
 Object::~Object() {
     _x      = 0;

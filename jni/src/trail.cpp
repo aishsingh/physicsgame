@@ -5,6 +5,10 @@ Trail::Trail() {
     _boxes_length = 20;
 }
 
+void Trail::setup(int screen_w, int screen_h) {
+    _renderer.setup(screen_w, screen_h);
+}
+
 void Trail::fade(Box &box) {
     // fade the box when it has stopped moving vertically
     float fade_decr = 0.04f;    // Larger = faster fade
@@ -12,17 +16,18 @@ void Trail::fade(Box &box) {
         box.setAlpha(box.getAlpha() - fade_decr);
     if (box.getAlpha() < fade_decr && box.getAlpha() > 0.0f)
         box.setAlpha(0.0f);
-
-    // boxRGBA(_renderer, box.getX(), box.getY(), box.getX() + box.getWidth(), box.getY() + box.getHeight(), box.getColour().r, box.getColour().g, box.getColour().b, box.getAlpha());
-    // Send to renderer
 }
 
-void Trail::render(Renderer &renderer, PhysicsEngine &physics, int time, int screen_width, int screen_height) {
+void Trail::render(PhysicsEngine &physics, int time, int screen_width, int screen_height) {
+    // Render changes
+    _renderer.renderFrame();
+
     // Draw every shape in shapes vector
     for (int i=0; i<(int)shapes.size(); i++) {
         fade(shapes.at(i));
 
-        renderer.renderBox(shapes.at(i));
+        // Send shape to renderer
+        _renderer.renderBox(shapes.at(i));
 
         // Update physics attributes only if box is moving
         if (shapes.at(i).vert_motion.getVel() != 0.0f || shapes.at(i).hori_motion.getVel() != 0.0f)
@@ -79,6 +84,13 @@ void Trail::removeBox(int index) {
     LOGI("remove_box() -> removed %i", index);
 }
 
-void Trail::rotateBy(float angle) {
-    // some codez here
+void Trail::rotate(float angle) {
+    float initial_vel_vert = 0.0f;
+    float initial_vel_hori = 0.0f;
+
+    if (angle >= 0 && angle < 90) {
+        for (int i=0; i<(int)shapes.size(); i++) {
+            shapes.at(i).hori_motion.setVel(shapes.at(i).hori_motion.getVel() + angle);
+        }
+    }
 }

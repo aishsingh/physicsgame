@@ -11,6 +11,8 @@ class Trail {
     private:
         int _boxes_length;
 
+        Renderer _renderer;
+
         // fade the selected box
         void fade(Box &box);
     public:
@@ -18,7 +20,7 @@ class Trail {
         std::vector<Box> shapes;
 
         /* Draw the shapes to the renderer */
-        void render(Renderer &renderer, PhysicsEngine &physics, int time, int screen_width, int screen_height);
+        void render(PhysicsEngine &physics, int time, int screen_width, int screen_height);
 
         /* Creates a new box with the given values
            1. Initializes a bew instanse  */
@@ -31,7 +33,9 @@ class Trail {
         void removeBox(int index);
 
         // Rotate the entire 
-        void rotateBy(float angle);
+        void rotate(float angle);
+
+        void setup(int screen_w, int screen_h);
 
         // Ctor
         Trail();

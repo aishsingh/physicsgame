@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <vector>
+#include "zip.h"
 
 #include "renderer.h"
 #include "shapes.h"
@@ -34,18 +35,10 @@ class Game {
         /* Generates a random theme for the GIVEN theme */
         void changeTheme(Theme &old_theme);
         
-        /* Function gets called every tick of the timer
-           Increments the time variable */
-        // static Uint32 timerCallback(Uint32 interval, void *param);
-
-        /* main poop hehehe.. */
+        /* main lewp */
         void mainLoop();
-
     public:
 
-        // Gets initilised from app_glue.cpp
-        // so needs to be public
-        Renderer renderer;
 
         // All players that are in the game
         // player[0] is the user
@@ -60,12 +53,15 @@ class Game {
         /* Respond to input events */
         void handleInput(float x, float y);
 
+        /* Load assets in the apk by extracting it with libzip */
+        zip *APKArchive;
+        void loadAPK(const char *packageName);
+
         /* Ctor */
         Game();
 
         /* Dtor */
         ~Game();
-
 };
 
 #endif /* GAME_H */

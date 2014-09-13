@@ -53,8 +53,8 @@ void Spaceman::changeTheme(Theme &old_theme) {
     old_theme = new_theme;
 }
 
-void Spaceman::Draw(Renderer &renderer, int time, int screen_width, int screen_height) {
-    trail.render(renderer, _physics, time, screen_width, screen_height);
+void Spaceman::draw(int time, int screen_width, int screen_height) {
+    trail.render(_physics, time, screen_width, screen_height);
 }
 
 void Spaceman::update(float x, float y, float time) {
@@ -62,4 +62,8 @@ void Spaceman::update(float x, float y, float time) {
         // Show the trail only if the player is flying
         trail.createBox(x, y, time, _colour_theme, _physics);
     }
+}
+
+void Spaceman::setup(int screen_w, int screen_h) {
+    trail.setup(screen_w, screen_h);
 }
