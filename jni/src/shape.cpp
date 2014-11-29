@@ -1,23 +1,19 @@
 #include <stdlib.h>    // Needed for rand()
-#include "shapes.h"
-#include "common.h"
-#include "motion.h"
-#include "log.h"
+#include "shape.h"
 
-Box::Box(const float x, const float y, const float diameter, const int &index, const float &time, const Theme &theme) : Object(x,y,diameter,diameter) {
+Shape::Shape(float x, float y, float width, float height, float &time, Theme &theme) : Object(x,y,width,height) {
     vert_motion.setTime(time);
     hori_motion.setTime(time);
 
     rot_angle = 0.0f;
 
-    setIndex(index);
-    setColour(theme);
+    useTheme(theme);
 }
 
-Colour Box::getColour() {
+Colour Shape::getColour() const {
     return _colour;
 }
-void Box::setColour(const Theme &theme) {
+void Shape::useTheme(Theme &theme) {
     switch(theme) {
         case GRAY:
         _colour.r = (rand() % 256) / 256.0f;
@@ -53,9 +49,9 @@ void Box::setColour(const Theme &theme) {
     // Reset Alpha value
     _colour.a = 1.0f;
 }
-float Box::getAlpha() {
+float Shape::getAlpha() const {
     return _colour.a;
 }
-void Box::setAlpha(const float alpha) {
+void Shape::setAlpha(float alpha) {
     _colour.a = alpha;
 }

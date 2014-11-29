@@ -2,46 +2,46 @@
 #define RENDERER_H
 
 #include <string>
+#include <vector>
 #include <GLES2/gl2.h>
 #include <png.h>
 #include "zip.h"
-#include "shapes.h"
-
-using std::string;
+#include "colour.h"
+#include "shape.h"
 
 class Renderer {
-private:
-    float aspect;
-    GLuint gProgram;
-    GLuint gvPosHandle;
-    GLuint gfAngleHandle;
-    GLuint gvColorHandle;
-    GLuint gmProjHandle;
-    GLuint gmModelHandle;
-    GLuint gsTexHandle;
+    protected:
+        // std::vector<float> proj;
+        // std::vector<float> model;
+        //
+        GLuint gProgram;
+        GLuint gvPosHandle;
+        GLuint gfAngleHandle;
+        GLuint gvColorHandle;
+        GLuint gmProjHandle;
+        GLuint gmModelHandle;
 
-    string shad_vertex;
-    string shad_fragment;
+        std::string shad_vertex;
+        std::string shad_fragment;
 
-    GLuint loadShader(GLenum shaderType, const char* pSource);
-    GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
+        GLuint loadShader(GLenum shaderType, const char *pSource);
+        GLuint createProgram(const char *pVertexSource, const char *pFragmentSource);
 
-    // PNG loading
-    static void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
-    GLubyte* getBytesFromPNG(const char* filename, zip *APKArchive, int &width, int &height);
+        /* Functions called from renderObject() */
+        virtual std::vector<float> useColour(Colour *colour) = 0; 
+        virtual std::vector<float> useObjectVertices(Object *obj) = 0;
+        virtual void setShaderData(float vertices[], float colours[], float angle) = 0;
 
-    // Texture loading
-    GLuint tex;
-    GLuint createSimpleTexture2D(GLuint _textureid, GLubyte* pixels, int width, int height, int channels);
-public:
+    public:
+        virtual bool setup(int screen_w, int screen_h);
+        virtual void renderFrame();
 
-    // bool setup(int w, int h, zip *APKArchive);
-    bool setup(int screen_w, int screen_h);
-    void renderFrame();
-    void renderBox(Box &box);
+        /* Send vectors and other data to shaders */
+        virtual void renderShape(Shape *obj);
 
-    /* Ctor - Init Shaders */
-    Renderer();
+        /* Ctor - Init Shaders */
+        Renderer();
+        virtual ~Renderer();
 };
 
 #endif /* RENDERER_H */

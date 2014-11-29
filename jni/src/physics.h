@@ -1,8 +1,8 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
-#include "common.h"
-#include "shapes.h"
+#include "object.h"
+#include "component.h"
 
 typedef enum Size {SMALL, MEDIUM, LARGE} Size;
 
@@ -17,19 +17,19 @@ class PhysicsEngine {
         float _MAX_G_SWITCH_MISCALC;
         float _gravity;   
 
-        Motion calcMotion(Box &box, const Comp comp, const float &elapsed_time);
+        Motion calcMotion(Object &obj, const Comp comp, const float &elapsed_time);
 
     public:
-        void updatePhysics(Box &box, const float &elapsed_time, const int &screen_width, const int &screen_height);
+        void updatePhysics(Object &obj, const float &elapsed_time, const int &screen_width, const int &screen_height);
 
         /* Reverse gravity and give blocks some initial velocity to look natural
            1. Invert gravity value
            2. Reset block time
            3. give blocks some initial velocity to make blocks fall with different levels */
-        void switchGravity(Box boxes[], const int &boxes_count, const int &elapsed_time);
+        void switchGravity(Object objs[], const int &boxes_count, const int &elapsed_time);
 
         /* Generated a suitable initial velocity using rand() */
-        void generateInitVelocity(Box &box);
+        void generateInitVelocity(Object &obj);
 
         /* Getters / Setters */
         float getGravity();

@@ -14,28 +14,28 @@ Object::~Object() {
     _height = 0;
 }
 
-float Object::getX() {
+float Object::getX() const {
     return _x;
 }
-void Object::setX(const float x) {
+void Object::setX(float x) {
     _x = x;
 }
-float Object::getY() {
+float Object::getY() const {
     return _y;
 }
-void Object::setY(const float y) {
+void Object::setY(float y) {
     _y = y;
 }
-int Object::getIndex() {
-    return _index;
-}
-void Object::setIndex(const int index) {
-    _index = index;
-}
-float Object::getWidth() {
+// int Object::getIndex() {
+//     return _index;
+// }
+// void Object::setIndex(const int index) {
+//     _index = index;
+// }
+float Object::getWidth() const {
     return _width;
 }
-float Object::getHeight() {
+float Object::getHeight() const {
     return _height;
 }
 

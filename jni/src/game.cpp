@@ -1,11 +1,9 @@
 #include <stdlib.h>    // rand()
 #include <time.h>      // seeding rand numbers
-#include <vector>
 #include <exception>
 
-#include "common.h"
 #include "game.h"
-#include "physics.h"
+#include "spaceman.h"
 #include "log.h"
 
 Game::Game() {
@@ -22,21 +20,24 @@ Game::Game() {
 
     // Setup Player
     try {
-        players.resize(players.size() + 1, Spaceman(0, 0, 385/2, 460/2));
+        // _players.resize(_players.size() + 1, new Spaceman(0, 0, 150, 300));
+        _players.push_back(new Spaceman(0, 0));
     }
     catch (std::exception &e) {
         LOGE("Error occured while creating player: %s", e.what());
     }
 }
+
 Game::~Game() {
-    for(int i=0; i<(int)players.size(); i++) {
+    for(int i=0; i<(int)_players.size(); i++) {
         // Clear boxes array
-        std::vector<Box>().swap(players.at(i).trail.shapes);
+        std::vector<Player*>().swap(_players);
     }
-} 
+}
+
 //----
-void Game::setup(int w, int h, const char &packageName) {
-    _packageName = packageName;
+void Game::setup(int w, int h, char &package_name) {
+    _package_name = package_name;
     _screen_width = w;
     _screen_height = h;
 
@@ -48,20 +49,18 @@ void Game::setup(int w, int h, const char &packageName) {
     printGLString("Renderer", GL_RENDERER);
     printGLString("Extensions", GL_EXTENSIONS);
 
-    LOGI("setup(%d, %d, %s)", w, h, &packageName);
+    LOGI("setup(%d, %d, %s)", w, h, &package_name);
 
-    players.at(0).setup(w, h);
+    // Setup renderers/objects
+    _players.at(0)->setup(w, h);
 }
 
 void Game::run() {
     /* MAIN GAME LOOP */
 
-    // Update _rend_boxes frame
-    // _rend_boxes.renderFrame();
-
     // Render players
-    for(int i=0; i<(int)players.size(); i++) {
-        players.at(i).draw(_elapsed_time, _screen_width, _screen_height);
+    for(int i=0; i<(int)_players.size(); i++) {
+        _players.at(i)->draw(_elapsed_time, _screen_width, _screen_height);
     }
 
     // Increment game time according to the current speed of time
@@ -78,14 +77,14 @@ void Game::handleInput(float x, float y) {
     for (int i=1; i<=_BOXES_PER_PRESS; i++) {
         // TODO replace (x, y) touch pos with a position returned from a controller class
         // Player[0] is the main player (the user)
-        players.at(0).update(x, y, _elapsed_time);
+        _players.at(0)->update(x, y, _elapsed_time);
     }
 }
 
 //---
-void Game::loadAPK (const char *packageName) {
-    LOGI("Loading APK %s", packageName);
-    APKArchive = zip_open(packageName, 0, NULL);
+void Game::loadAPK(const char *package_name) {
+    LOGI("Loading APK %s", package_name);
+    APKArchive = zip_open(package_name, 0, NULL);
     if (APKArchive == NULL) {
         LOGE("Error loading APK");
         return;

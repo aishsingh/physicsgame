@@ -10,6 +10,7 @@ flags = [
 '-Werror',
 '-Wno-unused-parameter',
 '-Wno-unused-variable',
+'-Wno-unused-function',
 
 '-std=c++11', '-x', 'c++',
 
@@ -23,8 +24,8 @@ flags = [
 'soil/include/SOIL',
 
 
-'-llog',
-'-lSDL2'
+# '-llog',
+# '-lSDL2'
 ]
 
 #=============================================================================================

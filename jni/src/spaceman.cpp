@@ -1,13 +1,14 @@
 #include <stdlib.h>    // Needed for rand()
 #include "motion.h"
-#include "players.h"
+#include "spaceman.h"
 
-Spaceman::Spaceman(const float x, const float y, const float width, const float height) : Object(x,y,width,height) {
+Spaceman::Spaceman(float x, float y) : Player(x,y,50,100) {
     // TODO use this after controls have been added -> _action = STILL;
     _action = FLYING;
     _facing = RIGHT;
     _frame = 0;
     _colour_theme = RAINBOW;
+    rot_angle = 0.0f;
 }
 
 Action Spaceman::getAction() {
@@ -54,16 +55,33 @@ void Spaceman::changeTheme(Theme &old_theme) {
 }
 
 void Spaceman::draw(int time, int screen_width, int screen_height) {
-    trail.render(_physics, time, screen_width, screen_height);
+    render(time, screen_width, screen_height);
+    _trail.render(_physics, time, screen_width, screen_height);
 }
 
 void Spaceman::update(float x, float y, float time) {
+    setX(x - getWidth());
+    setY(y - getHeight());
     if (_action == FLYING) {
         // Show the trail only if the player is flying
-        trail.createBox(x, y, time, _colour_theme, _physics);
+        _trail.createBox(x, y, time, _colour_theme, _physics);
     }
 }
 
 void Spaceman::setup(int screen_w, int screen_h) {
-    trail.setup(screen_w, screen_h);
+    renderer.setup(screen_w, screen_h);
+    _trail.setup(screen_w, screen_h);
+}
+
+void Spaceman::render(int time, int screen_width, int screen_height) {
+    // Render changes (Clear screen)
+    renderer.renderFrame();
+
+    // Draw every shape in shapes vector
+    // Send player data to renderer
+    renderer.renderObject(this);
+
+    // Update physics attributes only if box is moving
+    if (vert_motion.getVel() != 0.0f || hori_motion.getVel() != 0.0f)
+        _physics.updatePhysics(*this, time, screen_width, screen_height);
 }

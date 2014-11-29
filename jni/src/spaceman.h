@@ -1,33 +1,36 @@
-#ifndef PLAYERS_H
-#define PLAYERS_H
+/* Description: Spaceman header and Action enumeration
+ * Created On: 2014-11-25 
+ */
 
+#ifndef SPACEMAN_H
+#define SPACEMAN_H
+
+#include "player.h"
 #include "trail.h"
 #include "object.h"
 #include "motion.h"
+#include "direction.h"
 
 typedef enum Action {STILL, RUNNING, FLYING} Action;
 
-class Spaceman: public Object {
+class Spaceman: public Player {
     private:
 
         PhysicsEngine _physics;
         Action _action;
         Dir _facing;
         int _frame;
+        Theme _colour_theme; // Changes the colour scheme of the boxes and other UI
+        Trail _trail;
 
-        // Changes the colour scheme of the boxes and other UI
-        Theme _colour_theme;
+        void render(int time, int screen_width, int screen_height);
     public:
-
-        Trail trail;
-        Motion vert_motion, hori_motion;
 
         // Render player and trail
         void draw(int time, int screen_width, int screen_height);
 
         // Do spaceman according to its current action
         void update(float x, float y, float time); 
-
         void setup(int screen_width, int screen_height);
 
         /* Getters / Setters */
@@ -39,9 +42,8 @@ class Spaceman: public Object {
         void setFrame(int frame);
         void changeTheme(Theme &old_theme);
 
-        /* Constructor
-           Check if there is once 
-           Creates a new box instance and adds it to the array */
-        Spaceman(const float x, const float y, const float width, const float height);
+        /* Ctor - Creates a new box instance and adds it to the array */
+        Spaceman(float x, float y);
 };
-#endif
+
+#endif /* SPACEMAN_H */

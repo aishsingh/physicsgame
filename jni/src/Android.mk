@@ -14,16 +14,20 @@ LOCAL_STATIC_LIBRARIES := libzip libpng soil
 LOCAL_SRC_FILES := app_glue.cpp \
 					   game.cpp \
 				   renderer.cpp \
+				   rend_box.cpp \
+			   	rend_player.cpp \
 				    physics.cpp \
 					 object.cpp \
-					 shapes.cpp \
-					players.cpp \
+					  shape.cpp \
+					 	box.cpp \
+					 player.cpp \
+				   spaceman.cpp \
 					  trail.cpp \
 					 motion.cpp \
 						log.cpp
 
 LOCAL_LDLIBS    := -llog -lGLESv2 -ldl -lz
-LOCAL_CFLAGS    := -fexceptions
+LOCAL_CFLAGS    := -fexceptions -std=c++11
 
 include $(BUILD_SHARED_LIBRARY)
 # $(call import-module,soil)
