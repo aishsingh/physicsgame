@@ -7,16 +7,16 @@ class Motion {
         float _ct, _t, _d, _v, _a;
     public:
         /* Getters/Setters */
-        float getChangeTime();
-        void setChangeTime(const float t);
-        float getTime();
-        void setTime(const float t);
-        float getDisp();
-        void setDisp(const float d);
-        float getVel();
-        void setVel(const float v);
-        float getAccel();
-        void setAccel(const float a);
+        float getChangeTime() const;
+        void setChangeTime(float t);
+        float getTime() const;
+        void setTime(float t);
+        float getDisp() const;
+        void setDisp(float d);
+        float getVel() const;
+        void setVel(float v);
+        float getAccel() const;
+        void setAccel(float a);
 
         /* Ctor */
         Motion();

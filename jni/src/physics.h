@@ -29,7 +29,7 @@ class PhysicsEngine {
         void switchGravity(Object objs[], const int &boxes_count, const int &elapsed_time);
 
         /* Generated a suitable initial velocity using rand() */
-        void generateInitVelocity(Object &obj);
+        void generateInitVelocity(Object &obj, float rot_angle);
 
         /* Getters / Setters */
         float getGravity();

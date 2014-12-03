@@ -18,6 +18,8 @@ class Trail {
 
         // fade the selected box
         void fade(Shape &shape);
+
+        void disableRender();
     public:
         // Shapes that are displayed in the trail
         std::vector<Shape> shapes;
@@ -27,7 +29,7 @@ class Trail {
 
         /* Creates a new box with the given values
            1. Initializes a bew instanse  */
-        void createBox(float x, float y, float time, Theme theme, PhysicsEngine &physics);
+        void buildTrail(float x, float y, Theme theme, PhysicsEngine &physics);
 
         /* Removes the box at the given index
            1. Shifts boxes that are right of the index one pos left 

@@ -6,6 +6,7 @@
 #include "physics.h"
 // #include "textures.h"
 #include "player.h"
+#include "rend_UI.h"
 
 class Game {
     private:
@@ -13,25 +14,24 @@ class Game {
         static const bool _DEBUG = false;
         static const int _BOXES_PER_PRESS = 1;
 
-        bool _finished;
+        static int _screen_width;
+        static int _screen_height;
 
-        char _package_name;
-        int _screen_width;
-        int _screen_height;
-
-        float _elapsed_time;
+        static float _elapsed_time;
         float _time_speed;
+
+        bool _finished;
+        char _package_name;
 
         // All players that are in the game
         // player[0] is the user
         std::vector<Player*> _players;
 
         /* Renderers */
-        // Renderer _rend_UI_controls;
+        Rend_UI _UI_renderer;
 
         /* All fonts, gfx, audio will is loaded here */
         void loadResources();
-
     public:
 
         /* Setup OpenGL
@@ -48,6 +48,10 @@ class Game {
         /* Load assets in the apk by extracting it with libzip */
         zip *APKArchive;
         void loadAPK(const char *package_name);
+
+        static int getScreenWidth();
+        static int getScreenHeight();
+        static float getElapsedTime();
 
         Game();
         ~Game();

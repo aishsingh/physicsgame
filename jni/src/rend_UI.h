@@ -1,22 +1,21 @@
-#ifndef REND_BOX_H
-#define REND_BOX_H
+#ifndef REND_UI_H
+#define REND_UI_H
 
 #include <GLES2/gl2.h>
 #include "renderer.h"
-#include "shape.h"
 
-class Rend_box: public Renderer {
+class Rend_UI: public Renderer {
     private:
         std::vector<float> useObjectVertices(Object *obj);
         void setShaderData(float vertices[], float colours[], float angle);
 
     public:
-        // void renderFrame();
-        void renderShape(Shape *obj);
+        bool setup(int screen_w, int screen_h);
+        void renderUI();
         void disableAttributes();
 
         /* Ctor - Init Shaders */
-        Rend_box();
+        Rend_UI();
 };
 
-#endif /* REND_BOX_H */
+#endif /* REND_UI_H */

@@ -11,15 +11,10 @@
 
 class Renderer {
     protected:
-        // std::vector<float> proj;
-        // std::vector<float> model;
-        //
         GLuint gProgram;
         GLuint gvPosHandle;
         GLuint gfAngleHandle;
         GLuint gvColorHandle;
-        GLuint gmProjHandle;
-        GLuint gmModelHandle;
 
         std::string shad_vertex;
         std::string shad_fragment;
@@ -28,16 +23,19 @@ class Renderer {
         GLuint createProgram(const char *pVertexSource, const char *pFragmentSource);
 
         /* Functions called from renderObject() */
-        virtual std::vector<float> useColour(Colour *colour) = 0; 
+        virtual std::vector<float> useColour(Colour *colour); 
         virtual std::vector<float> useObjectVertices(Object *obj) = 0;
         virtual void setShaderData(float vertices[], float colours[], float angle) = 0;
 
     public:
         virtual bool setup(int screen_w, int screen_h);
-        virtual void renderFrame();
 
         /* Send vectors and other data to shaders */
         virtual void renderShape(Shape *obj);
+        
+        virtual void disableAttributes() = 0;
+
+        static void clearScreen();
 
         /* Ctor - Init Shaders */
         Renderer();

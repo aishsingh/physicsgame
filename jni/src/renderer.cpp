@@ -77,6 +77,12 @@ GLuint Renderer::createProgram(const char *pVertexSource, const char *pFragmentS
             glDeleteProgram(program);
             program = 0;
         }
+        // Shaders are no longer needed once linked to program
+        // so they can be freed
+        glDetachShader(program, vertexShader);
+        glDetachShader(program, pixelShader);
+        glDeleteShader(vertexShader);
+        glDeleteShader(pixelShader);
     }
     return program;
 }
@@ -87,6 +93,7 @@ bool Renderer::setup(int screen_w, int screen_h) {
         LOGE("Could not create program.");
         return false;
     }
+
     gvPosHandle = glGetAttribLocation(gProgram, "vPos");
     checkGlError("glGetAttribLocation(vPos)");
 
@@ -96,10 +103,10 @@ bool Renderer::setup(int screen_w, int screen_h) {
     gfAngleHandle = glGetAttribLocation(gProgram, "fAngle");
     checkGlError("glGetAttribLocation(fAngle)");
 
-    gmProjHandle = glGetUniformLocation(gProgram, "mProj");
+    GLuint gmProjHandle = glGetUniformLocation(gProgram, "mProj");
     checkGlError("glGetUniformLocation(mProj)");
 
-    gmModelHandle = glGetUniformLocation(gProgram, "mModel");
+    GLuint gmModelHandle = glGetUniformLocation(gProgram, "mModel");
     checkGlError("glGetUniformLocation(mModel)");
  
     /* Projection Matrix */
@@ -139,18 +146,27 @@ bool Renderer::setup(int screen_w, int screen_h) {
     return true;
 }
 
-void Renderer::renderFrame() {
+void Renderer::clearScreen() {
+    // glUseProgram(gProgram);
+    // checkGlError("glUseProgram");
+
     float bg = 0.0f;
     glClearColor(bg, bg, bg, 1.0f);
     checkGlError("glClearColor");
     glClear(GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
-    glUseProgram(gProgram);
-    checkGlError("glUseProgram");
-
     glDisable(GL_DEPTH_TEST);
     checkGlError("glDisable(GL_DEPTH_TEST)");
+}
+
+std::vector<float> Renderer::useColour(Colour *colour) {
+    float clr[] = { colour->r, colour->g, colour->b, colour->a,
+                    colour->r, colour->g, colour->b, colour->a,
+                    colour->r, colour->g, colour->b, colour->a,
+                    colour->r, colour->g, colour->b, colour->a };
+
+    return std::vector<float> (clr, clr + sizeof(clr) / sizeof(float));
 }
 
 void Renderer::renderShape(Shape *obj) {}

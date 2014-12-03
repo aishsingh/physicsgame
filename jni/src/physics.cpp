@@ -149,15 +149,48 @@ void PhysicsEngine::switchGravity(Object objs[], const int &objs_count, const in
     }
 }
 
-void PhysicsEngine::generateInitVelocity(Object &obj) {
-    float init_v = _MIN_INITIAL_VERT_VELOCITY + (float)(rand()) / (float)(RAND_MAX/(_MAX_INITIAL_VERT_VELOCITY - _MIN_INITIAL_VERT_VELOCITY));
+void PhysicsEngine::generateInitVelocity(Object &obj, float rot_angle) {
+    // Gen random velocity magnitude
+    // float init_v = _MIN_INITIAL_VERT_VELOCITY + (float)(rand()) / (float)(RAND_MAX/(_MAX_INITIAL_VERT_VELOCITY - _MIN_INITIAL_VERT_VELOCITY));
+    float init_v = 10.0f;
     float init_h = _MAX_INITIAL_HORI_VELOCITY + (float)(rand()) / (float)(RAND_MAX/(-_MAX_INITIAL_HORI_VELOCITY-(_MAX_INITIAL_HORI_VELOCITY)));
 
+    // Handle obj rotation
+    float ratio = 0;
+
+    if (rot_angle > 0 && rot_angle <= 90) {
+        if (rot_angle >= 45) {
+            // hori comp is stronger
+            ratio = rot_angle / 90;
+            init_h *= ratio;
+            init_v *= (90 - ratio);
+        }
+        else {
+            // vert comp is stronger
+            ratio = rot_angle / 90;
+            init_v *= ratio;
+            init_h *= (90 - ratio);
+        }
+    }
+    else if (rot_angle > 90 && rot_angle <= 180) {
+        if (rot_angle >= 135) {
+            // hori comp is stronger
+            ratio = rot_angle / 180;
+            init_h *= ratio;
+            init_v *= (180 - ratio);
+        }
+        else {
+            // vert comp is stronger
+            ratio = rot_angle / 90;
+            init_v *= ratio;
+            init_h *= (180 - ratio);
+        }
+    }
+
+
+    // Apply velocity
     obj.vert_motion.setVel(init_v);
     obj.hori_motion.setVel(init_h);
-
-    // SDL_Log("%.4f + %.2f / (%.2f/(-%.2f - %.2f))", _MAX_INITIAL_HORI_VELOCITY, rnd, rnd_max, _MAX_INITIAL_HORI_VELOCITY, _MAX_INITIAL_HORI_VELOCITY);
-    // SDL_Log("%i, x:%.2f, y:%.2f, vv:%2.f, hv:%2.f", obj.getIndex(), obj.getX(), obj.getY(), obj.vert_motion.getVel(), obj.hori_motion.getVel());
 }
 
 /* vim: set ts=4 */

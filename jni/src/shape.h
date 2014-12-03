@@ -18,7 +18,7 @@ class Shape: public Object {
 
         /* Ctor - Creates a new box instance and adds it to the array */
         // Box() {}
-        Shape(float x, float y, float width, float height, float &time, Theme &theme);
+        Shape(float x, float y, float width, float height, Theme &theme);
 };
 
 #endif /* SHAPE_H */

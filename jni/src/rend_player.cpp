@@ -17,9 +17,7 @@
 Rend_player::Rend_player() {
     shad_vertex =
         "attribute vec2 vPos;\n"
-        "attribute vec4 vColor;\n"
         "attribute float fAngle;\n"
-        "varying vec4 vFragColor;\n"
         "uniform mat4 mProj;\n"
         "uniform mat4 mModel;\n"
 
@@ -31,18 +29,16 @@ Rend_player::Rend_player() {
         "  pos.y = vPos.y*cos(rad_angle) + vPos.x*sin(rad_angle);\n"
 
         "  mat4 mMP = mProj * mModel;\n"
-        "  gl_Position = mMP * vec4(pos, 0.0f, 1.0f);\n"
-
-        "  vFragColor = vColor;\n"
+        "  gl_Position = mMP * vec4(vPos, 0.0f, 1.0f);\n"
         "}\n";
 
     shad_fragment = 
         "precision mediump float;\n"
-        "varying vec4 vFragColor;\n"
 
         "void main() {\n"
-        "  gl_FragColor = vFragColor;\n"
+        "  gl_FragColor = vec4(0.0f, 0.0f, 1.0f, 1.0f);\n"
         "}\n";
+}
 /*
     shad_vertex =
         "attribute vec2 vPos;\n"
@@ -78,7 +74,6 @@ Rend_player::Rend_player() {
         "  gl_FragColor = lightCol;\n"
         "}\n";
 */
-}
 
 bool Rend_player::setup(int screen_w, int screen_h) {
     gProgram = createProgram(shad_vertex.c_str(), shad_fragment.c_str());
@@ -89,16 +84,13 @@ bool Rend_player::setup(int screen_w, int screen_h) {
     gvPosHandle = glGetAttribLocation(gProgram, "vPos");
     checkGlError("glGetAttribLocation(vPos)");
 
-    gvColorHandle = glGetAttribLocation(gProgram, "vColor");
-    checkGlError("glGetAttribLocation(vColor)");
-
     gfAngleHandle = glGetAttribLocation(gProgram, "fAngle");
     checkGlError("glGetAttribLocation(fAngle)");
 
-    gmProjHandle = glGetUniformLocation(gProgram, "mProj");
+    GLuint gmProjHandle = glGetUniformLocation(gProgram, "mProj");
     checkGlError("glGetUniformLocation(mProj)");
 
-    gmModelHandle = glGetUniformLocation(gProgram, "mModel");
+    GLuint gmModelHandle = glGetUniformLocation(gProgram, "mModel");
     checkGlError("glGetUniformLocation(mModel)");
 
     gsTexHandle = glGetUniformLocation(gProgram, "sTexture");
@@ -145,6 +137,7 @@ bool Rend_player::setup(int screen_w, int screen_h) {
     // glEnable(GL_TEXTURE_2D);
     // checkGlError("glEnable(GL_TEXTURE_2D)");
 
+    /*
     // Bind the texture
     glActiveTexture(GL_TEXTURE0);
     checkGlError("glActiveTexture");
@@ -170,10 +163,10 @@ bool Rend_player::setup(int screen_w, int screen_h) {
     // tex = createSimpleTexture2D(tex, img_pixels, tex_w, tex_h, 4);
 
     // delete[] &img_pixels;
+    */
 
     return true;
 }
-
 
 // void Rend_player::renderFrame() {
 //     float bg = 0.0f;
@@ -244,34 +237,32 @@ void Rend_player::renderObject(Object *obj) {
 
     // Pass values to shader
     setShaderData(&objVertices[0], &objColours[0], objAngle);
-}
 
-std::vector<float> Rend_player::useColour(Colour *colour) {
-
-    float clr[] = { colour->r, colour->g, colour->b, colour->a,
-                    colour->r, colour->g, colour->b, colour->a,
-                    colour->r, colour->g, colour->b, colour->a,
-                    colour->r, colour->g, colour->b, colour->a };
-
-    return std::vector<float> (clr, clr + sizeof clr / sizeof clr[0]);
+    // disableAttributes();
 }
 
 std::vector<float> Rend_player::useObjectVertices(Object *obj) {
-    /*  [p2]---[p4]   
-         |       |  
-         | (box) |
-         |       |
-        [p1]---[p3]  */
+    /*  [p2]----[p4]   
+         |        |  
+         |        |
+         |        |
+         |(player)|
+         |        |
+         |        |
+         |        |
+        [p1]----[p3]  */
 
 
     /* This is the original (x,y) that will now be transformed
      * before being passed to the vertex shader */
     float x = obj->getX();
     float y = obj->getY();
+    float w = obj->getWidth();
+    float h = obj->getHeight();
 
     // Translate to center
-    x += (obj->getWidth()/2);
-    y += (obj->getHeight()/2);
+    x += (w/2);
+    y += (h/2);
 
     // Rotate
     // static float angle = 0;
@@ -285,36 +276,41 @@ std::vector<float> Rend_player::useObjectVertices(Object *obj) {
     y = rot_y;
 
     // Translate back to origin
-    x -= (obj->getWidth()/2);
-    y -= (obj->getHeight()/2);
+    x -= (w/2);
+    y -= (h/2);
     
     // Declare points (x,y)
-    float p1[2] = { x                  , y                    };
-    float p2[2] = { x                  , y + obj->getHeight() };
-    float p3[2] = { x + obj->getWidth(), y                    };
-    float p4[2] = { x + obj->getWidth(), y + obj->getHeight() };
+    float vec[] = { x     , y     ,
+                    x     , y + h ,
+                    x + w , y     ,
+                    x + w , y + h };
 
-    float vert[] = { p1[0], p1[1],
-                     p2[0], p2[1],
-                     p3[0], p3[1],
-                     p4[0], p4[1] };
-
-    return std::vector<float> (vert, vert + sizeof vert / sizeof vert[0]);
+    return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }
 
 void Rend_player::setShaderData(float vertices[], float colours[], float angle) {
+    // Change renderer
+    glUseProgram(gProgram);
+    checkGlError("glUseProgram");
+
     glVertexAttribPointer(gvPosHandle, 2, GL_FLOAT, GL_FALSE, 0, vertices);
-    glVertexAttribPointer(gvColorHandle, 4, GL_FLOAT, GL_FALSE, 0, colours);
-    checkGlError("glVertexAttribPointer");
-    glVertexAttrib1f(gfAngleHandle, angle);
+    // glVertexAttribPointer(gvColorHandle, 4, GL_FLOAT, GL_FALSE, 0, colours);
+    // glVertexAttribPointer(gfAngleHandle, 1, GL_FLOAT, GL_FALSE, 0, &angle);
     checkGlError("glVertexAttrib");
 
     glEnableVertexAttribArray(gvPosHandle);
-    glEnableVertexAttribArray(gvColorHandle);
+    // glEnableVertexAttribArray(gvColorHandle);
+    // glEnableVertexAttribArray(gfAngleHandle);
     checkGlError("glEnableVertexAttribArray");
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-    checkGlError("glDrawArrays");
+    checkGlError("player glDrawArrays");
+}
+
+void Rend_player::disableAttributes() {
+    glDisableVertexAttribArray(gvPosHandle);
+    // glDisableVertexAttribArray(gvColorHandle);
+    // glDisableVertexAttribArray(gfAngleHandle);
 }
 
 //----------------

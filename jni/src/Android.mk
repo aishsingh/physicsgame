@@ -16,6 +16,7 @@ LOCAL_SRC_FILES := app_glue.cpp \
 				   renderer.cpp \
 				   rend_box.cpp \
 			   	rend_player.cpp \
+					rend_UI.cpp \
 				    physics.cpp \
 					 object.cpp \
 					  shape.cpp \

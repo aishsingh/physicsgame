@@ -1,7 +1,11 @@
 #include <stdlib.h>    // Needed for rand()
 #include "shape.h"
+#include "game.h"
+#include "log.h"
 
-Shape::Shape(float x, float y, float width, float height, float &time, Theme &theme) : Object(x,y,width,height) {
+Shape::Shape(float x, float y, float width, float height, Theme &theme) : Object(x,y,width,height) {
+
+    float time = Game::getElapsedTime();
     vert_motion.setTime(time);
     hori_motion.setTime(time);
 

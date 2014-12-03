@@ -6,6 +6,7 @@ Object::Object(float x, float y, float width, float height) {
     _y      = y;
     _width  = width;
     _height = height;
+    rot_angle = 0.0f;
 }
 Object::~Object() {
     _x      = 0;

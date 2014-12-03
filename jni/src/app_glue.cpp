@@ -17,42 +17,35 @@ extern "C" {
     JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_setAppName( JNIEnv * env, jobject obj, jstring pkgname );
 };
 
-static Game game;
+static Game *game;
 static char packageName;
-// static Game game;
+bool gameStarted;
 
 /* FIXME This is also run when screen sleeps then awakes */
 JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_init(JNIEnv * env, jobject obj,  jint width, jint height) {
     // Clear unix term
     // LOGI("\033c");
 
+    // Destroy any old instance
+    if (!gameStarted) {
+        // Create new game
+        game = new Game();
 
-    // if (game) {
-    //     delete game;
-    //     game = NULL;
-    // }
-    //
-    // static Game tmpGame;
+        // Unzip apk using libzip
+        game->loadAPK(&packageName);
+        game->setup(width, height, packageName);
 
-    // Unzip apk using libzip
-    game.loadAPK(&packageName);
-
-    game.setup(width, height, packageName);
-    // game = &tmpGame;
-    // game.setup(width, height);
-    
+        gameStarted = true;
+    }
 }
 
 JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_step(JNIEnv * env, jobject obj) {
-    // if (game) {
-        game.run();
-    // }
-    // game.run();
+    game->run();
 }
 
 
 JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_touchMove(JNIEnv * env, jobject obj, jfloat x, jfloat y) {
-    game.handleInput(x, y);
+    game->handleInput(x, y);
 }
 
 JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_setAppName( JNIEnv * env, jobject obj, jstring pkgname ) {

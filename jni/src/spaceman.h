@@ -43,7 +43,7 @@ class Spaceman: public Player {
         void changeTheme(Theme &old_theme);
 
         /* Ctor - Creates a new box instance and adds it to the array */
-        Spaceman(float x, float y);
+        Spaceman(float x, float y, Theme theme);
 };
 
 #endif /* SPACEMAN_H */

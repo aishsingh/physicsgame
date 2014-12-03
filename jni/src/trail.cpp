@@ -29,7 +29,7 @@ void Trail::fade(Shape &shape) {
 
 void Trail::render(PhysicsEngine &physics, int time, int screen_width, int screen_height) {
     // Spaceman already cleared screen
-    // _renderer.renderFrame();
+    // _renderer.clearScreen();
 
     // Draw every shape in shapes vector
     for (int i=0; i<(int)shapes.size(); i++) {
@@ -47,13 +47,19 @@ void Trail::render(PhysicsEngine &physics, int time, int screen_width, int scree
         if (shapes.at(i).getAlpha() <= 0 && (int)shapes.size() > 0 && shapes.at(i).vert_motion.getVel() == 0) {
             removeBox(i);
             // shapes.erase(shapes.begin() + i);
-            LOGI("remove_box() -> removed %i", i);
+            // LOGI("remove_box() -> removed %i", i);
             i--;
         }
     }
+
+    disableRender();
 }
 
-void Trail::createBox(float x, float y, float time, Theme theme, PhysicsEngine &physics) {
+void Trail::disableRender() {
+    _renderer.disableAttributes();
+}
+
+void Trail::buildTrail(float x, float y, Theme theme, PhysicsEngine &physics) {
     // Center position
     x -= _boxes_length/2;
     y -= _boxes_length/2;
@@ -61,7 +67,7 @@ void Trail::createBox(float x, float y, float time, Theme theme, PhysicsEngine &
     /* Increase size of array and check for exceptions */
     try {
         // shapes.resize(shapes.size() + 1, Box(x, y, _boxes_length, (int)shapes.size(), time, theme));
-        shapes.push_back(Box(x, y, _boxes_length, time, theme));
+        shapes.push_back(Box(x, y, _boxes_length, theme));
     }
     catch (std::exception &e) {
         LOGE("Error occured while creating box: %s", e.what());
@@ -73,7 +79,7 @@ void Trail::createBox(float x, float y, float time, Theme theme, PhysicsEngine &
     Shape *shape = &shapes[(int)shapes.size() - 1];
 
     // Create the fountain effect
-    physics.generateInitVelocity(*shape);
+    physics.generateInitVelocity(*shape, shape->rot_angle);
 
     // Just for testing
     // box->hori_motion.setAccel(-1.3f);
@@ -96,7 +102,7 @@ void Trail::removeBox(int index) {
 
     // Decrease size of array & realloc with less mem
     // shapes.resize((int)shapes.size() - 1);
-    shapes.erase(shapes.begin() + index);
+    shapes.erase(shapes.begin() + (index));
     LOGI("remove_box() -> removed %i", index);
 }
 

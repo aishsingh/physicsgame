@@ -8,8 +8,8 @@
 
 Game::Game() {
     // Initilise 
+    _elapsed_time = 0;
     _finished = false;
-    _elapsed_time = 0.0f;
     _time_speed = 0.7f;
     
     // loadSDL();
@@ -21,7 +21,7 @@ Game::Game() {
     // Setup Player
     try {
         // _players.resize(_players.size() + 1, new Spaceman(0, 0, 150, 300));
-        _players.push_back(new Spaceman(0, 0));
+        _players.push_back(new Spaceman(0, 0, Theme::BLUE));
     }
     catch (std::exception &e) {
         LOGE("Error occured while creating player: %s", e.what());
@@ -52,16 +52,23 @@ void Game::setup(int w, int h, char &package_name) {
     LOGI("setup(%d, %d, %s)", w, h, &package_name);
 
     // Setup renderers/objects
-    _players.at(0)->setup(w, h);
+    for(int i=0; i<(int)_players.size(); i++)
+        _players.at(i)->setup(w, h);
+
+    _UI_renderer.setup(w, h);
 }
 
 void Game::run() {
     /* MAIN GAME LOOP */
+    Renderer::clearScreen();
 
     // Render players
     for(int i=0; i<(int)_players.size(); i++) {
-        _players.at(i)->draw(_elapsed_time, _screen_width, _screen_height);
+        _players.at(i)->draw(getElapsedTime(), getScreenWidth(), getScreenHeight());
     }
+
+    // Render UI
+    _UI_renderer.renderUI();
 
     // Increment game time according to the current speed of time
     _elapsed_time += _time_speed;
@@ -77,7 +84,7 @@ void Game::handleInput(float x, float y) {
     for (int i=1; i<=_BOXES_PER_PRESS; i++) {
         // TODO replace (x, y) touch pos with a position returned from a controller class
         // Player[0] is the main player (the user)
-        _players.at(0)->update(x, y, _elapsed_time);
+        _players.at(0)->update(x, y, getElapsedTime());
     }
 }
 
@@ -100,4 +107,20 @@ void Game::loadAPK(const char *package_name) {
         }
         LOGI("File %i : %s\n", i, name);
     }
+}
+
+/* Static Members */
+int Game::_screen_width = 0;
+int Game::getScreenWidth() { 
+    return _screen_width; 
+}
+
+int Game::_screen_height = 0;
+int Game::getScreenHeight() { 
+    return _screen_height; 
+}
+
+float Game::_elapsed_time = 0.0f;
+float Game::getElapsedTime() {
+    return _elapsed_time; 
 }

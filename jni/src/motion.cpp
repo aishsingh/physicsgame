@@ -14,34 +14,34 @@ Motion::~Motion() {
         _v = 0.0f;
         _a = 0.0f;
 }
-float Motion::getChangeTime() {
+float Motion::getChangeTime() const {
     return _ct;
 }
-void Motion::setChangeTime(const float ct) {
+void Motion::setChangeTime(float ct) {
     _ct = ct;
 }
-float Motion::getTime() {
+float Motion::getTime() const {
     return _t;
 }
-void Motion::setTime(const float t) {
+void Motion::setTime(float t) {
     _t = t;
 }
-float Motion::getDisp() {
+float Motion::getDisp() const {
     return _d;
 }
-void Motion::setDisp(const float d) {
+void Motion::setDisp(float d) {
     _d = d;
 }
-float Motion::getVel() {
+float Motion::getVel() const {
     return _v;
 }
-void Motion::setVel(const float v) {
+void Motion::setVel(float v) {
     _v = v;
 }
-float Motion::getAccel() {
+float Motion::getAccel() const {
     return _a;
 }
-void Motion::setAccel(const float a) {
+void Motion::setAccel(float a) {
     _a = a;
 }
 
