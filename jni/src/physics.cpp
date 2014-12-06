@@ -1,5 +1,5 @@
-#include <stdlib.h>                // Needed for rand()
-#include <math.h>                  // Needed for math functions
+#include <stdlib.h>
+#include <math.h>
 
 #include "physics.h"
 #include "log.h"
@@ -152,7 +152,7 @@ void PhysicsEngine::switchGravity(Object objs[], const int &objs_count, const in
 void PhysicsEngine::generateInitVelocity(Object &obj, float rot_angle) {
     // Gen random velocity magnitude
     // float init_v = _MIN_INITIAL_VERT_VELOCITY + (float)(rand()) / (float)(RAND_MAX/(_MAX_INITIAL_VERT_VELOCITY - _MIN_INITIAL_VERT_VELOCITY));
-    float init_v = 10.0f;
+    float init_v = 20.0f;
     float init_h = _MAX_INITIAL_HORI_VELOCITY + (float)(rand()) / (float)(RAND_MAX/(-_MAX_INITIAL_HORI_VELOCITY-(_MAX_INITIAL_HORI_VELOCITY)));
 
     // Handle obj rotation

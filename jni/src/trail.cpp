@@ -1,6 +1,7 @@
 #include "trail.h"
 #include "log.h"
 #include "box.h"
+#include "game.h"
 
 Trail::Trail() {
     _boxes_length = 20;
@@ -13,8 +14,8 @@ Trail::~Trail() {
     }
 }
 
-void Trail::setup(int screen_w, int screen_h) {
-    _renderer.setup(screen_w, screen_h);
+void Trail::setup() {
+    _renderer.setup();
 }
 
 void Trail::fade(Shape &shape) {
@@ -22,15 +23,12 @@ void Trail::fade(Shape &shape) {
     float fade_decr = 0.02f;    // Larger = faster fade
     if (shape.getAlpha() >= fade_decr) {
         shape.setAlpha(shape.getAlpha() - fade_decr);
-        if (shape.getAlpha() < fade_decr && shape.getAlpha() > 0.0f)
-            shape.setAlpha(0.0f);
     }
+    else if (shape.getAlpha() < fade_decr && shape.getAlpha() > 0.0f)
+        shape.setAlpha(0.0f);
 }
 
-void Trail::render(PhysicsEngine &physics, int time, int screen_width, int screen_height) {
-    // Spaceman already cleared screen
-    // _renderer.clearScreen();
-
+void Trail::render(PhysicsEngine &physics) {
     // Draw every shape in shapes vector
     for (int i=0; i<(int)shapes.size(); i++) {
         if (shapes.at(i).vert_motion.getVel() == 0)
@@ -41,7 +39,7 @@ void Trail::render(PhysicsEngine &physics, int time, int screen_width, int scree
 
         // Update physics attributes only if box is moving
         if (shapes.at(i).vert_motion.getVel() != 0.0f || shapes.at(i).hori_motion.getVel() != 0.0f)
-            physics.updatePhysics(shapes.at(i), time, screen_width, screen_height);
+            physics.updatePhysics(shapes.at(i), Game::getElapsedTime(), Game::getScreenWidth(), Game::getScreenHeight());
 
         // Remove shape if no longer needed
         if (shapes.at(i).getAlpha() <= 0 && (int)shapes.size() > 0 && shapes.at(i).vert_motion.getVel() == 0) {
@@ -52,10 +50,6 @@ void Trail::render(PhysicsEngine &physics, int time, int screen_width, int scree
         }
     }
 
-    disableRender();
-}
-
-void Trail::disableRender() {
     _renderer.disableAttributes();
 }
 

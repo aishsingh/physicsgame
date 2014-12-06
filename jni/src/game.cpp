@@ -1,10 +1,13 @@
 #include <stdlib.h>    // rand()
 #include <time.h>      // seeding rand numbers
 #include <exception>
+#include <math.h>
 
 #include "game.h"
 #include "spaceman.h"
 #include "log.h"
+
+#define PI 3.14159265
 
 Game::Game() {
     // Initilise 
@@ -21,7 +24,7 @@ Game::Game() {
     // Setup Player
     try {
         // _players.resize(_players.size() + 1, new Spaceman(0, 0, 150, 300));
-        _players.push_back(new Spaceman(0, 0, Theme::BLUE));
+        _players.push_back(new Spaceman(0, 0, Theme::RAINBOW));
     }
     catch (std::exception &e) {
         LOGE("Error occured while creating player: %s", e.what());
@@ -53,9 +56,13 @@ void Game::setup(int w, int h, char &package_name) {
 
     // Setup renderers/objects
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->setup(w, h);
+        _players.at(i)->setup();
 
-    _UI_renderer.setup(w, h);
+    _UI_renderer.setup();
+
+    // Put player in the center now that width and height are determined
+    _players.at(0)->setX((w/2) - 25);
+    _players.at(0)->setY((h/2) - 50);
 }
 
 void Game::run() {
@@ -63,9 +70,8 @@ void Game::run() {
     Renderer::clearScreen();
 
     // Render players
-    for(int i=0; i<(int)_players.size(); i++) {
-        _players.at(i)->draw(getElapsedTime(), getScreenWidth(), getScreenHeight());
-    }
+    for(int i=0; i<(int)_players.size(); i++)
+        _players.at(i)->draw();
 
     // Render UI
     _UI_renderer.renderUI();
@@ -75,17 +81,87 @@ void Game::run() {
 }
 
 void Game::loadResources() {
-    // textures.loadTextures(__rend_boxes);
+    // Load textures here
 }
 
 void Game::handleInput(float x, float y) {
-    // LOGI("Touch at (%.2f, %.2f)", x, y);
+    // Handle joystick input
+    float angle = 0;
+    bool js1InputRecieved = false;
 
+    int js1X = 150;
+    int js1Y = Game::getScreenHeight() - 200;
+    int js1length = 200;
+    if (x >= js1X && x <= js1X + js1length && 
+            y >= js1Y && y <= js1Y + js1length) {
+        js1InputRecieved = true;
+        // LOGI("Joystick1 touched");
+
+        /* Quadrants
+             ---      
+            1   4
+          |   +   |   
+            2   3
+             ---   */
+
+        float A = 0,
+              O = 0;
+
+        float originX = js1X + (js1length/2);
+        float originY = js1Y + (js1length/2);
+        float lengthFromOriginX = 0;
+        float lengthFromOriginY = 0;
+        if (x >= originX)
+            lengthFromOriginX = originX - x;
+        else
+            lengthFromOriginX = x - originX;
+        if (y >= originY)
+            lengthFromOriginY = originY - y;
+        else
+            lengthFromOriginY = y - originY;
+
+        // LOGI("lfoX %.2f, lfoY %.2f", lengthFromOriginX, lengthFromOriginY);
+
+        // Find out the quadrants
+        if (x <= js1X + (js1length/2) && y <= js1Y + (js1length/2)) {
+            LOGI("    1st Quad -");
+            A += lengthFromOriginY;
+            O += lengthFromOriginX;
+        }
+        else if (x <= js1X + (js1length/2) && y >= js1Y + (js1length/2)) {
+            LOGI("    2st Quad -");
+            angle += 90;
+            A += lengthFromOriginX;
+            O += lengthFromOriginY;
+        }
+        else if (x >= js1X + (js1length/2) && y >= js1Y + (js1length/2)) {
+            LOGI("    3st Quad -");
+            angle += 180;
+            A += lengthFromOriginY;
+            O += lengthFromOriginX;
+        }
+        else if (x >= js1X + (js1length/2) && y <= js1Y + (js1length/2)) {
+            LOGI("    4st Quad -");
+            angle += 270;
+            A += lengthFromOriginX;
+            O += lengthFromOriginY;
+        }
+
+        angle += atanf(O/A) * 180/PI;
+        // Output
+        LOGI("    angle %.2f", angle);
+    }
+
+    
     for (int i=1; i<=_BOXES_PER_PRESS; i++) {
         // TODO replace (x, y) touch pos with a position returned from a controller class
         // Player[0] is the main player (the user)
-        _players.at(0)->update(x, y, getElapsedTime());
+        if (js1InputRecieved)
+            _players.at(0)->update(x, y, -(360-angle));
+        else
+            _players.at(0)->update(x, y, _players.at(0)->rot_angle);
     }
+    
 }
 
 //---

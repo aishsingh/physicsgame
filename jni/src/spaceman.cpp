@@ -1,6 +1,8 @@
 #include <stdlib.h>    // Needed for rand()
-#include "motion.h"
 #include "spaceman.h"
+#include "game.h"
+#include "point2d.h"
+#include "log.h"
 
 Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,50,100) {
     // TODO use this after controls have been added -> _action = STILL;
@@ -54,39 +56,46 @@ void Spaceman::changeTheme(Theme &old_theme) {
     old_theme = new_theme;
 }
 
-void Spaceman::draw(int time, int screen_width, int screen_height) {
-    // Attributes need to be disabled to avoid different shaders from reading in random values
-    _trail.render(_physics, time, screen_width, screen_height);
-    render(time, screen_width, screen_height);
+void Spaceman::draw() {
+    _trail.render(_physics);
+    render();
 }
 
-void Spaceman::update(float x, float y, float time) {
+void Spaceman::update(float x, float y, float angle) {
     // Offset pos
-    x -= 50;
-    y -= 50;
+    x -= 0;//50;
+    y -= 0;//50;
 
-    // Update player pos
-    setX(x - getWidth());
-    setY(y - getHeight());
+    // Update player attributes
+    // setX(x - getWidth());
+    // setY(y - getHeight());
+    rot_angle = angle;
 
     if (_action == FLYING) {
         // Show the trail only if the player is flying
-        _trail.buildTrail(x - (getWidth()/2), y, _colour_theme, _physics);
+        // _trail.buildTrail(x - (getWidth()/2), y, _colour_theme, _physics);
+        Point2D base = renderer.getBasePoint();
+        LOGI("base(%.2f, %.2f)", base.getX(), base.getY());
+        if (base.getY() < 0)
+            _trail.buildTrail(base.getX(), -base.getY(), _colour_theme, _physics);
+        else
+            _trail.buildTrail(base.getX(), base.getY(), _colour_theme, _physics);
     }
 }
 
-void Spaceman::setup(int screen_w, int screen_h) {
-    renderer.setup(screen_w, screen_h);
-    _trail.setup(screen_w, screen_h);
+void Spaceman::setup() {
+    renderer.setup();
+    _trail.setup();
 }
 
-void Spaceman::render(int time, int screen_width, int screen_height) {
+void Spaceman::render() {
     // Send player data to renderer
     renderer.renderObject(this);
 
     // Update physics attributes only if box is moving
     if (vert_motion.getVel() != 0.0f || hori_motion.getVel() != 0.0f)
-        _physics.updatePhysics(*this, time, screen_width, screen_height);
+        _physics.updatePhysics(*this, Game::getElapsedTime(), Game::getScreenWidth(), Game::getScreenHeight());
 
+    // Attributes need to be disabled to avoid different shaders from reading in random values
     renderer.disableAttributes();
 }

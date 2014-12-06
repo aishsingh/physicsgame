@@ -35,17 +35,19 @@ class Game {
     public:
 
         /* Setup OpenGL
-         - called from java code */
+         - called from java */
         void setup(int w, int h, char &package_name);
 
         /* Main Lewp
-         - called from java code */
+         - called from java */
         void run();
 
-        /* Respond to input events */
+        /* Respond to input events 
+         - called from java */
         void handleInput(float x, float y);
 
-        /* Load assets in the apk by extracting it with libzip */
+        /* Load assets in the apk by extracting it with libzip
+         - called from java */
         zip *APKArchive;
         void loadAPK(const char *package_name);
 

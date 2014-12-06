@@ -10,7 +10,7 @@ class Rend_UI: public Renderer {
         void setShaderData(float vertices[], float colours[], float angle);
 
     public:
-        bool setup(int screen_w, int screen_h);
+        bool setup();
         void renderUI();
         void disableAttributes();
 

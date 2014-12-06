@@ -35,7 +35,9 @@ Rend_UI::Rend_UI() {
         "}\n";
 }
 
-bool Rend_UI::setup(int screen_w, int screen_h) {
+bool Rend_UI::setup() {
+    int screen_w = Game::getScreenWidth();
+    int screen_h = Game::getScreenHeight();
     gProgram = createProgram(shad_vertex.c_str(), shad_fragment.c_str());
     if (!gProgram) {
         LOGE("Could not create program.");
@@ -153,7 +155,7 @@ void Rend_UI::disableAttributes() {
 
 void Rend_UI::renderUI() {
     // Joystick controls player rotation
-    Object joystick1 = Object(125, Game::getScreenHeight() - 180, 150, 150);
+    Object joystick1 = Object(150, Game::getScreenHeight() - 200, 200, 200);
     
     // Positioning
     std::vector<float> js1Vertices = useObjectVertices(&joystick1);

@@ -9,6 +9,7 @@
 #include <math.h>
 #include "rend_box.h"
 #include "log.h"
+#include "game.h"
 
 #define PI 3.14159265358979323846264
 
@@ -43,6 +44,69 @@ Rend_box::Rend_box() {
         "}\n";
 }
 
+bool Rend_box::setup() {
+    int screen_w = Game::getScreenWidth();
+    int screen_h = Game::getScreenHeight();
+
+    gProgram = createProgram(shad_vertex.c_str(), shad_fragment.c_str());
+    if (!gProgram) {
+        LOGE("Could not create program.");
+        return false;
+    }
+
+    gvPosHandle = glGetAttribLocation(gProgram, "vPos");
+    checkGlError("glGetAttribLocation(vPos)");
+
+    gvColorHandle = glGetAttribLocation(gProgram, "vColor");
+    checkGlError("glGetAttribLocation(vColor)");
+
+    gfAngleHandle = glGetAttribLocation(gProgram, "fAngle");
+    checkGlError("glGetAttribLocation(fAngle)");
+
+    GLuint gmProjHandle = glGetUniformLocation(gProgram, "mProj");
+    checkGlError("glGetUniformLocation(mProj)");
+
+    GLuint gmModelHandle = glGetUniformLocation(gProgram, "mModel");
+    checkGlError("glGetUniformLocation(mModel)");
+ 
+    /* Projection Matrix */
+    GLfloat proj[] = { 2.0f/screen_w, 0.0f,          0.0f, 0.0f,
+                       0.0f,         -2.0f/screen_h, 0.0f, 0.0f,
+                       0.0f,          0.0f,          0.0f, 0.0f,
+                      -1.0f,          1.0f,          0.0f, 1.0f };
+
+    /* Model Matrix */
+    // Identity Matrix
+    GLfloat model[] = { 1.0f, 0.0f, 0.0f, 0.0f, 
+                        0.0f, 1.0f, 0.0f, 0.0f, 
+                        0.0f, 0.0f, 1.0f, 0.0f, 
+                        0.0f, 0.0f, 0.0f, 1.0f };
+
+
+    // Pass uniforms to shader
+    /* VERY IMPORTANT
+     * glUseProgram() needs to be called before you setup a uniform 
+     * but not needed before glGetUniformLocation() 
+     * http://www.opengl.org/wiki/GLSL_:_common_mistakes */
+    glUseProgram(gProgram);
+    checkGlError("glUseProgram");
+
+    glUniformMatrix4fv(gmProjHandle, 1, GL_FALSE, &proj[0]);
+    checkGlError("glUniformMatrix4fv, mProj");
+
+    glUniformMatrix4fv(gmModelHandle, 1, GL_FALSE, &model[0]);
+    checkGlError("glUniformMatrix4fv, mModel");
+
+    glViewport(0, 0, screen_w, screen_h);
+    checkGlError("glViewport");
+
+    glDisable(GL_DEPTH_TEST);
+    checkGlError("glDisable(GL_DEPTH_TEST)");
+    LOGI("--------------------");
+    return true;
+}
+
+
 void Rend_box::renderShape(Shape *obj) {
     // Positioning
     std::vector<float> objVertices = useObjectVertices(obj);
@@ -62,11 +126,11 @@ void Rend_box::renderShape(Shape *obj) {
 }
 
 std::vector<float> Rend_box::useObjectVertices(Object *obj) {
-    /*  [p2]---[p4]   
+    /*  [p1]---[p3]   
          |       |  
          | (box) |
          |       |
-        [p1]---[p3]  */
+        [p2]---[p4]  */
 
 
     /* This is the original (x,y) that will now be transformed
@@ -81,7 +145,6 @@ std::vector<float> Rend_box::useObjectVertices(Object *obj) {
     y += (h/2);
 
     // Rotate
-    // static float angle = 0;
     float objAngle = obj->rot_angle;
 
     float rad_angle = objAngle*PI/180.0;
@@ -96,12 +159,12 @@ std::vector<float> Rend_box::useObjectVertices(Object *obj) {
     y -= (h/2);
     
     // Declare points (x,y)
-    float ver[] = { x     , y     ,
+    float vec[] = { x     , y     ,
                     x     , y + h ,
                     x + w , y     ,
                     x + w , y + h };
 
-    return std::vector<float> (ver, ver + sizeof(ver) / sizeof(float));
+    return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }
 
 void Rend_box::setShaderData(float vertices[], float colours[], float angle) {
@@ -112,12 +175,10 @@ void Rend_box::setShaderData(float vertices[], float colours[], float angle) {
     glVertexAttribPointer(gvPosHandle, 2, GL_FLOAT, GL_FALSE, 0, vertices);
     glVertexAttribPointer(gvColorHandle, 4, GL_FLOAT, GL_FALSE, 0, colours);
     glVertexAttrib1f(gfAngleHandle, angle);
-    // glVertexAttribPointer(gfAngleHandle, 1, GL_FLOAT, GL_FALSE, 0, &angle);
     checkGlError("glVertexAttrib");
 
     glEnableVertexAttribArray(gvPosHandle);
     glEnableVertexAttribArray(gvColorHandle);
-    // glEnableVertexAttribArray(gfAngleHandle);
     checkGlError("glEnableVertexAttribArray");
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -127,5 +188,4 @@ void Rend_box::setShaderData(float vertices[], float colours[], float angle) {
 void Rend_box::disableAttributes() {
     glDisableVertexAttribArray(gvPosHandle);
     glDisableVertexAttribArray(gvColorHandle);
-    // glDisableVertexAttribArray(gfAngleHandle);
 }

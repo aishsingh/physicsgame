@@ -17,6 +17,7 @@ Shape::Shape(float x, float y, float width, float height, Theme &theme) : Object
 Colour Shape::getColour() const {
     return _colour;
 }
+
 void Shape::useTheme(Theme &theme) {
     switch(theme) {
         case GRAY:

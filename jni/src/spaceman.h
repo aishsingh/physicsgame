@@ -7,7 +7,6 @@
 
 #include "player.h"
 #include "trail.h"
-#include "object.h"
 #include "motion.h"
 #include "direction.h"
 
@@ -23,15 +22,15 @@ class Spaceman: public Player {
         Theme _colour_theme; // Changes the colour scheme of the boxes and other UI
         Trail _trail;
 
-        void render(int time, int screen_width, int screen_height);
+        void render();
     public:
 
         // Render player and trail
-        void draw(int time, int screen_width, int screen_height);
+        void draw();
 
         // Do spaceman according to its current action
-        void update(float x, float y, float time); 
-        void setup(int screen_width, int screen_height);
+        void update(float x, float y, float angle); 
+        void setup();
 
         /* Getters / Setters */
         Action getAction();

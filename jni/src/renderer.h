@@ -28,7 +28,7 @@ class Renderer {
         virtual void setShaderData(float vertices[], float colours[], float angle) = 0;
 
     public:
-        virtual bool setup(int screen_w, int screen_h);
+        virtual bool setup() = 0;
 
         /* Send vectors and other data to shaders */
         virtual void renderShape(Shape *obj);

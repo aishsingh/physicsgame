@@ -14,6 +14,7 @@ class Rend_box: public Renderer {
         // void renderFrame();
         void renderShape(Shape *obj);
         void disableAttributes();
+        bool setup();
 
         /* Ctor - Init Shaders */
         Rend_box();
