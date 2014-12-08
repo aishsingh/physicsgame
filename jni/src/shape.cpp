@@ -3,13 +3,12 @@
 #include "game.h"
 #include "log.h"
 
-Shape::Shape(float x, float y, float width, float height, Theme &theme) : Object(x,y,width,height) {
-
+Shape::Shape(float x, float y, float angle, float width, float height, Theme &theme) : Object(x,y,width,height) {
     float time = Game::getElapsedTime();
     vert_motion.setTime(time);
     hori_motion.setTime(time);
 
-    rot_angle = 0.0f;
+    rot_angle = angle;
 
     useTheme(theme);
 }

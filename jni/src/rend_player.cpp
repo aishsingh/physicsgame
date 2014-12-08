@@ -1,10 +1,3 @@
-/* GLM lib
-  #define GLM_FORCE_RADIANS
-  #include "glm/glm/glm.hpp"
-  #include <glm/gtc/matrix_transform.hpp>
-  #include <glm/gtc/type_ptr.hpp>
-*/
-
 #include <stdlib.h>
 #include <math.h>
 #include "rend_player.h"
@@ -113,8 +106,7 @@ bool Rend_player::setup() {
                        0.0f,          0.0f,          0.0f, 0.0f,
                       -1.0f,          1.0f,          0.0f, 1.0f };
 
-    /* Model Matrix */
-    // Identity Matrix
+    /* Model Matrix (Identity Matrix) */
     GLfloat model[] = { 1.0f, 0.0f, 0.0f, 0.0f, 
                         0.0f, 1.0f, 0.0f, 0.0f, 
                         0.0f, 0.0f, 1.0f, 0.0f, 
@@ -269,10 +261,6 @@ std::vector<float> Rend_player::useObjectVertices(Object *obj) {
     float w = obj->getWidth();
     float h = obj->getHeight();
 
-    // Set base value
-    // _base.setX(((x) + (x+w))/2);
-    // _base.setY(((y) + (y))/2);
-
     // Translate to center
     x += (w/2);
     y += (h/2);
@@ -297,10 +285,12 @@ std::vector<float> Rend_player::useObjectVertices(Object *obj) {
                     x + w , y     ,
                     x + w , y + h };
 
-    Point2D pos((vec[2] + vec[6])/2, (vec[3] + vec[7])/2);
-          
-    _base.setX(pos.getX()*cos(rad_angle) - pos.getY()*sin(rad_angle));
-    _base.setY(pos.getY()*cos(rad_angle) + pos.getX()*sin(rad_angle));
+    /* Set base value (bottom of the player after rotation)
+     * These calculations ensure that the base pos is the same as it would be after it went through the vshader.
+     * The vshader rotates the pos, so the same rotation is applyed here */
+    Point2D afterRot((vec[2] + vec[6])/2, (vec[3] + vec[7])/2);
+    _base.setX(afterRot.getX()*cos(rad_angle) - afterRot.getY()*sin(rad_angle));
+    _base.setY(afterRot.getY()*cos(rad_angle) + afterRot.getX()*sin(rad_angle));
 
 
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));

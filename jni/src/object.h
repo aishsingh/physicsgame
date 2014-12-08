@@ -11,7 +11,7 @@ class Object {
 
     public:
         Motion vert_motion, hori_motion;
-        float rot_angle;
+        float rot_angle; //FIME apply encapsulation
 
         /* Getters / Setters */
         float getX() const;

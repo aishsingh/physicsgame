@@ -2,6 +2,7 @@
 #include "log.h"
 #include "box.h"
 #include "game.h"
+#include "math.h"
 
 Trail::Trail() {
     _boxes_length = 20;
@@ -21,10 +22,9 @@ void Trail::setup() {
 void Trail::fade(Shape &shape) {
     // fade the box when it has stopped moving vertically
     float fade_decr = 0.02f;    // Larger = faster fade
-    if (shape.getAlpha() >= fade_decr) {
+    if (shape.getAlpha() >= fade_decr)
         shape.setAlpha(shape.getAlpha() - fade_decr);
-    }
-    else if (shape.getAlpha() < fade_decr && shape.getAlpha() > 0.0f)
+    else if (shape.getAlpha() > 0.0f)
         shape.setAlpha(0.0f);
 }
 
@@ -45,7 +45,6 @@ void Trail::render(PhysicsEngine &physics) {
         if (shapes.at(i).getAlpha() <= 0 && (int)shapes.size() > 0 && shapes.at(i).vert_motion.getVel() == 0) {
             removeBox(i);
             // shapes.erase(shapes.begin() + i);
-            // LOGI("remove_box() -> removed %i", i);
             i--;
         }
     }
@@ -53,7 +52,7 @@ void Trail::render(PhysicsEngine &physics) {
     _renderer.disableAttributes();
 }
 
-void Trail::buildTrail(float x, float y, Theme theme, PhysicsEngine &physics) {
+void Trail::buildTrail(float x, float y, float rot_angle, Theme theme, PhysicsEngine &physics) {
     // Center position
     x -= _boxes_length/2;
     y -= _boxes_length/2;
@@ -61,19 +60,22 @@ void Trail::buildTrail(float x, float y, Theme theme, PhysicsEngine &physics) {
     /* Increase size of array and check for exceptions */
     try {
         // shapes.resize(shapes.size() + 1, Box(x, y, _boxes_length, (int)shapes.size(), time, theme));
-        shapes.push_back(Box(x, y, _boxes_length, theme));
+        shapes.push_back(Box(x, y, rot_angle, _boxes_length, theme));
     }
     catch (std::exception &e) {
         LOGE("Error occured while creating box: %s", e.what());
     }
 
-    LOGI("create_box() -> created %i", (int)shapes.size());
+    LOGI("%i Shapes (+)", (int)shapes.size());
 
     /* Setup new box */
     Shape *shape = &shapes[(int)shapes.size() - 1];
 
     // Create the fountain effect
     physics.generateInitVelocity(*shape, shape->rot_angle);
+
+    // Apply player rotation on trail
+    // rotate(rot_angle);
 
     // Just for testing
     // box->hori_motion.setAccel(-1.3f);
@@ -82,7 +84,7 @@ void Trail::buildTrail(float x, float y, Theme theme, PhysicsEngine &physics) {
     shape->vert_motion.setAccel(physics.getGravity());
     // box->vert_motion.setAccel(-0.1f);
     
-    // box->rot_angle = box->hori_motion.getVel() + box->vert_motion.getVel();
+    // shape->rot_angle += shape->hori_motion.getVel() * 2;
 }
 
 
@@ -96,8 +98,8 @@ void Trail::removeBox(int index) {
 
     // Decrease size of array & realloc with less mem
     // shapes.resize((int)shapes.size() - 1);
-    shapes.erase(shapes.begin() + (index));
-    LOGI("remove_box() -> removed %i", index);
+    shapes.erase(shapes.begin() + index);
+    LOGI("%i Shapes (-)", (int)shapes.size());
 }
 
 

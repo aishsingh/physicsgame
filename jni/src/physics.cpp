@@ -82,11 +82,11 @@ Motion PhysicsEngine::calcMotion(Object &obj, const Comp comp, const float &elap
 }
 
 void PhysicsEngine::updatePhysics(Object &obj, const float &elapsed_time, const int &screen_width, const int &screen_height) {
-    int origin_x = 0;//screen_width/-1;  // usually 0
-    int origin_y = 0;//screen_height/-1; // usually 0
+    int origin_x = 0;
+    int origin_y = 0;
     Motion vertComp = calcMotion(obj, VERT, elapsed_time);
     Motion horiComp = calcMotion(obj, HORI, elapsed_time);
-    Motion circComp = calcMotion(obj, CIRC, elapsed_time);
+    Motion circComp = calcMotion(obj, CIRC, elapsed_time);    // keeps rotating object
 
     // Vertical Component
     if (obj.getY() + vertComp.getDisp() + obj.getHeight() > screen_height) {    // Check if not too high
@@ -94,7 +94,7 @@ void PhysicsEngine::updatePhysics(Object &obj, const float &elapsed_time, const 
         obj.vert_motion.setVel(0.0f);
     } 
     else if (obj.getY() + vertComp.getDisp() < origin_y) {                      // Check if not too low
-        obj.setY(origin_y); // usually 0
+        obj.setY(origin_y);
         obj.vert_motion.setVel(0.0f);
     }
     else {

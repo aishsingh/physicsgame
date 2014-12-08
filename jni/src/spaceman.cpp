@@ -75,11 +75,7 @@ void Spaceman::update(float x, float y, float angle) {
         // Show the trail only if the player is flying
         // _trail.buildTrail(x - (getWidth()/2), y, _colour_theme, _physics);
         Point2D base = renderer.getBasePoint();
-        LOGI("base(%.2f, %.2f)", base.getX(), base.getY());
-        if (base.getY() < 0)
-            _trail.buildTrail(base.getX(), -base.getY(), _colour_theme, _physics);
-        else
-            _trail.buildTrail(base.getX(), base.getY(), _colour_theme, _physics);
+        _trail.buildTrail(base.getX(), base.getY(), angle, _colour_theme, _physics);
     }
 }
 

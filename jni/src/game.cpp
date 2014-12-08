@@ -120,28 +120,26 @@ void Game::handleInput(float x, float y) {
         else
             lengthFromOriginY = y - originY;
 
-        // LOGI("lfoX %.2f, lfoY %.2f", lengthFromOriginX, lengthFromOriginY);
-
         // Find out the quadrants
         if (x <= js1X + (js1length/2) && y <= js1Y + (js1length/2)) {
-            LOGI("    1st Quad -");
+            // 1st Quad
             A += lengthFromOriginY;
             O += lengthFromOriginX;
         }
         else if (x <= js1X + (js1length/2) && y >= js1Y + (js1length/2)) {
-            LOGI("    2st Quad -");
+            // 2st Quad
             angle += 90;
             A += lengthFromOriginX;
             O += lengthFromOriginY;
         }
         else if (x >= js1X + (js1length/2) && y >= js1Y + (js1length/2)) {
-            LOGI("    3st Quad -");
+            // 3st Quad
             angle += 180;
             A += lengthFromOriginY;
             O += lengthFromOriginX;
         }
         else if (x >= js1X + (js1length/2) && y <= js1Y + (js1length/2)) {
-            LOGI("    4st Quad -");
+            // 4st Quad
             angle += 270;
             A += lengthFromOriginX;
             O += lengthFromOriginY;
@@ -149,7 +147,7 @@ void Game::handleInput(float x, float y) {
 
         angle += atanf(O/A) * 180/PI;
         // Output
-        LOGI("    angle %.2f", angle);
+        LOGI("JS1 angle %.2f", angle);
     }
 
     

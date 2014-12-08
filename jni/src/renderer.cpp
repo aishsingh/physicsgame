@@ -89,17 +89,20 @@ GLuint Renderer::createProgram(const char *pVertexSource, const char *pFragmentS
 }
 
 void Renderer::clearScreen() {
-    // glUseProgram(gProgram);
-    // checkGlError("glUseProgram");
-
     float bg = 0.0f;
     glClearColor(bg, bg, bg, 1.0f);
     checkGlError("glClearColor");
     glClear(GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
+    // Disable depth rendering
     glDisable(GL_DEPTH_TEST);
     checkGlError("glDisable(GL_DEPTH_TEST)");
+
+    // Enable Alpha blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    checkGlError("glBlendFunc");
 }
 
 std::vector<float> Renderer::useColour(Colour *colour) {
