@@ -5,7 +5,7 @@
 #include "math.h"
 
 #define FADE_DEC 0.02f
-#define SHRINK_DEC 0.4f
+#define SHRINK_DEC 1.6f
 #define OUT_ShapesCount false
 
 Trail::Trail(int obj_length) {
@@ -33,7 +33,7 @@ void Trail::fade(Shape &shape) {
 
 void Trail::shrink(Shape &shape) {
     if (shape.getWidth() > 0)
-        shape.setLength(shape.getWidth() - SHRINK_DEC); 
+        shape.setLength(shape.getWidth() - (SHRINK_DEC*Game::getTimeSpeed())); 
 }
 
 void Trail::render(PhysicsEngine &physics) {
@@ -55,7 +55,7 @@ void Trail::render(PhysicsEngine &physics) {
         // Remove shape if no longer needed
         if ((shapes.at(i).getAlpha() <= 0 && (int)shapes.size() > 0 && shapes.at(i).vert_motion.getVel() == 0)
                 || shapes.at(i).getWidth() == 0
-                || shapes.at(i).getWidth() < SHRINK_DEC) {
+                || shapes.at(i).getWidth() < SHRINK_DEC*Game::getTimeSpeed()) {
             removeBox(shapes.at(i).getIndex());
             // i--;
         }

@@ -1,5 +1,5 @@
-#include <stdlib.h>    // rand()
-#include <time.h>      // seeding rand numbers
+#include <stdlib.h>
+#include <time.h>
 #include <exception>
 #include <math.h>
 
@@ -7,10 +7,14 @@
 #include "spaceman.h"
 #include "log.h"
 
+#define INIT_TIME_SPEED 0.4f
+#define TRAIL_UPDATE_INTERVAL 0.5f
+#define TRAIL_PART_PER_UPDATE 1
 #define PI 3.14159265
 
 Game::Game() : _finished(false) {
-    _elapsed_time = 0; // FIXME needs to be init again here for some reason
+    _elapsed_time = 0; // Needs to be init here also for some reason
+    _previousTrailUpdate = 0;
     
     loadResources();
     
@@ -20,7 +24,9 @@ Game::Game() : _finished(false) {
     // Setup Player
     try {
         // _players.resize(_players.size() + 1, new Spaceman(0, 0, 150, 300));
-        _players.push_back(new Spaceman(0, 0, Theme::GRAY));
+        _players.push_back(new Spaceman(300, 310, Theme::GRAY));
+        _players.push_back(new Spaceman(0,     0, Theme::RAINBOW));
+        _players.push_back(new Spaceman(850, 310, Theme::GRAY));
     }
     catch (std::exception &e) {
         LOGE("Error occured while creating player: %s", e.what());
@@ -58,13 +64,17 @@ void Game::setup(int w, int h, char &package_name) {
     _UI_renderer.setup();
 
     // Put player in the center now that width and height are determined
-    _players.at(0)->setX((w/2) - 25);
-    _players.at(0)->setY((h/2) - 50);
+    _players.at(1)->setX((w/2) - 25);
+    _players.at(1)->setY((h/2) - 50);
 }
 
 void Game::run() {
     /* MAIN GAME LOOP */
     Renderer::clearScreen();
+
+    // Render trails behind player
+    for(int i=0; i<(int)_players.size(); i++)
+        _players.at(i)->drawTrail();
 
     // Render players
     for(int i=0; i<(int)_players.size(); i++)
@@ -145,16 +155,25 @@ void Game::handleInput(float x, float y) {
         angle += atanf(O/A) * 180/PI;
     }
 
-    
-    for (int i=1; i<=_BOXES_PER_PRESS; i++) {
+    // Only build player trail after time interval
+    float currentUpdate = getElapsedTime();
+    float elapsedSinceUpdate = currentUpdate - _previousTrailUpdate;
+    bool build_trail = false;
+    if (elapsedSinceUpdate >= TRAIL_UPDATE_INTERVAL) {
+        build_trail = true;
+        _previousTrailUpdate = currentUpdate;
+    }
+
+    for (int i=1; i<=TRAIL_PART_PER_UPDATE; i++) {
         // TODO replace (x, y) touch pos with a position returned from a controller class
         // Player[0] is the main player (the user)
-        if (js1InputRecieved)
-            _players.at(0)->update(x, y, -(360-angle));
-        else
-            _players.at(0)->update(x, y, _players.at(0)->getRotAngle());
+        for(int p=0; p<(int)_players.size(); p++) {
+            if (js1InputRecieved)
+                _players.at(p)->update(x, y, -(360-angle), build_trail);
+            else
+                _players.at(p)->update(x, y, _players.at(p)->getRotAngle(), build_trail);
+        }
     }
-    
 }
 
 //---
@@ -194,7 +213,7 @@ float Game::getElapsedTime() {
     return _elapsed_time; 
 }
 
-float Game::_time_speed = 0.4f;
+float Game::_time_speed = INIT_TIME_SPEED;
 float Game::getTimeSpeed() {
     return _time_speed; 
 }

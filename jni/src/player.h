@@ -10,16 +10,21 @@
 
 class Player: public Object {
     protected:
-        Rend_player renderer;
+        enum Action {
+            STILL, 
+            RUNNING, 
+            FLYING
+        };
 
-        virtual void render() = 0;
+        Rend_player _renderer;
 
     public:
         // Render player and trail
         virtual void draw() = 0;
-                
-        // Don according to its current action
-        virtual void update(float x, float y, float angle) = 0; 
+        virtual void drawTrail() = 0;
+        // Update player based on its current action
+        virtual void update(float x, float y, float angle, bool build_trail) = 0; 
+        // Setup all renderers
         virtual void setup() = 0;
 
         /* Ctor - */

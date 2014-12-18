@@ -10,11 +10,8 @@
 #include "motion.h"
 #include "direction.h"
 
-typedef enum Action {STILL, RUNNING, FLYING} Action;
-
 class Spaceman: public Player {
     private:
-
         PhysicsEngine _physics;
         Action _action;
         Dir _facing;
@@ -22,14 +19,12 @@ class Spaceman: public Player {
         Theme _colour_theme; // Changes the colour scheme of the boxes and other UI
         Trail _trail;
 
-        void render();
     public:
-
         // Render player and trail
         void draw();
-
+        void drawTrail();
         // Do spaceman according to its current action
-        void update(float x, float y, float angle); 
+        void update(float x, float y, float angle, bool build_trail); 
         void setup();
 
         /* Getters / Setters */

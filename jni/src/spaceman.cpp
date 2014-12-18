@@ -5,14 +5,14 @@
 #include "log.h"
 
 Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,50,100), _trail(27) {
-    _action = FLYING;     // TODO use this after controls have been added -> _action = STILL;
-    _facing = RIGHT;
+    _action = Action::FLYING;     // TODO use this after controls have been added -> _action = STILL;
+    _facing = Dir::RIGHT;
     _frame = 0;           // TODO not implemented yet
     _colour_theme = theme;
     setRotAngle(-360.0f); // TODO should work with 0.0f
 }
 
-Action Spaceman::getAction() {
+Player::Action Spaceman::getAction() {
     return _action;
 }
 
@@ -56,11 +56,22 @@ void Spaceman::changeTheme(Theme &old_theme) {
 }
 
 void Spaceman::draw() {
+    // Render
+    _renderer.renderObject(this);
+
+    // Update physics attributes only if box is moving
+    // if (vert_motion.getVel() != 0.0f || hori_motion.getVel() != 0.0f)
+    //     _physics.updatePhysics(*this, Game::getElapsedTime(), Game::getScreenWidth(), Game::getScreenHeight());
+
+    // Attributes need to be disabled to avoid different shaders from reading in random values
+    _renderer.disableAttributes();
+}
+void Spaceman::drawTrail() {
+    // Render
     _trail.render(_physics);
-    render();
 }
 
-void Spaceman::update(float x, float y, float angle) {
+void Spaceman::update(float x, float y, float angle, bool build_trail) {
     // Update player attributes
     // setX(x - getWidth());
     // setY(y - getHeight());
@@ -68,25 +79,15 @@ void Spaceman::update(float x, float y, float angle) {
     // Rotate player from joystick
     setRotAngle(angle);
 
-    if (_action == FLYING) {
-        Point2D base = renderer.getBasePoint();
-        _trail.buildTrail(base.getX(), base.getY(), angle, _colour_theme, _physics);
+    if (build_trail) {
+        if (_action == FLYING) {
+            Point2D base = _renderer.getBasePoint();
+            _trail.buildTrail(base.getX(), base.getY(), angle, _colour_theme, _physics);
+        }
     }
 }
 
 void Spaceman::setup() {
-    renderer.setup();
+    _renderer.setup();
     _trail.setup();
-}
-
-void Spaceman::render() {
-    // Send player data to renderer
-    renderer.renderObject(this);
-
-    // Update physics attributes only if box is moving
-    // if (vert_motion.getVel() != 0.0f || hori_motion.getVel() != 0.0f)
-    //     _physics.updatePhysics(*this, Game::getElapsedTime(), Game::getScreenWidth(), Game::getScreenHeight());
-
-    // Attributes need to be disabled to avoid different shaders from reading in random values
-    renderer.disableAttributes();
 }

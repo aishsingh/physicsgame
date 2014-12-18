@@ -11,9 +11,6 @@
 class Game {
     private:
         // Textures textures;
-        static const bool _DEBUG = false;
-        static const int _BOXES_PER_PRESS = 1;
-
         static int _screen_width;
         static int _screen_height;
 
@@ -22,6 +19,9 @@ class Game {
 
         bool _finished;
         char _package_name;
+
+        // Used to set the elepsed time since last update
+        float _previousTrailUpdate;
 
         // All players that are in the game
         // player[0] is the user
