@@ -8,7 +8,7 @@ class Box: public Shape {
         Colour _colour;
 
     public:
-        Box(float x, float y, float angle, float diameter, Theme &theme);
+        Box(float x, float y, int index, float angle, float diameter, Theme &theme);
 };
 
 #endif /* BOX_H */

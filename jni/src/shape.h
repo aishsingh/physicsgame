@@ -7,6 +7,7 @@
 
 class Shape: public Object {
     private:
+        int _index;
         Colour _colour;
 
     public:
@@ -15,10 +16,11 @@ class Shape: public Object {
         void useTheme(Theme &theme);
         float getAlpha() const;
         void setAlpha(float alpha);
+        int getIndex() const;
+        void setIndex(int index);
 
         /* Ctor - Creates a new box instance and adds it to the array */
-        // Box() {}
-        Shape(float x, float y, float angle, float width, float height, Theme &theme);
+        Shape(float x, float y, int index, float angle, float width, float height, Theme &theme);
 };
 
 #endif /* SHAPE_H */

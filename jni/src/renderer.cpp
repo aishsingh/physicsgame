@@ -13,7 +13,6 @@
 #include "game.h"
 
 #define PI 3.14159265358979323846264
-#define TEXTURE_LOAD_ERROR 0
 
 Renderer::Renderer() {}
 Renderer::~Renderer() {}

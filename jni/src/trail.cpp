@@ -4,8 +4,12 @@
 #include "game.h"
 #include "math.h"
 
-Trail::Trail() {
-    _boxes_length = 20;
+#define FADE_DEC 0.02f
+#define SHRINK_DEC 0.4f
+#define OUT_ShapesCount false
+
+Trail::Trail(int obj_length) {
+    _boxes_length = obj_length;
 }
 
 Trail::~Trail() {
@@ -21,16 +25,22 @@ void Trail::setup() {
 
 void Trail::fade(Shape &shape) {
     // fade the box when it has stopped moving vertically
-    float fade_decr = 0.02f;    // Larger = faster fade
-    if (shape.getAlpha() >= fade_decr)
-        shape.setAlpha(shape.getAlpha() - fade_decr);
+    if (shape.getAlpha() >= FADE_DEC)
+        shape.setAlpha(shape.getAlpha() - FADE_DEC);
     else if (shape.getAlpha() > 0.0f)
         shape.setAlpha(0.0f);
+}
+
+void Trail::shrink(Shape &shape) {
+    if (shape.getWidth() > 0)
+        shape.setLength(shape.getWidth() - SHRINK_DEC); 
 }
 
 void Trail::render(PhysicsEngine &physics) {
     // Draw every shape in shapes vector
     for (int i=0; i<(int)shapes.size(); i++) {
+        // Effects
+        shrink(shapes.at(i));
         if (shapes.at(i).vert_motion.getVel() == 0)
             fade(shapes.at(i));
 
@@ -41,12 +51,15 @@ void Trail::render(PhysicsEngine &physics) {
         if (shapes.at(i).vert_motion.getVel() != 0.0f || shapes.at(i).hori_motion.getVel() != 0.0f)
             physics.updatePhysics(shapes.at(i), Game::getElapsedTime(), Game::getScreenWidth(), Game::getScreenHeight());
 
+
         // Remove shape if no longer needed
-        if (shapes.at(i).getAlpha() <= 0 && (int)shapes.size() > 0 && shapes.at(i).vert_motion.getVel() == 0) {
-            removeBox(i);
-            // shapes.erase(shapes.begin() + i);
-            i--;
+        if ((shapes.at(i).getAlpha() <= 0 && (int)shapes.size() > 0 && shapes.at(i).vert_motion.getVel() == 0)
+                || shapes.at(i).getWidth() == 0
+                || shapes.at(i).getWidth() < SHRINK_DEC) {
+            removeBox(shapes.at(i).getIndex());
+            // i--;
         }
+
     }
 
     _renderer.disableAttributes();
@@ -57,34 +70,22 @@ void Trail::buildTrail(float x, float y, float rot_angle, Theme theme, PhysicsEn
     x -= _boxes_length/2;
     y -= _boxes_length/2;
 
+    /* Setup new box */
+    Box box(x, y, (int)shapes.size(), rot_angle, _boxes_length, theme);
+
+    // Apply initial velocity using player rotation
+    physics.generateInitVelocity(box, rot_angle);
+
     /* Increase size of array and check for exceptions */
     try {
-        // shapes.resize(shapes.size() + 1, Box(x, y, _boxes_length, (int)shapes.size(), time, theme));
-        shapes.push_back(Box(x, y, rot_angle, _boxes_length, theme));
+        shapes.push_back(box);
     }
     catch (std::exception &e) {
         LOGE("Error occured while creating box: %s", e.what());
     }
 
-    LOGI("%i Shapes (+)", (int)shapes.size());
-
-    /* Setup new box */
-    Shape *shape = &shapes[(int)shapes.size() - 1];
-
-    // Create the fountain effect
-    physics.generateInitVelocity(*shape, shape->rot_angle);
-
-    // Apply player rotation on trail
-    // rotate(rot_angle);
-
-    // Just for testing
-    // box->hori_motion.setAccel(-1.3f);
-
-    // Allow gravity to affect the box
-    shape->vert_motion.setAccel(physics.getGravity());
-    // box->vert_motion.setAccel(-0.1f);
-    
-    // shape->rot_angle += shape->hori_motion.getVel() * 2;
+    if (OUT_ShapesCount)
+        LOGI("%i Shapes (+)", (int)shapes.size());
 }
 
 
@@ -93,23 +94,20 @@ void Trail::removeBox(int index) {
     if (index < (int)shapes.size() - 1) {
         for (int i = index; i < (int)shapes.size(); i++) {
             shapes[i] = shapes[i + 1];
+            shapes[i].setIndex(i);
         }
     }
 
     // Decrease size of array & realloc with less mem
-    // shapes.resize((int)shapes.size() - 1);
-    shapes.erase(shapes.begin() + index);
-    LOGI("%i Shapes (-)", (int)shapes.size());
-}
-
-
-void Trail::rotate(float angle) {
-    float initial_vel_vert = 0.0f;
-    float initial_vel_hori = 0.0f;
-
-    if (angle >= 0 && angle < 90) {
-        for (int i=0; i<(int)shapes.size(); i++) {
-            shapes.at(i).hori_motion.setVel(shapes.at(i).hori_motion.getVel() + angle);
-        }
+    try {
+        // shapes.resize((int)shapes.size() - 1);
+        shapes.pop_back();
+        // shapes.erase(shapes.begin() + index);
     }
+    catch (std::exception &e) {
+        LOGE("Error occured while removing box: %s", e.what());
+    }
+
+    if (OUT_ShapesCount)
+        LOGI("%i Shapes (-)", (int)shapes.size());
 }

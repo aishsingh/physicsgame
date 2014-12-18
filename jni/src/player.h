@@ -6,7 +6,6 @@
 #define PLAYER_H
 
 #include "rend_player.h"
-#include "physics.h"
 #include "object.h"
 
 class Player: public Object {

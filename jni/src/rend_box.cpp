@@ -116,7 +116,7 @@ void Rend_box::renderShape(Shape *obj) {
     std::vector<float> objColours = useColour(&colour);
 
     // Rotate
-    float objAngle = obj->rot_angle;
+    float objAngle = obj->getRotAngle();
 
     // Pass values to shader
     setShaderData(&objVertices[0], &objColours[0], objAngle);
@@ -145,7 +145,7 @@ std::vector<float> Rend_box::useObjectVertices(Object *obj) {
     y += (h/2);
 
     // Rotate
-    float objAngle = obj->rot_angle;
+    float objAngle = obj->getRotAngle();
 
     float rad_angle = objAngle*PI/180.0;
     float rot_x =  x*cos(rad_angle) + y*sin(rad_angle);

@@ -4,13 +4,12 @@
 #include "point2d.h"
 #include "log.h"
 
-Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,50,100) {
-    // TODO use this after controls have been added -> _action = STILL;
-    _action = FLYING;
+Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,50,100), _trail(27) {
+    _action = FLYING;     // TODO use this after controls have been added -> _action = STILL;
     _facing = RIGHT;
-    _frame = 0;
+    _frame = 0;           // TODO not implemented yet
     _colour_theme = theme;
-    rot_angle = 0.0f;
+    setRotAngle(-360.0f); // TODO should work with 0.0f
 }
 
 Action Spaceman::getAction() {
@@ -62,18 +61,14 @@ void Spaceman::draw() {
 }
 
 void Spaceman::update(float x, float y, float angle) {
-    // Offset pos
-    x -= 0;//50;
-    y -= 0;//50;
-
     // Update player attributes
     // setX(x - getWidth());
     // setY(y - getHeight());
-    rot_angle = angle;
+    
+    // Rotate player from joystick
+    setRotAngle(angle);
 
     if (_action == FLYING) {
-        // Show the trail only if the player is flying
-        // _trail.buildTrail(x - (getWidth()/2), y, _colour_theme, _physics);
         Point2D base = renderer.getBasePoint();
         _trail.buildTrail(base.getX(), base.getY(), angle, _colour_theme, _physics);
     }
@@ -89,8 +84,8 @@ void Spaceman::render() {
     renderer.renderObject(this);
 
     // Update physics attributes only if box is moving
-    if (vert_motion.getVel() != 0.0f || hori_motion.getVel() != 0.0f)
-        _physics.updatePhysics(*this, Game::getElapsedTime(), Game::getScreenWidth(), Game::getScreenHeight());
+    // if (vert_motion.getVel() != 0.0f || hori_motion.getVel() != 0.0f)
+    //     _physics.updatePhysics(*this, Game::getElapsedTime(), Game::getScreenWidth(), Game::getScreenHeight());
 
     // Attributes need to be disabled to avoid different shaders from reading in random values
     renderer.disableAttributes();

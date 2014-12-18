@@ -18,7 +18,7 @@ class Game {
         static int _screen_height;
 
         static float _elapsed_time;
-        float _time_speed;
+        static float _time_speed;
 
         bool _finished;
         char _package_name;
@@ -54,6 +54,7 @@ class Game {
         static int getScreenWidth();
         static int getScreenHeight();
         static float getElapsedTime();
+        static float getTimeSpeed();
 
         Game();
         ~Game();

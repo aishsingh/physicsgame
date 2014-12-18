@@ -6,11 +6,11 @@
 
 PhysicsEngine::PhysicsEngine() {
     /* Initialize */
-    _MAX_INITIAL_VERT_VELOCITY = -25.0f;
-    _MIN_INITIAL_VERT_VELOCITY = -20.0f;
-    _MAX_INITIAL_HORI_VELOCITY = 4.0f;
+    _MAX_INITIAL_VERT_VELOCITY = -30.0f;
+    _MIN_INITIAL_VERT_VELOCITY = -26.0f;
+    _MAX_INITIAL_HORI_VELOCITY = 3.0f;
     _MAX_G_SWITCH_MISCALC = 3.0f;
-    _gravity = 0.98f; //2.5f; // normal = 0.75f;
+    _gravity = 0.98f;
 }
 
 float PhysicsEngine::getGravity() {
@@ -72,10 +72,8 @@ Motion PhysicsEngine::calcMotion(Object &obj, const Comp comp, const float &elap
     }
     else if (comp == CIRC) {
         // Circular motion
-        float offset = 1.5f;
-        obj.rot_angle += obj.hori_motion.getVel() * offset;
-
-        // LOGI("angle [%.2f]", obj.rot_angle);
+        float offset = 0.4f;
+        obj.setRotAngle(obj.getRotAngle() + (obj.hori_motion.getVel() * offset));
     }
 
     return calc;
@@ -150,47 +148,52 @@ void PhysicsEngine::switchGravity(Object objs[], const int &objs_count, const in
 }
 
 void PhysicsEngine::generateInitVelocity(Object &obj, float rot_angle) {
+    // Remove neg values
+    rot_angle /= -1;
+    // rot_angle = (360 - (rot_angle/-1)) /-1;
+
+    float init_v = 0;
+    float init_h = 0;
+
     // Gen random velocity magnitude
-    // float init_v = _MIN_INITIAL_VERT_VELOCITY + (float)(rand()) / (float)(RAND_MAX/(_MAX_INITIAL_VERT_VELOCITY - _MIN_INITIAL_VERT_VELOCITY));
-    float init_v = 20.0f;
-    float init_h = _MAX_INITIAL_HORI_VELOCITY + (float)(rand()) / (float)(RAND_MAX/(-_MAX_INITIAL_HORI_VELOCITY-(_MAX_INITIAL_HORI_VELOCITY)));
+    float dominantV = -1 * _MIN_INITIAL_VERT_VELOCITY + (float)(rand()) / (float)(RAND_MAX/(_MAX_INITIAL_VERT_VELOCITY - _MIN_INITIAL_VERT_VELOCITY));
+    float sideV = _MAX_INITIAL_HORI_VELOCITY + (float)(rand()) / (float)(RAND_MAX/(-_MAX_INITIAL_HORI_VELOCITY-(_MAX_INITIAL_HORI_VELOCITY)));
 
-    // Handle obj rotation
+    // Determine velocity for both components after rotation
     float ratio = 0;
-
     if (rot_angle > 0 && rot_angle <= 90) {
-        if (rot_angle >= 45) {
-            // hori comp is stronger
-            ratio = rot_angle / 90;
-            init_h *= ratio;
-            init_v *= (90 - ratio);
-        }
-        else {
-            // vert comp is stronger
-            ratio = rot_angle / 90;
-            init_v *= ratio;
-            init_h *= (90 - ratio);
-        }
+        ratio = rot_angle / 90;
+
+        init_v = dominantV * (1 - ratio);
+        init_h = dominantV * ratio;
     }
     else if (rot_angle > 90 && rot_angle <= 180) {
-        if (rot_angle >= 135) {
-            // hori comp is stronger
-            ratio = rot_angle / 180;
-            init_h *= ratio;
-            init_v *= (180 - ratio);
-        }
-        else {
-            // vert comp is stronger
-            ratio = rot_angle / 90;
-            init_v *= ratio;
-            init_h *= (180 - ratio);
-        }
+        ratio = (rot_angle - 90) / 90;
+
+        init_v = -dominantV * ratio;
+        init_h = dominantV * (1 - ratio);
+    }
+    else if (rot_angle > 180 && rot_angle <= 270) {
+        ratio = (rot_angle - 180) / 90;
+
+        init_v = -dominantV * (1 - ratio);
+        init_h = -dominantV * ratio;
+    }
+    else if (rot_angle > 270 && rot_angle <= 360) {
+        ratio = (rot_angle - 270) / 90;
+
+        init_v = dominantV * ratio;
+        init_h = -dominantV * (1 - ratio);
     }
 
+    // Even more offset
+    init_v += sideV;
+    init_h += sideV;
 
     // Apply velocity
     obj.vert_motion.setVel(init_v);
     obj.hori_motion.setVel(init_h);
+    obj.vert_motion.setAccel(getGravity());
 }
 
 /* vim: set ts=4 */

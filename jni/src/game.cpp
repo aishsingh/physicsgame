@@ -9,13 +9,9 @@
 
 #define PI 3.14159265
 
-Game::Game() {
-    // Initilise 
-    _elapsed_time = 0;
-    _finished = false;
-    _time_speed = 0.7f;
+Game::Game() : _finished(false) {
+    _elapsed_time = 0; // FIXME needs to be init again here for some reason
     
-    // loadSDL();
     loadResources();
     
     // Seed random numbers using the time to improve randomness
@@ -24,7 +20,7 @@ Game::Game() {
     // Setup Player
     try {
         // _players.resize(_players.size() + 1, new Spaceman(0, 0, 150, 300));
-        _players.push_back(new Spaceman(0, 0, Theme::RAINBOW));
+        _players.push_back(new Spaceman(0, 0, Theme::GRAY));
     }
     catch (std::exception &e) {
         LOGE("Error occured while creating player: %s", e.what());
@@ -54,7 +50,8 @@ void Game::setup(int w, int h, char &package_name) {
 
     LOGI("setup(%d, %d, %s)", w, h, &package_name);
 
-    // Setup renderers/objects
+    // Setup renderers
+    // setup procedures are used as all the renderers can only be setup after width and height are known (after OpenGL is setup)
     for(int i=0; i<(int)_players.size(); i++)
         _players.at(i)->setup();
 
@@ -146,8 +143,6 @@ void Game::handleInput(float x, float y) {
         }
 
         angle += atanf(O/A) * 180/PI;
-        // Output
-        LOGI("JS1 angle %.2f", angle);
     }
 
     
@@ -157,7 +152,7 @@ void Game::handleInput(float x, float y) {
         if (js1InputRecieved)
             _players.at(0)->update(x, y, -(360-angle));
         else
-            _players.at(0)->update(x, y, _players.at(0)->rot_angle);
+            _players.at(0)->update(x, y, _players.at(0)->getRotAngle());
     }
     
 }
@@ -197,4 +192,9 @@ int Game::getScreenHeight() {
 float Game::_elapsed_time = 0.0f;
 float Game::getElapsedTime() {
     return _elapsed_time; 
+}
+
+float Game::_time_speed = 0.4f;
+float Game::getTimeSpeed() {
+    return _time_speed; 
 }

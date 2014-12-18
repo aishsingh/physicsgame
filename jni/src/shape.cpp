@@ -3,13 +3,12 @@
 #include "game.h"
 #include "log.h"
 
-Shape::Shape(float x, float y, float angle, float width, float height, Theme &theme) : Object(x,y,width,height) {
+Shape::Shape(float x, float y, int index, float angle, float width, float height, Theme &theme) : Object(x,y,width,height) {
     float time = Game::getElapsedTime();
     vert_motion.setTime(time);
     hori_motion.setTime(time);
-
-    rot_angle = angle;
-
+    setIndex(index);
+    setRotAngle(angle);
     useTheme(theme);
 }
 
@@ -58,4 +57,11 @@ float Shape::getAlpha() const {
 }
 void Shape::setAlpha(float alpha) {
     _colour.a = alpha;
+}
+
+int Shape::getIndex() const {
+    return _index;
+}
+void Shape::setIndex(const int index) {
+    _index = index;
 }

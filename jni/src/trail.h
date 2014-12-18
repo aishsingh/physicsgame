@@ -12,12 +12,12 @@
 
 class Trail {
     private:
-        int _boxes_length;
+        float _boxes_length;
 
         Rend_box _renderer;
 
-        // fade the selected box
         void fade(Shape &shape);
+        void shrink(Shape &shape);
 
     public:
         // Shapes that are displayed in the trail
@@ -35,13 +35,10 @@ class Trail {
            2. Decreases the memory allocation of the array */
         void removeBox(int index);
 
-        // Rotate the entire 
-        void rotate(float angle);
-
         void setup();
 
         /* Ctor */
-        Trail();
+        Trail(int obj_length);
 
         /* Dtor */
         ~Trail();
