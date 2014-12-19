@@ -6,6 +6,8 @@
 #include "physics.h"
 // #include "textures.h"
 #include "player.h"
+#include "rend_player.h"
+#include "rend_box.h"
 #include "rend_UI.h"
 
 class Game {
@@ -28,7 +30,9 @@ class Game {
         std::vector<Player*> _players;
 
         /* Renderers */
-        Rend_UI _UI_renderer;
+        Rend_player _pla_rend;
+        Rend_box _box_rend;
+        Rend_UI _UI_rend;
 
         /* All fonts, gfx, audio will is loaded here */
         void loadResources();

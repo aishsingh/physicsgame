@@ -11,8 +11,7 @@ class Rend_box: public Renderer {
         void setShaderData(float vertices[], float colours[], float angle);
 
     public:
-        // void renderFrame();
-        void renderShape(Shape *obj);
+        void renderShape(Shape *shape);
         void disableAttributes();
         bool setup();
 

@@ -8,8 +8,9 @@
 #define SHRINK_DEC 1.6f
 #define OUT_ShapesCount false
 
-Trail::Trail(int obj_length) {
+Trail::Trail(int obj_length, Rend_box* rend) {
     _boxes_length = obj_length;
+    _rend = rend;
 }
 
 Trail::~Trail() {
@@ -17,10 +18,6 @@ Trail::~Trail() {
         // Clear boxes array
         std::vector<Shape>().swap(shapes);
     }
-}
-
-void Trail::setup() {
-    _renderer.setup();
 }
 
 void Trail::fade(Shape &shape) {
@@ -45,7 +42,7 @@ void Trail::render(PhysicsEngine &physics) {
             fade(shapes.at(i));
 
         // Send shape to renderer
-        _renderer.renderShape(&shapes.at(i));
+        _rend->renderShape(&shapes.at(i));
 
         // Update physics attributes only if box is moving
         if (shapes.at(i).vert_motion.getVel() != 0.0f || shapes.at(i).hori_motion.getVel() != 0.0f)
@@ -62,7 +59,7 @@ void Trail::render(PhysicsEngine &physics) {
 
     }
 
-    _renderer.disableAttributes();
+    _rend->disableAttributes();
 }
 
 void Trail::buildTrail(float x, float y, float rot_angle, Theme theme, PhysicsEngine &physics) {

@@ -93,61 +93,6 @@ bool Rend_UI::setup() {
     return true;
 }
 
-// bool Rend_UI::setup(int screen_w, int screen_h) {
-//     gProgram = createProgram(shad_vertex.c_str(), shad_fragment.c_str());
-//     if (!gProgram) {
-//         LOGE("Could not create program.");
-//         return false;
-//     }
-//
-//     gvPosHandle = glGetAttribLocation(gProgram, "vPos");
-//     checkGlError("glGetAttribLocation(vPos)");
-//
-//     GLuint gmProjHandle = glGetUniformLocation(gProgram, "mProj");
-//     checkGlError("glGetUniformLocation(mProj)");
-//
-//     GLuint gmModelHandle = glGetUniformLocation(gProgram, "mModel");
-//     checkGlError("glGetUniformLocation(mModel)");
-//
-//     /* Projection Matrix */
-//     GLfloat proj[] = { 2.0f/screen_w, 0.0f,          0.0f, 0.0f,
-//                        0.0f,         -2.0f/screen_h, 0.0f, 0.0f,
-//                        0.0f,          0.0f,          0.0f, 0.0f,
-//                       -1.0f,          1.0f,          0.0f, 1.0f };
-//
-//     /* Model Matrix */
-//     // Identity Matrix
-//     GLfloat model[] = { 1.0f, 0.0f, 0.0f, 0.0f, 
-//                         0.0f, 1.0f, 0.0f, 0.0f, 
-//                         0.0f, 0.0f, 1.0f, 0.0f, 
-//                         0.0f, 0.0f, 0.0f, 1.0f };
-//
-//
-//     // Pass uniforms to shader
-//     /* VERY IMPORTANT
-//      * glUseProgram() needs to be called before you setup a uniform 
-//      * but not needed before glGetUniformLocation() 
-//      * http://www.opengl.org/wiki/GLSL_:_common_mistakes */
-//     glUseProgram(gProgram);
-//     checkGlError("glUseProgram");
-//
-//     glUniformMatrix4fv(gmProjHandle, 1, GL_FALSE, &proj[0]);
-//     checkGlError("glUniformMatrix4fv, mProj");
-//
-//     glUniformMatrix4fv(gmModelHandle, 1, GL_FALSE, &model[0]);
-//     checkGlError("glUniformMatrix4fv, mModel");
-//
-//     glViewport(0, 0, screen_w, screen_h);
-//     checkGlError("glViewport");
-//
-//     glDisable(GL_DEPTH_TEST);
-//     checkGlError("glDisable(GL_DEPTH_TEST)");
-//     LOGI("--------------------");
-//
-//     return true;
-// }
-//
-
 void Rend_UI::disableAttributes() {
     // Any unique attributes in these shaders needs to be disabled here
     glDisableVertexAttribArray(gvPosHandle);
@@ -160,17 +105,10 @@ void Rend_UI::renderUI() {
     // Positioning
     std::vector<float> js1Vertices = useObjectVertices(&joystick1);
 
-    // for (int i=0; i<(int)js1Vertices.size(); i++)
-    //     LOGI("p[%i]: %2.f", i, js1Vertices.at(i));
-
-    // Colours
-    // Colour colour = Colour(1.0f, 0.0f, 0.0f, 1.0f);
-    // std::vector<float> js1Colours = useColour(&colour);
-
     // Pass values to shader
     setShaderData(&js1Vertices[0], 0, 0);
 
-    // can be called by the renderer as this will be the only UI renderer
+    // Can be called directly by the renderer as this will be the only UI renderer instance
     disableAttributes();
 }
 

@@ -14,7 +14,7 @@ class Trail {
     private:
         float _boxes_length;
 
-        Rend_box _renderer;
+        Rend_box* _rend;
 
         void fade(Shape &shape);
         void shrink(Shape &shape);
@@ -35,10 +35,8 @@ class Trail {
            2. Decreases the memory allocation of the array */
         void removeBox(int index);
 
-        void setup();
-
         /* Ctor */
-        Trail(int obj_length);
+        Trail(int obj_length, Rend_box* rend);
 
         /* Dtor */
         ~Trail();

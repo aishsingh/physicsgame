@@ -5,8 +5,10 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "rend_player.h"
 #include "object.h"
+#include "point2d.h"
+
+class Rend_player;
 
 class Player: public Object {
     protected:
@@ -16,7 +18,8 @@ class Player: public Object {
             FLYING
         };
 
-        Rend_player _renderer;
+        Rend_player* _rend;
+        Point2D _base;
 
     public:
         // Render player and trail
@@ -24,11 +27,12 @@ class Player: public Object {
         virtual void drawTrail() = 0;
         // Update player based on its current action
         virtual void update(float x, float y, float angle, bool build_trail) = 0; 
-        // Setup all renderers
-        virtual void setup() = 0;
+
+        // Set current pos of the bottom of the player after rotations
+        void setBasePoint(Point2D point); 
 
         /* Ctor - */
-        Player(float x, float y, float width, float height);
+        Player(float x, float y, float width, float height, Rend_player* rend);
 };
 
 #endif /* PLAYER_H */

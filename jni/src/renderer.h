@@ -29,9 +29,6 @@ class Renderer {
 
     public:
         virtual bool setup() = 0;
-
-        /* Send vectors and other data to shaders */
-        virtual void renderShape(Shape *obj);
         
         virtual void disableAttributes() = 0;
 

@@ -227,19 +227,29 @@ bool Rend_player::setup() {
 // }
 //
 
-void Rend_player::renderObject(Object *obj) {
+void Rend_player::renderPlayer(Player *pla) {
     // Positioning
-    std::vector<float> objVertices = useObjectVertices(obj);
+    std::vector<float> plaVertices = useObjectVertices(pla);
 
     // Colours
     Colour colour = Colour(0.0f, 0.0f, 1.0f, 1.0f);
-    std::vector<float> objColours = useColour(&colour);
+    std::vector<float> plaColours = useColour(&colour);
 
     // Rotate
-    float objAngle = obj->getRotAngle();
+    float plaAngle = pla->getRotAngle();
 
     // Pass values to shader
-    setShaderData(&objVertices[0], &objColours[0], objAngle);
+    setShaderData(&plaVertices[0], &plaColours[0], plaAngle);
+
+    /* Set base value (bottom of the player after rotation)
+     * These calculations ensure that the base pos is the same as it would be after it went through the vshader.
+     * The vshader rotates the pos, so the same rotation is applyed here */
+    Point2D afterRot((plaVertices[2] + plaVertices[6])/2, (plaVertices[3] + plaVertices[7])/2);
+    float rad_angle = plaAngle*PI/180.0;
+    Point2D pos;
+    pos.setX(afterRot.getX()*cos(rad_angle) - afterRot.getY()*sin(rad_angle));
+    pos.setY(afterRot.getY()*cos(rad_angle) + afterRot.getX()*sin(rad_angle));
+    pla->setBasePoint(pos);
 }
 
 std::vector<float> Rend_player::useObjectVertices(Object *obj) {
@@ -285,14 +295,6 @@ std::vector<float> Rend_player::useObjectVertices(Object *obj) {
                     x + w , y     ,
                     x + w , y + h };
 
-    /* Set base value (bottom of the player after rotation)
-     * These calculations ensure that the base pos is the same as it would be after it went through the vshader.
-     * The vshader rotates the pos, so the same rotation is applyed here */
-    Point2D afterRot((vec[2] + vec[6])/2, (vec[3] + vec[7])/2);
-    _base.setX(afterRot.getX()*cos(rad_angle) - afterRot.getY()*sin(rad_angle));
-    _base.setY(afterRot.getY()*cos(rad_angle) + afterRot.getX()*sin(rad_angle));
-
-
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }
 
@@ -326,10 +328,6 @@ void Rend_player::setShaderData(float vertices[], float colours[], float angle) 
 void Rend_player::disableAttributes() {
     glDisableVertexAttribArray(gvPosHandle);
     glDisableVertexAttribArray(gvColorHandle);
-}
-
-Point2D Rend_player::getBasePoint() {
-    return _base;
 }
 
 //----------------

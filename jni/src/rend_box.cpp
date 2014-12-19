@@ -107,22 +107,19 @@ bool Rend_box::setup() {
 }
 
 
-void Rend_box::renderShape(Shape *obj) {
+void Rend_box::renderShape(Shape *shape) {
     // Positioning
-    std::vector<float> objVertices = useObjectVertices(obj);
+    std::vector<float> shapeVertices = useObjectVertices(shape);
 
     // Colours
-    Colour colour = obj->getColour();
-    std::vector<float> objColours = useColour(&colour);
+    Colour colour = shape->getColour();
+    std::vector<float> shapeColours = useColour(&colour);
 
     // Rotate
-    float objAngle = obj->getRotAngle();
+    float shapeAngle = shape->getRotAngle();
 
     // Pass values to shader
-    setShaderData(&objVertices[0], &objColours[0], objAngle);
-
-    // can be called by the renderer as this will be the only UI renderer
-    // disableAttributes();
+    setShaderData(&shapeVertices[0], &shapeColours[0], shapeAngle);
 }
 
 std::vector<float> Rend_box::useObjectVertices(Object *obj) {

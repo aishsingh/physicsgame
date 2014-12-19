@@ -3,12 +3,12 @@
 
 #include <GLES2/gl2.h>
 #include "renderer.h"
-#include "point2d.h"
+
+class Player;
 
 class Rend_player: public Renderer {
     private:
         GLuint gsTexHandle;
-        Point2D _base;
 
         // PNG loading
         static void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
@@ -23,9 +23,8 @@ class Rend_player: public Renderer {
         void setShaderData(float vertices[], float colours[], float angle);
 
     public:
-        void renderObject(Object *obj);
+        void renderPlayer(Player *pla);
         void disableAttributes();
-        Point2D getBasePoint(); // return pos of the bottom of the player after rotations
         bool setup();
 
         /* Ctor - Init Shaders */

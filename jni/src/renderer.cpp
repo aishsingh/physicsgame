@@ -12,8 +12,6 @@
 #include "jni.h"
 #include "game.h"
 
-#define PI 3.14159265358979323846264
-
 Renderer::Renderer() {}
 Renderer::~Renderer() {}
 
@@ -112,5 +110,3 @@ std::vector<float> Renderer::useColour(Colour *colour) {
 
     return std::vector<float> (clr, clr + sizeof(clr) / sizeof(float));
 }
-
-void Renderer::renderShape(Shape *obj) {}

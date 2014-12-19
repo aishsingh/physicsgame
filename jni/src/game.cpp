@@ -8,7 +8,7 @@
 #include "log.h"
 
 #define INIT_TIME_SPEED 0.4f
-#define TRAIL_UPDATE_INTERVAL 0.5f
+#define TRAIL_UPDATE_INTERVAL 0.25f
 #define TRAIL_PART_PER_UPDATE 1
 #define PI 3.14159265
 
@@ -24,9 +24,9 @@ Game::Game() : _finished(false) {
     // Setup Player
     try {
         // _players.resize(_players.size() + 1, new Spaceman(0, 0, 150, 300));
-        _players.push_back(new Spaceman(300, 310, Theme::GRAY));
-        _players.push_back(new Spaceman(0,     0, Theme::RAINBOW));
-        _players.push_back(new Spaceman(850, 310, Theme::GRAY));
+        _players.push_back(new Spaceman(300, 310, Theme::GRAY,    &_pla_rend, &_box_rend));
+        _players.push_back(new Spaceman(0,     0, Theme::RAINBOW, &_pla_rend, &_box_rend));
+        _players.push_back(new Spaceman(850, 310, Theme::GRAY,    &_pla_rend, &_box_rend));
     }
     catch (std::exception &e) {
         LOGE("Error occured while creating player: %s", e.what());
@@ -57,11 +57,9 @@ void Game::setup(int w, int h, char &package_name) {
     LOGI("setup(%d, %d, %s)", w, h, &package_name);
 
     // Setup renderers
-    // setup procedures are used as all the renderers can only be setup after width and height are known (after OpenGL is setup)
-    for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->setup();
-
-    _UI_renderer.setup();
+    _pla_rend.setup();
+    _box_rend.setup();
+    _UI_rend.setup();
 
     // Put player in the center now that width and height are determined
     _players.at(1)->setX((w/2) - 25);
@@ -81,7 +79,7 @@ void Game::run() {
         _players.at(i)->draw();
 
     // Render UI
-    _UI_renderer.renderUI();
+    _UI_rend.renderUI();
 
     // Increment game time according to the current speed of time
     _elapsed_time += _time_speed;
