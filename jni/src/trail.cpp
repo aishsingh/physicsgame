@@ -6,9 +6,9 @@
 
 #define FADE_DEC 0.02f
 #define SHRINK_DEC 1.6f
-#define OUT_ShapesCount false
+#define OUT_ShapesCount true
 
-Trail::Trail(int obj_length, Rend_box* rend) {
+Trail::Trail(int obj_length, ObjRenderer* rend) {
     _boxes_length = obj_length;
     _rend = rend;
 }
@@ -42,7 +42,7 @@ void Trail::render(PhysicsEngine &physics) {
             fade(shapes.at(i));
 
         // Send shape to renderer
-        _rend->renderShape(&shapes.at(i));
+        shapes.at(i).draw(_rend);
 
         // Update physics attributes only if box is moving
         if (shapes.at(i).vert_motion.getVel() != 0.0f || shapes.at(i).hori_motion.getVel() != 0.0f)
@@ -54,7 +54,6 @@ void Trail::render(PhysicsEngine &physics) {
                 || shapes.at(i).getWidth() == 0
                 || shapes.at(i).getWidth() < SHRINK_DEC*Game::getTimeSpeed()) {
             removeBox(shapes.at(i).getIndex());
-            // i--;
         }
 
     }
@@ -97,9 +96,7 @@ void Trail::removeBox(int index) {
 
     // Decrease size of array & realloc with less mem
     try {
-        // shapes.resize((int)shapes.size() - 1);
         shapes.pop_back();
-        // shapes.erase(shapes.begin() + index);
     }
     catch (std::exception &e) {
         LOGE("Error occured while removing box: %s", e.what());

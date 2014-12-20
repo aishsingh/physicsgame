@@ -14,10 +14,11 @@ LOCAL_STATIC_LIBRARIES := libzip libpng soil
 LOCAL_SRC_FILES := app_glue.cpp \
 					   game.cpp \
 				   renderer.cpp \
-				   rend_box.cpp \
-			   	rend_player.cpp \
-					rend_UI.cpp \
+		       obj_renderer.cpp \
+			 asset_renderer.cpp \
+		    screen_renderer.cpp \
 				    physics.cpp \
+						 ui.cpp \
 					 object.cpp \
 					  shape.cpp \
 					 	box.cpp \

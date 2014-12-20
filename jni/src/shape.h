@@ -1,14 +1,21 @@
+/* Description: Shape class header
+ * Created On: 2014-11-30
+ */
 #ifndef SHAPE_H
 #define SHAPE_H
 
 #include "object.h"
 #include "colour.h"
 #include "theme.h"
+#include "obj_renderer.h"
 
 class Shape: public Object {
     private:
         int _index;
         Colour _colour;
+
+        vector<float> getVerticeData();
+        vector<float> getColourData();
 
     public:
         /* Getters / Setters */
@@ -18,6 +25,7 @@ class Shape: public Object {
         void setAlpha(float alpha);
         int getIndex() const;
         void setIndex(int index);
+        void draw(ObjRenderer *rend);
 
         /* Ctor - Creates a new box instance and adds it to the array */
         Shape(float x, float y, int index, float angle, float width, float height, Theme &theme);

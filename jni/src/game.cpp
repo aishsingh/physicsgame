@@ -10,7 +10,6 @@
 #define INIT_TIME_SPEED 0.4f
 #define TRAIL_UPDATE_INTERVAL 0.25f
 #define TRAIL_PART_PER_UPDATE 1
-#define PI 3.14159265
 
 Game::Game() : _finished(false) {
     _elapsed_time = 0; // Needs to be init here also for some reason
@@ -24,9 +23,9 @@ Game::Game() : _finished(false) {
     // Setup Player
     try {
         // _players.resize(_players.size() + 1, new Spaceman(0, 0, 150, 300));
-        _players.push_back(new Spaceman(300, 310, Theme::GRAY,    &_pla_rend, &_box_rend));
-        _players.push_back(new Spaceman(0,     0, Theme::RAINBOW, &_pla_rend, &_box_rend));
-        _players.push_back(new Spaceman(850, 310, Theme::GRAY,    &_pla_rend, &_box_rend));
+        _players.push_back(new Spaceman(300, 310, Theme::GRAY,    &_ass_rend, &_obj_rend));
+        _players.push_back(new Spaceman(0,     0, Theme::RAINBOW, &_ass_rend, &_obj_rend));
+        _players.push_back(new Spaceman(850, 310, Theme::GRAY,    &_ass_rend, &_obj_rend));
     }
     catch (std::exception &e) {
         LOGE("Error occured while creating player: %s", e.what());
@@ -36,7 +35,7 @@ Game::Game() : _finished(false) {
 Game::~Game() {
     for(int i=0; i<(int)_players.size(); i++) {
         // Clear boxes array
-        std::vector<Player*>().swap(_players);
+        vector<Player*>().swap(_players);
     }
 }
 
@@ -57,9 +56,9 @@ void Game::setup(int w, int h, char &package_name) {
     LOGI("setup(%d, %d, %s)", w, h, &package_name);
 
     // Setup renderers
-    _pla_rend.setup();
-    _box_rend.setup();
-    _UI_rend.setup();
+    _ass_rend.setup();
+    _obj_rend.setup();
+    _scr_rend.setup();
 
     // Put player in the center now that width and height are determined
     _players.at(1)->setX((w/2) - 25);
@@ -79,7 +78,7 @@ void Game::run() {
         _players.at(i)->draw();
 
     // Render UI
-    _UI_rend.renderUI();
+    screen_ui.draw(&_scr_rend);
 
     // Increment game time according to the current speed of time
     _elapsed_time += _time_speed;

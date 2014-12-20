@@ -7,34 +7,29 @@
 #include <png.h>
 #include "zip.h"
 #include "colour.h"
-#include "shape.h"
+
+#define PI 3.14159265358979323846264
+using std::vector;
 
 class Renderer {
     protected:
-        GLuint gProgram;
-        GLuint gvPosHandle;
-        GLuint gfAngleHandle;
-        GLuint gvColorHandle;
+        GLuint _gProgram;
+        GLuint _gvPosHandle;
 
-        std::string shad_vertex;
-        std::string shad_fragment;
+        std::string _shad_vertex;
+        std::string _shad_fragment;
 
         GLuint loadShader(GLenum shaderType, const char *pSource);
         GLuint createProgram(const char *pVertexSource, const char *pFragmentSource);
 
-        /* Functions called from renderObject() */
-        virtual std::vector<float> useColour(Colour *colour); 
-        virtual std::vector<float> useObjectVertices(Object *obj) = 0;
-        virtual void setShaderData(float vertices[], float colours[], float angle) = 0;
-
     public:
         virtual bool setup() = 0;
-        
+        virtual void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode) = 0;
         virtual void disableAttributes() = 0;
 
         static void clearScreen();
 
-        /* Ctor - Init Shaders */
+        /* Ctor / Dtor */
         Renderer();
         virtual ~Renderer();
 };

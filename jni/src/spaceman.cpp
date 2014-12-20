@@ -4,7 +4,7 @@
 #include "point2d.h"
 #include "log.h"
 
-Spaceman::Spaceman(float x, float y, Theme theme, Rend_player* pla_rend, Rend_box* trail_rend) : Player(x,y,50,100,pla_rend), _trail(27,trail_rend) {
+Spaceman::Spaceman(float x, float y, Theme theme, AssetRenderer* ass_rend, ObjRenderer* obj_rend) : Player(x,y,50,100,ass_rend), _trail(27,obj_rend) {
     _action = Action::FLYING;     // TODO use this after controls have been added -> _action = STILL;
     _facing = Dir::RIGHT;
     _frame = 0;           // TODO not implemented yet
@@ -55,9 +55,10 @@ void Spaceman::changeTheme(Theme &old_theme) {
     old_theme = new_theme;
 }
 
+/*
 void Spaceman::draw() {
     // Render
-    _rend->renderPlayer(this);
+    // _rend->renderPlayer(this);
 
     // Update physics attributes only if box is moving
     // if (vert_motion.getVel() != 0.0f || hori_motion.getVel() != 0.0f)
@@ -66,6 +67,8 @@ void Spaceman::draw() {
     // Attributes need to be disabled to avoid different shaders from reading in random values
     _rend->disableAttributes();
 }
+*/
+
 void Spaceman::drawTrail() {
     // Render
     _trail.render(_physics);

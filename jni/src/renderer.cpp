@@ -1,16 +1,6 @@
-/* GLM lib
-  #define GLM_FORCE_RADIANS
-  #include "glm/glm/glm.hpp"
-  #include <glm/gtc/matrix_transform.hpp>
-  #include <glm/gtc/type_ptr.hpp>
-*/
-
-#include <stdlib.h>
-#include <math.h>
 #include "renderer.h"
 #include "log.h"
 #include "jni.h"
-#include "game.h"
 
 Renderer::Renderer() {}
 Renderer::~Renderer() {}
@@ -100,13 +90,4 @@ void Renderer::clearScreen() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     checkGlError("glBlendFunc");
-}
-
-std::vector<float> Renderer::useColour(Colour *colour) {
-    float clr[] = { colour->r, colour->g, colour->b, colour->a,
-                    colour->r, colour->g, colour->b, colour->a,
-                    colour->r, colour->g, colour->b, colour->a,
-                    colour->r, colour->g, colour->b, colour->a };
-
-    return std::vector<float> (clr, clr + sizeof(clr) / sizeof(float));
 }

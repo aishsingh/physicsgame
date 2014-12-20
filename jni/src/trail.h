@@ -8,13 +8,13 @@
 #include <vector>
 #include "shape.h"
 #include "physics.h"
-#include "rend_box.h"
+#include "obj_renderer.h"
 
 class Trail {
     private:
         float _boxes_length;
 
-        Rend_box* _rend;
+        ObjRenderer* _rend;
 
         void fade(Shape &shape);
         void shrink(Shape &shape);
@@ -36,7 +36,7 @@ class Trail {
         void removeBox(int index);
 
         /* Ctor */
-        Trail(int obj_length, Rend_box* rend);
+        Trail(int obj_length, ObjRenderer* rend);
 
         /* Dtor */
         ~Trail();

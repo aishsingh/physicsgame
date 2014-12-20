@@ -21,8 +21,9 @@ class Spaceman: public Player {
 
     public:
         // Render player and trail
-        void draw();
+        // void draw();
         void drawTrail();
+
         // Do spaceman according to its current action
         void update(float x, float y, float angle, bool build_trail); 
 
@@ -36,7 +37,7 @@ class Spaceman: public Player {
         void changeTheme(Theme &old_theme);
 
         /* Ctor - Creates a new box instance and adds it to the array */
-        Spaceman(float x, float y, Theme theme, Rend_player* pla_rend, Rend_box* trail_rend);
+        Spaceman(float x, float y, Theme theme, AssetRenderer* ass_rend, ObjRenderer* obj_rend);
 };
 
 #endif /* SPACEMAN_H */

@@ -1,7 +1,10 @@
 #include <stdlib.h>    // Needed for rand()
+#include <math.h>
 #include "shape.h"
 #include "game.h"
 #include "log.h"
+
+#define PI 3.14159265358979323846264
 
 Shape::Shape(float x, float y, int index, float angle, float width, float height, Theme &theme) : Object(x,y,width,height) {
     float time = Game::getElapsedTime();
@@ -64,4 +67,62 @@ int Shape::getIndex() const {
 }
 void Shape::setIndex(const int index) {
     _index = index;
+}
+
+void Shape::draw(ObjRenderer *rend) {
+    // Render
+    rend->render(getVerticeData(), getColourData(), getRotAngle(), GL_TRIANGLE_STRIP);
+}
+
+vector<float> Shape::getVerticeData() {
+    /*  [p1]---[p3]   
+         |       |  
+         | (box) |
+         |       |
+        [p2]---[p4]  */
+
+
+    /* This is the original (x,y) that will now be transformed
+     * before being passed to the vertex shader */
+    float x = getX();
+    float y = getY();
+    float w = getWidth();
+    float h = getHeight();
+
+    // Translate to center
+    x += (w/2);
+    y += (h/2);
+
+    // Rotate
+    float objAngle = getRotAngle();
+
+    float rad_angle = objAngle*PI/180.0;
+    float rot_x =  x*cos(rad_angle) + y*sin(rad_angle);
+    float rot_y = -x*sin(rad_angle) + y*cos(rad_angle);
+
+    x = rot_x;
+    y = rot_y;
+
+    // Translate back to origin
+    x -= (w/2);
+    y -= (h/2);
+    
+    // Declare points (x,y)
+    float vec[] = { x     , y     ,
+                    x     , y + h ,
+                    x + w , y     ,
+                    x + w , y + h };
+
+    return vector<float> (vec, vec + sizeof(vec) / sizeof(float));
+}
+
+vector<float> Shape::getColourData() {
+    Colour colour = getColour();
+
+    float clr[] = { colour.r, colour.g, colour.b, colour.a,
+                    colour.r, colour.g, colour.b, colour.a,
+                    colour.r, colour.g, colour.b, colour.a,
+                    colour.r, colour.g, colour.b, colour.a };
+
+    return vector<float> (clr, clr + sizeof(clr) / sizeof(float));
 }

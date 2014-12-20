@@ -4,15 +4,14 @@
 #include <vector>
 #include "zip.h"
 #include "physics.h"
-// #include "textures.h"
 #include "player.h"
-#include "rend_player.h"
-#include "rend_box.h"
-#include "rend_UI.h"
+#include "ui.h"
+#include "asset_renderer.h"
+#include "obj_renderer.h"
+#include "screen_renderer.h"
 
 class Game {
     private:
-        // Textures textures;
         static int _screen_width;
         static int _screen_height;
 
@@ -27,12 +26,13 @@ class Game {
 
         // All players that are in the game
         // player[0] is the user
-        std::vector<Player*> _players;
+        vector<Player*> _players;
 
+        UI screen_ui;
         /* Renderers */
-        Rend_player _pla_rend;
-        Rend_box _box_rend;
-        Rend_UI _UI_rend;
+        AssetRenderer _ass_rend;
+        ObjRenderer _obj_rend;
+        ScreenRenderer _scr_rend;
 
         /* All fonts, gfx, audio will is loaded here */
         void loadResources();

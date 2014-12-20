@@ -1,14 +1,14 @@
-#ifndef REND_PLAYER_H
-#define REND_PLAYER_H
+#ifndef ASSET_RENDERER_H
+#define ASSET_RENDERER_H
 
 #include <GLES2/gl2.h>
 #include "renderer.h"
 
-class Player;
-
-class Rend_player: public Renderer {
+class AssetRenderer: public Renderer {
     private:
-        GLuint gsTexHandle;
+        GLuint _gsTexHandle;
+        GLuint _gfAngleHandle;
+        GLuint _gvColorHandle;
 
         // PNG loading
         static void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
@@ -18,17 +18,13 @@ class Rend_player: public Renderer {
         GLuint tex;
         GLuint createSimpleTexture2D(GLuint _textureid, GLubyte* pixels, int width, int height, int channels);
 
-        std::vector<float> useObjectVertices(Object *obj);
-        std::vector<float> useColour(Colour *colour); 
-        void setShaderData(float vertices[], float colours[], float angle);
-
     public:
-        void renderPlayer(Player *pla);
-        void disableAttributes();
         bool setup();
+        void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);
+        void disableAttributes();
 
         /* Ctor - Init Shaders */
-        Rend_player();
+        AssetRenderer();
 };
 
-#endif /* REND_PLAYER_H */
+#endif /* ASSET_RENDERER_H */

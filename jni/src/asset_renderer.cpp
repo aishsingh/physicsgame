@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <math.h>
-#include "rend_player.h"
+#include "asset_renderer.h"
 #include "log.h"
 #include "game.h"
 
@@ -8,8 +8,8 @@
 #define TEXTURE_LOAD_ERROR 0
 
 
-Rend_player::Rend_player() {
-    shad_vertex =
+AssetRenderer::AssetRenderer() {
+    _shad_vertex =
         "attribute vec2 vPos;\n"
         "attribute vec4 vColor;\n"
         "attribute float fAngle;\n"
@@ -30,7 +30,7 @@ Rend_player::Rend_player() {
         "  vFragColor = vColor;\n"
         "}\n";
 
-    shad_fragment = 
+    _shad_fragment = 
         "precision mediump float;\n"
         "varying vec4 vFragColor;\n"
 
@@ -74,30 +74,30 @@ Rend_player::Rend_player() {
         "}\n";
 */
 
-bool Rend_player::setup() {
+bool AssetRenderer::setup() {
     int screen_w = Game::getScreenWidth();
     int screen_h = Game::getScreenHeight();
-    gProgram = createProgram(shad_vertex.c_str(), shad_fragment.c_str());
-    if (!gProgram) {
+    _gProgram = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());
+    if (!_gProgram) {
         LOGE("Could not create program.");
         return false;
     }
-    gvPosHandle = glGetAttribLocation(gProgram, "vPos");
+    _gvPosHandle = glGetAttribLocation(_gProgram, "vPos");
     checkGlError("glGetAttribLocation(vPos)");
 
-    gvColorHandle = glGetAttribLocation(gProgram, "vColor");
+    _gvColorHandle = glGetAttribLocation(_gProgram, "vColor");
     checkGlError("glGetAttribLocation(vColor)");
 
-    gfAngleHandle = glGetAttribLocation(gProgram, "fAngle");
+    _gfAngleHandle = glGetAttribLocation(_gProgram, "fAngle");
     checkGlError("glGetAttribLocation(fAngle)");
 
-    GLuint gmProjHandle = glGetUniformLocation(gProgram, "mProj");
+    GLuint gmProjHandle = glGetUniformLocation(_gProgram, "mProj");
     checkGlError("glGetUniformLocation(mProj)");
 
-    GLuint gmModelHandle = glGetUniformLocation(gProgram, "mModel");
+    GLuint gmModelHandle = glGetUniformLocation(_gProgram, "mModel");
     checkGlError("glGetUniformLocation(mModel)");
 
-    gsTexHandle = glGetUniformLocation(gProgram, "sTexture");
+    _gsTexHandle = glGetUniformLocation(_gProgram, "sTexture");
     checkGlError("glGetUniformLocation(sTexture)");
 
     /* Projection Matrix */
@@ -118,7 +118,7 @@ bool Rend_player::setup() {
      * glUseProgram() needs to be called before you setup a uniform 
      * but not needed before glGetUniformLocation() 
      * http://www.opengl.org/wiki/GLSL_:_common_mistakes */
-    glUseProgram(gProgram);
+    glUseProgram(_gProgram);
     checkGlError("glUseProgram");
 
     glUniformMatrix4fv(gmProjHandle, 1, GL_FALSE, &proj[0]);
@@ -171,7 +171,7 @@ bool Rend_player::setup() {
     return true;
 }
 
-// void Rend_player::renderFrame() {
+// void AssetRenderer::renderFrame() {
 //     float bg = 0.0f;
 //     glClearColor(bg, bg, bg, 1.0f);
 //     checkGlError("glClearColor");
@@ -227,115 +227,35 @@ bool Rend_player::setup() {
 // }
 //
 
-void Rend_player::renderPlayer(Player *pla) {
-    // Positioning
-    std::vector<float> plaVertices = useObjectVertices(pla);
-
-    // Colours
-    Colour colour = Colour(0.0f, 0.0f, 1.0f, 1.0f);
-    std::vector<float> plaColours = useColour(&colour);
-
-    // Rotate
-    float plaAngle = pla->getRotAngle();
-
-    // Pass values to shader
-    setShaderData(&plaVertices[0], &plaColours[0], plaAngle);
-
-    /* Set base value (bottom of the player after rotation)
-     * These calculations ensure that the base pos is the same as it would be after it went through the vshader.
-     * The vshader rotates the pos, so the same rotation is applyed here */
-    Point2D afterRot((plaVertices[2] + plaVertices[6])/2, (plaVertices[3] + plaVertices[7])/2);
-    float rad_angle = plaAngle*PI/180.0;
-    Point2D pos;
-    pos.setX(afterRot.getX()*cos(rad_angle) - afterRot.getY()*sin(rad_angle));
-    pos.setY(afterRot.getY()*cos(rad_angle) + afterRot.getX()*sin(rad_angle));
-    pla->setBasePoint(pos);
-}
-
-std::vector<float> Rend_player::useObjectVertices(Object *obj) {
-    /*  [p1]----[p3]   
-         |        |  
-         |        |
-         |        |
-         |(player)|
-         |        |
-         |        |
-         |        |
-        [p2]----[p4]  */
-
-
-    /* This is the original (x,y) that will now be transformed
-     * before being passed to the vertex shader */
-    float x = obj->getX();
-    float y = obj->getY();
-    float w = obj->getWidth();
-    float h = obj->getHeight();
-
-    // Translate to center
-    x += (w/2);
-    y += (h/2);
-
-    // Rotate
-    float objAngle = obj->getRotAngle();
-
-    float rad_angle = objAngle*PI/180.0;
-    float rot_x =  x*cos(rad_angle) + y*sin(rad_angle);
-    float rot_y = -x*sin(rad_angle) + y*cos(rad_angle);
-
-    x = rot_x;
-    y = rot_y;
-
-    // Translate back to origin
-    x -= (w/2);
-    y -= (h/2);
-
-    // Declare points (x,y)
-    float vec[] = { x     , y     ,
-                    x     , y + h ,
-                    x + w , y     ,
-                    x + w , y + h };
-
-    return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
-}
-
-std::vector<float> Rend_player::useColour(Colour *colour) {
-    float clr[] = { 0.8f     , 0.2f     , 0.3f     , colour->a,
-                    colour->r, colour->g, colour->b, colour->a,
-                    0.8f     , 0.2f     , 0.3f     , colour->a,
-                    colour->r, colour->g, colour->b, colour->a};
-
-    return std::vector<float> (clr, clr + sizeof(clr) / sizeof(float));
-}
-
-void Rend_player::setShaderData(float vertices[], float colours[], float angle) {
+void AssetRenderer::render(vector<float> vertices, vector<float> colours, float angle, GLenum mode) {
     // Change renderer
-    glUseProgram(gProgram);
+    glUseProgram(_gProgram);
     checkGlError("glUseProgram");
 
-    glVertexAttribPointer(gvPosHandle, 2, GL_FLOAT, GL_FALSE, 0, vertices);
-    glVertexAttribPointer(gvColorHandle, 4, GL_FLOAT, GL_FALSE, 0, colours);
-    glVertexAttrib1f(gfAngleHandle, angle);
+    glVertexAttribPointer(_gvPosHandle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
+    glVertexAttribPointer(_gvColorHandle, 4, GL_FLOAT, GL_FALSE, 0, &colours[0]);
+    glVertexAttrib1f(_gfAngleHandle, angle);
     checkGlError("glVertexAttrib");
 
-    glEnableVertexAttribArray(gvPosHandle);
-    glEnableVertexAttribArray(gvColorHandle);
+    glEnableVertexAttribArray(_gvPosHandle);
+    glEnableVertexAttribArray(_gvColorHandle);
     checkGlError("glEnableVertexAttribArray");
 
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    glDrawArrays(mode, 0, vertices.size()/2);
     checkGlError("player glDrawArrays");
 }
 
-void Rend_player::disableAttributes() {
-    glDisableVertexAttribArray(gvPosHandle);
-    glDisableVertexAttribArray(gvColorHandle);
+void AssetRenderer::disableAttributes() {
+    glDisableVertexAttribArray(_gvPosHandle);
+    glDisableVertexAttribArray(_gvColorHandle);
 }
 
 //----------------
 zip_file* file = NULL;
-void Rend_player::png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length) {
+void AssetRenderer::png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length) {
     zip_fread(file, data, length);
 }
-GLubyte* Rend_player::getBytesFromPNG(const char* filename, zip *APKArchive, int &width, int &height) {
+GLubyte* AssetRenderer::getBytesFromPNG(const char* filename, zip *APKArchive, int &width, int &height) {
     file = zip_fopen(APKArchive, filename, 0);
     if (!file) {
         LOGE("Error opening %s from APK", filename);
@@ -393,7 +313,7 @@ GLubyte* Rend_player::getBytesFromPNG(const char* filename, zip *APKArchive, int
 
     //init png reading
     //png_init_io(png_ptr, fp);
-    png_set_read_fn(png_ptr, NULL, Rend_player::png_zip_read);
+    png_set_read_fn(png_ptr, NULL, AssetRenderer::png_zip_read);
 
     //let libpng know you already read the first 8 bytes
     png_set_sig_bytes(png_ptr, 8);
@@ -464,7 +384,7 @@ GLubyte* Rend_player::getBytesFromPNG(const char* filename, zip *APKArchive, int
     return image_data;
 }
 
-GLuint Rend_player::createSimpleTexture2D(GLuint _textureid, GLubyte* pixels, int width, int height, int channels) {
+GLuint AssetRenderer::createSimpleTexture2D(GLuint _textureid, GLubyte* pixels, int width, int height, int channels) {
 
     GLenum format;
     switch (channels) {
