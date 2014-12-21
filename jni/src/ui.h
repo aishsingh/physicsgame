@@ -14,6 +14,7 @@ class UI {
 
     public:
         void draw(ScreenRenderer *rend);
+        float getJoystickAngle(int x, int y);
 
         /* Ctor */
         UI();

@@ -6,11 +6,10 @@
 
 #define FADE_DEC 0.02f
 #define SHRINK_DEC 1.6f
-#define OUT_ShapesCount true
+#define OUT_ShapesCount false
 
-Trail::Trail(int obj_length, ObjRenderer* rend) {
+Trail::Trail(int obj_length) {
     _boxes_length = obj_length;
-    _rend = rend;
 }
 
 Trail::~Trail() {
@@ -33,7 +32,7 @@ void Trail::shrink(Shape &shape) {
         shape.setLength(shape.getWidth() - (SHRINK_DEC*Game::getTimeSpeed())); 
 }
 
-void Trail::render(PhysicsEngine &physics) {
+void Trail::draw(ObjRenderer* rend, PhysicsEngine &physics) {
     // Draw every shape in shapes vector
     for (int i=0; i<(int)shapes.size(); i++) {
         // Effects
@@ -42,7 +41,7 @@ void Trail::render(PhysicsEngine &physics) {
             fade(shapes.at(i));
 
         // Send shape to renderer
-        shapes.at(i).draw(_rend);
+        shapes.at(i).draw(rend);
 
         // Update physics attributes only if box is moving
         if (shapes.at(i).vert_motion.getVel() != 0.0f || shapes.at(i).hori_motion.getVel() != 0.0f)
@@ -55,10 +54,7 @@ void Trail::render(PhysicsEngine &physics) {
                 || shapes.at(i).getWidth() < SHRINK_DEC*Game::getTimeSpeed()) {
             removeBox(shapes.at(i).getIndex());
         }
-
     }
-
-    _rend->disableAttributes();
 }
 
 void Trail::buildTrail(float x, float y, float rot_angle, Theme theme, PhysicsEngine &physics) {

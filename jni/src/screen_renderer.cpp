@@ -50,14 +50,6 @@ bool ScreenRenderer::setup() {
                        0.0f,          0.0f,          0.0f, 0.0f,
                       -1.0f,          1.0f,          0.0f, 1.0f };
 
-    /* Model Matrix */
-    // Identity Matrix
-    GLfloat model[] = { 1.0f, 0.0f, 0.0f, 0.0f, 
-                        0.0f, 1.0f, 0.0f, 0.0f, 
-                        0.0f, 0.0f, 1.0f, 0.0f, 
-                        0.0f, 0.0f, 0.0f, 1.0f };
-
-
     // Pass uniforms to shader
     /* VERY IMPORTANT
      * glUseProgram() needs to be called before you setup a uniform 

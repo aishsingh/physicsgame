@@ -25,6 +25,7 @@ LOCAL_SRC_FILES := app_glue.cpp \
 					 player.cpp \
 				   spaceman.cpp \
 					  trail.cpp \
+					 planet.cpp \
 					 motion.cpp \
 						log.cpp
 

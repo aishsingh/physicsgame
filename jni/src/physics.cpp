@@ -161,25 +161,25 @@ void PhysicsEngine::generateInitVelocity(Object &obj, float rot_angle) {
 
     // Determine velocity for both components after rotation
     float ratio = 0;
-    if (rot_angle > 0 && rot_angle <= 90) {
+    if (rot_angle >= 0 && rot_angle < 90) {
         ratio = rot_angle / 90;
 
         init_v = dominantV * (1 - ratio);
         init_h = dominantV * ratio;
     }
-    else if (rot_angle > 90 && rot_angle <= 180) {
+    else if (rot_angle >= 90 && rot_angle < 180) {
         ratio = (rot_angle - 90) / 90;
 
         init_v = -dominantV * ratio;
         init_h = dominantV * (1 - ratio);
     }
-    else if (rot_angle > 180 && rot_angle <= 270) {
+    else if (rot_angle >= 180 && rot_angle < 270) {
         ratio = (rot_angle - 180) / 90;
 
         init_v = -dominantV * (1 - ratio);
         init_h = -dominantV * ratio;
     }
-    else if (rot_angle > 270 && rot_angle <= 360) {
+    else if (rot_angle >= 270 && rot_angle < 360) {
         ratio = (rot_angle - 270) / 90;
 
         init_v = dominantV * ratio;

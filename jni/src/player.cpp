@@ -1,8 +1,7 @@
 #include <math.h>
 #include "player.h"
 
-Player::Player(float x, float y, float width, float height, AssetRenderer* rend) : Object(x,y,width,height) {
-    _rend = rend;
+Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
 }
 
 void Player::setBasePoint(Point2D point) {
@@ -66,11 +65,11 @@ std::vector<float> Player::getColourData() {
     return std::vector<float> (clr, clr + sizeof(clr) / sizeof(float));
 }
 
-void Player::draw() {
+void Player::draw(AssetRenderer* _ass_rend) {
     // Render
     vector<float> vert = getVerticeData();
     float rot_angle = getRotAngle();
-    _rend->render(vert, getColourData(), rot_angle, GL_TRIANGLE_STRIP);
+    _ass_rend->render(vert, getColourData(), rot_angle, GL_TRIANGLE_STRIP);
 
     /* Set base value (bottom of the player after rotation)
      * These calculations ensure that the base pos is the same as it would be after it went through the vshader.
@@ -81,6 +80,6 @@ void Player::draw() {
                          afterRot.getY()*cos(rad_angle) + afterRot.getX()*sin(rad_angle)));
 
     // Attributes need to be disabled to avoid different shaders from reading in random values
-    _rend->disableAttributes();
+    _ass_rend->disableAttributes();
 }
 

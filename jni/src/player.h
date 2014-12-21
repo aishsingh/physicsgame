@@ -8,6 +8,7 @@
 #include "object.h"
 #include "point2d.h"
 #include "asset_renderer.h"
+#include "obj_renderer.h"
 
 class Player: public Object {
     protected:
@@ -17,13 +18,13 @@ class Player: public Object {
             FLYING
         };
 
-        AssetRenderer* _rend;
+        Action _action;
         Point2D _base;
 
     public:
         // Render player and trail
-        virtual void draw();
-        virtual void drawTrail() = 0;
+        virtual void draw(AssetRenderer* _ass_rend);
+        virtual void drawTrail(ObjRenderer* _obj_rend) = 0;
         vector<float> getVerticeData();
         vector<float> getColourData();
 
@@ -34,7 +35,7 @@ class Player: public Object {
         void setBasePoint(Point2D point); 
 
         /* Ctor - */
-        Player(float x, float y, float width, float height, AssetRenderer* rend);
+        Player(float x, float y, float width, float height);
 };
 
 #endif /* PLAYER_H */

@@ -5,6 +5,7 @@
 #include "zip.h"
 #include "physics.h"
 #include "player.h"
+#include "planet.h"
 #include "ui.h"
 #include "asset_renderer.h"
 #include "obj_renderer.h"
@@ -22,11 +23,12 @@ class Game {
         char _package_name;
 
         // Used to set the elepsed time since last update
-        float _previousTrailUpdate;
+        float _previous_trail_update;
 
         // All players that are in the game
         // player[0] is the user
         vector<Player*> _players;
+        vector<Planet*> _planets;
 
         UI screen_ui;
         /* Renderers */

@@ -14,8 +14,6 @@ class Trail {
     private:
         float _boxes_length;
 
-        ObjRenderer* _rend;
-
         void fade(Shape &shape);
         void shrink(Shape &shape);
 
@@ -24,7 +22,7 @@ class Trail {
         std::vector<Shape> shapes;
 
         /* Draw the shapes to the renderer */
-        void render(PhysicsEngine &physics);
+        void draw(ObjRenderer* rend, PhysicsEngine &physics);
 
         /* Creates a new box with the given values
            1. Initializes a bew instanse  */
@@ -36,7 +34,7 @@ class Trail {
         void removeBox(int index);
 
         /* Ctor */
-        Trail(int obj_length, ObjRenderer* rend);
+        Trail(int obj_length);
 
         /* Dtor */
         ~Trail();

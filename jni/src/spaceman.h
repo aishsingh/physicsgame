@@ -8,12 +8,12 @@
 #include "player.h"
 #include "trail.h"
 #include "motion.h"
+#include "theme.h"
 #include "direction.h"
 
 class Spaceman: public Player {
     private:
         PhysicsEngine _physics;
-        Action _action;
         Dir _facing;
         int _frame;
         Theme _colour_theme; // Changes the colour scheme of the boxes and other UI
@@ -21,8 +21,7 @@ class Spaceman: public Player {
 
     public:
         // Render player and trail
-        // void draw();
-        void drawTrail();
+        void drawTrail(ObjRenderer* _obj_rend);
 
         // Do spaceman according to its current action
         void update(float x, float y, float angle, bool build_trail); 
@@ -37,7 +36,7 @@ class Spaceman: public Player {
         void changeTheme(Theme &old_theme);
 
         /* Ctor - Creates a new box instance and adds it to the array */
-        Spaceman(float x, float y, Theme theme, AssetRenderer* ass_rend, ObjRenderer* obj_rend);
+        Spaceman(float x, float y, Theme theme);
 };
 
 #endif /* SPACEMAN_H */
