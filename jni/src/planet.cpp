@@ -5,6 +5,11 @@ Planet::Planet(float x, float y, float d) : Object(x,y,d,d) {
     _colour = Colour(0.647059f, 0.164706f, 0.164706f, 1.0f);
     _action = Action::STILL;
     setRotAngle(0.0f);
+    _gravity = 0.98f; // TODO should be determined from width
+}
+
+float Planet::getGravity() {
+    return _gravity;
 }
 
 void Planet::draw(ObjRenderer *rend) {

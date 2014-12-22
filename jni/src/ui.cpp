@@ -1,7 +1,6 @@
 #include <math.h>
 #include "ui.h"
 #include "game.h"
-#include "log.h"
 
 UI::UI() {}
 
@@ -125,7 +124,6 @@ float UI::getJoystickAngle(int x, int y) {
         }
 
         angle += atanf(O/A) * 180/PI;
-        LOGI("angle %.2f", angle);
     }
     return angle;
 }

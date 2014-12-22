@@ -66,7 +66,10 @@ void Trail::buildTrail(float x, float y, float rot_angle, Theme theme, PhysicsEn
     Box box(x, y, (int)shapes.size(), rot_angle, _boxes_length, theme);
 
     // Apply initial velocity using player rotation
-    physics.generateInitVelocity(box, rot_angle);
+    physics.genInitVelocity(box, rot_angle);
+
+    box.vert_motion.setAccel(0);
+    box.hori_motion.setAccel(0);
 
     /* Increase size of array and check for exceptions */
     try {

@@ -125,6 +125,7 @@ void Game::handleInput(float x, float y) {
 
     for (int i=1; i<=TRAIL_PART_PER_UPDATE; i++) {
         for(int p=0; p<(int)_players.size(); p++) {
+            // TODO make player rotate func coz x,y cord dont matter right now
             if (js1Angle != 0)
                 _players.at(p)->update(x, y, -(360-js1Angle), build_trail);
             else

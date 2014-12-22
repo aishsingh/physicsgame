@@ -18,6 +18,7 @@ class Planet: public Object {
 
         Action _action;
         Colour _colour;
+        float _gravity;   
 
         vector<float> getVerticeData();
         vector<float> getColourData(int vertex_count);
@@ -27,6 +28,9 @@ class Planet: public Object {
         virtual void draw(ObjRenderer *rend);
         // Update player based on its current action
         virtual void update(); 
+
+        /* Getters / Setters */
+        float getGravity();
 
         /* Ctor - */
         Planet(float x, float y, float d);
