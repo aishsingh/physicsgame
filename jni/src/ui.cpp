@@ -1,6 +1,7 @@
 #include <math.h>
 #include "ui.h"
 #include "game.h"
+#include "physics.h"
 
 UI::UI() {}
 
@@ -67,63 +68,5 @@ vector<float> UI::getColourData() {
 }
 
 float UI::getJoystickAngle(int x, int y) {
-    float angle = 0;
-
-    int js1_x = 150;
-    int js1_y = Game::getScreenHeight() - 200;
-    int js1_length = 200;
-    if (x >= js1_x && x <= js1_x + js1_length && 
-            y >= js1_y && y <= js1_y + js1_length) {
-
-        /* Quadrants
-             ---      
-            1   4
-          |   +   |   
-            2   3
-             ---   */
-
-        float A = 0,
-              O = 0;
-
-        float origin_x = js1_x + (js1_length/2);
-        float origin_y = js1_y + (js1_length/2);
-        float length_from_origin_x = 0;
-        float length_from_origin_y = 0;
-        if (x >= origin_x)
-            length_from_origin_x = origin_x - x;
-        else
-            length_from_origin_x = x - origin_x;
-        if (y >= origin_y)
-            length_from_origin_y = origin_y - y;
-        else
-            length_from_origin_y = y - origin_y;
-
-        // Find out the quadrants
-        if (x <= js1_x + (js1_length/2) && y < js1_y + (js1_length/2)) {
-            // 1st Quad
-            A += length_from_origin_y;
-            O += length_from_origin_x;
-        }
-        else if (x < js1_x + (js1_length/2) && y >= js1_y + (js1_length/2)) {
-            // 2st Quad
-            angle += 90;
-            A += length_from_origin_x;
-            O += length_from_origin_y;
-        }
-        else if (x >= js1_x + (js1_length/2) && y > js1_y + (js1_length/2)) {
-            // 3st Quad
-            angle += 180;
-            A += length_from_origin_y;
-            O += length_from_origin_x;
-        }
-        else if (x > js1_x + (js1_length/2) && y <= js1_y + (js1_length/2)) {
-            // 4st Quad
-            angle += 270;
-            A += length_from_origin_x;
-            O += length_from_origin_y;
-        }
-
-        angle += atanf(O/A) * 180/PI;
-    }
-    return angle;
+    return PhysicsEngine::getAngleOfPtFromObjCentre(x, y, 150, Game::getScreenHeight() - 200, 200);
 }

@@ -22,8 +22,8 @@ Game::Game() : _finished(false) {
     // Setup Player
     try {
         _players.push_back(new Spaceman(300, 310, Theme::GRAY));
-        _players.push_back(new Spaceman(0,     0, Theme::RAINBOW));
-        _players.push_back(new Spaceman(850, 310, Theme::GRAY));
+        // _players.push_back(new Spaceman(0,     0, Theme::RAINBOW));
+        // _players.push_back(new Spaceman(850, 310, Theme::GRAY));
     }
     catch (std::exception &e) {
         LOGE("Error creating player: %s", e.what());
@@ -31,7 +31,8 @@ Game::Game() : _finished(false) {
 
     // Setup planets
     try {
-        _planets.push_back(new Planet(0, 0, 400));
+        _planets.push_back(new Planet(0, 0, 400, 10));
+        _planets.push_back(new Planet(0, 0, 200, 10));
     }
     catch (std::exception &e) {
         LOGE("Error creating planet: %s", e.what());
@@ -66,16 +67,21 @@ void Game::setup(int w, int h, char &package_name) {
     loadResources();
 
     // Put player in the center now that width and height are determined
-    _players.at(1)->setX((w/2) - 25);
-    _players.at(1)->setY((h/2) - 50);
+    _players.at(0)->setX((w/2) - 25);
+    _players.at(0)->setY((h/2) - 50);
 
-    _planets.at(0)->setX((w/2));
-    _planets.at(0)->setY(h);
+    _planets.at(0)->setX((w/2) + 50);
+    _planets.at(0)->setY((h/2) - 150);
+
+    _planets.at(1)->setX((w/2) - 350);
+    _planets.at(1)->setY((h/2) - 150);
 }
 
 void Game::run() {
     /* MAIN GAME LOOP */
     Renderer::clearScreen();
+
+    applyGravity();
 
     // Render player trails
     for(int i=0; i<(int)_players.size(); i++)
@@ -111,27 +117,36 @@ void Game::loadResources() {
 }
 
 void Game::handleInput(float x, float y) {
+
     // Handle joystick input
     float js1Angle = screen_ui.getJoystickAngle(x, y);
+
+    // Always rotate players whenever there is new input
+    for(int p=0; p<(int)_players.size(); p++) {
+        if (js1Angle != 0)
+            _players.at(p)->setRotAngle(-(360-js1Angle));
+        // _players.at(p)->setX(x);
+        // _players.at(p)->setY(y);
+    }
 
     // Only build player trail after time interval
     float currentUpdate = getElapsedTime();
     float elapsedSinceUpdate = currentUpdate - _previous_trail_update;
-    bool build_trail = false;
     if (elapsedSinceUpdate >= TRAIL_UPDATE_INTERVAL) {
-        build_trail = true;
+        // build all trails 
+        for (int i=1; i<=TRAIL_PART_PER_UPDATE; i++) {
+            for(int p=0; p<(int)_players.size(); p++)
+                _players.at(p)->update();
+        }
+
+        // update values for next input
         _previous_trail_update = currentUpdate;
     }
+}
 
-    for (int i=1; i<=TRAIL_PART_PER_UPDATE; i++) {
-        for(int p=0; p<(int)_players.size(); p++) {
-            // TODO make player rotate func coz x,y cord dont matter right now
-            if (js1Angle != 0)
-                _players.at(p)->update(x, y, -(360-js1Angle), build_trail);
-            else
-                _players.at(p)->update(x, y, _players.at(p)->getRotAngle(), build_trail);
-        }
-    }
+void Game::applyGravity() {
+    for (int i=0; i<(int)_players.size(); i++)
+        _players.at(i)->applyGravity(&_planets);
 }
 
 //---

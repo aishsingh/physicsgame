@@ -9,6 +9,7 @@
 #include "point2d.h"
 #include "asset_renderer.h"
 #include "obj_renderer.h"
+#include "planet.h"
 
 class Player: public Object {
     protected:
@@ -29,7 +30,9 @@ class Player: public Object {
         vector<float> getColourData();
 
         // Update player based on its current action
-        virtual void update(float x, float y, float angle, bool build_trail) = 0; 
+        virtual void update() = 0; 
+
+        virtual void applyGravity(vector<Planet*> *g_objs);
 
         // Set current pos of the bottom of the player after rotations
         void setBasePoint(Point2D point); 

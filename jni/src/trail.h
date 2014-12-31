@@ -22,11 +22,13 @@ class Trail {
         std::vector<Shape> shapes;
 
         /* Draw the shapes to the renderer */
-        void draw(ObjRenderer* rend, PhysicsEngine &physics);
+        void draw(ObjRenderer* rend);
 
         /* Creates a new box with the given values
            1. Initializes a bew instanse  */
-        void buildTrail(float x, float y, float rot_angle, Theme theme, PhysicsEngine &physics);
+        void buildTrail(float x, float y, float rot_angle, Theme theme);
+
+        void applyGravity(vector<Planet*> *g_objs);
 
         /* Removes the box at the given index
            1. Shifts boxes that are right of the index one pos left 

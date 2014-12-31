@@ -13,7 +13,6 @@
 
 class Spaceman: public Player {
     private:
-        PhysicsEngine _physics;
         Dir _facing;
         int _frame;
         Theme _colour_theme; // Changes the colour scheme of the boxes and other UI
@@ -21,10 +20,12 @@ class Spaceman: public Player {
 
     public:
         // Render player and trail
-        void drawTrail(ObjRenderer* _obj_rend);
+        void drawTrail(ObjRenderer *_obj_rend);
 
         // Do spaceman according to its current action
-        void update(float x, float y, float angle, bool build_trail); 
+        void update();
+
+        void applyGravity(vector<Planet*> *g_objs);
 
         /* Getters / Setters */
         Action getAction();

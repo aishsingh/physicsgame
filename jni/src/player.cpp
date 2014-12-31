@@ -1,5 +1,6 @@
 #include <math.h>
 #include "player.h"
+#include "physics.h"
 
 Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
 }
@@ -83,3 +84,6 @@ void Player::draw(AssetRenderer* _ass_rend) {
     _ass_rend->disableAttributes();
 }
 
+void Player::applyGravity(vector<Planet*> *g_objs) {
+    PhysicsEngine::applyGravityTo(*this, g_objs);
+}

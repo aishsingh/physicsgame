@@ -5,7 +5,7 @@
 #include "math.h"
 
 #define FADE_DEC 0.02f
-#define SHRINK_DEC 1.6f
+#define SHRINK_DEC 0.4f
 #define OUT_ShapesCount false
 
 Trail::Trail(int obj_length) {
@@ -32,7 +32,7 @@ void Trail::shrink(Shape &shape) {
         shape.setLength(shape.getWidth() - (SHRINK_DEC*Game::getTimeSpeed())); 
 }
 
-void Trail::draw(ObjRenderer* rend, PhysicsEngine &physics) {
+void Trail::draw(ObjRenderer* rend) {
     // Draw every shape in shapes vector
     for (int i=0; i<(int)shapes.size(); i++) {
         // Effects
@@ -45,7 +45,7 @@ void Trail::draw(ObjRenderer* rend, PhysicsEngine &physics) {
 
         // Update physics attributes only if box is moving
         if (shapes.at(i).vert_motion.getVel() != 0.0f || shapes.at(i).hori_motion.getVel() != 0.0f)
-            physics.updatePhysics(shapes.at(i), Game::getElapsedTime(), Game::getScreenWidth(), Game::getScreenHeight());
+            PhysicsEngine::updatePhysics(shapes.at(i));
 
 
         // Remove shape if no longer needed
@@ -57,7 +57,7 @@ void Trail::draw(ObjRenderer* rend, PhysicsEngine &physics) {
     }
 }
 
-void Trail::buildTrail(float x, float y, float rot_angle, Theme theme, PhysicsEngine &physics) {
+void Trail::buildTrail(float x, float y, float rot_angle, Theme theme) {
     // Center position
     x -= _boxes_length/2;
     y -= _boxes_length/2;
@@ -66,10 +66,10 @@ void Trail::buildTrail(float x, float y, float rot_angle, Theme theme, PhysicsEn
     Box box(x, y, (int)shapes.size(), rot_angle, _boxes_length, theme);
 
     // Apply initial velocity using player rotation
-    physics.genInitVelocity(box, rot_angle);
+    PhysicsEngine::genInitVelocity(box, rot_angle);
 
-    box.vert_motion.setAccel(0);
-    box.hori_motion.setAccel(0);
+    // box.vert_motion.setAccel(-10);
+    // box.hori_motion.setAccel(-10); // lop left
 
     /* Increase size of array and check for exceptions */
     try {
@@ -82,7 +82,6 @@ void Trail::buildTrail(float x, float y, float rot_angle, Theme theme, PhysicsEn
     if (OUT_ShapesCount)
         LOGI("%i Shapes (+)", (int)shapes.size());
 }
-
 
 void Trail::removeBox(int index) {
     // Shift box positions
@@ -103,4 +102,9 @@ void Trail::removeBox(int index) {
 
     if (OUT_ShapesCount)
         LOGI("%i Shapes (-)", (int)shapes.size());
+}
+
+void Trail::applyGravity(vector<Planet*> *g_objs) {
+     for (int i=0; i<(int)shapes.size(); i++)
+         PhysicsEngine::applyGravityTo(shapes.at(i), g_objs);
 }

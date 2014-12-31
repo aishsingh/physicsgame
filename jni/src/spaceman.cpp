@@ -3,6 +3,7 @@
 #include "game.h"
 #include "point2d.h"
 #include "log.h"
+#include "physics.h"
 
 Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,50,100), _trail(27) {
     _action = Action::FLYING;     // TODO use this after controls have been added -> _action = STILL;
@@ -55,22 +56,18 @@ void Spaceman::changeTheme(Theme &old_theme) {
     old_theme = new_theme;
 }
 
-void Spaceman::drawTrail(ObjRenderer* _obj_rend) {
+void Spaceman::drawTrail(ObjRenderer *_obj_rend) {
     // Render
-    _trail.draw(_obj_rend, _physics);
+    _trail.draw(_obj_rend);
 }
 
-void Spaceman::update(float x, float y, float angle, bool build_trail) {
-    // Update player attributes
-    // setX(x - getWidth());
-    // setY(y - getHeight());
-    
-    // Rotate player from joystick
-    setRotAngle(angle);
-
-    if (build_trail) {
-        if (_action == FLYING) {
-            _trail.buildTrail(_base.getX(), _base.getY(), angle, _colour_theme, _physics);
-        }
+void Spaceman::update() {
+    if (_action == FLYING) {
+        _trail.buildTrail(_base.getX(), _base.getY(), getRotAngle(), _colour_theme);
     }
+}
+
+void Spaceman::applyGravity(vector<Planet*> *g_objs) {
+    Player::applyGravity(g_objs);
+    _trail.applyGravity(g_objs);
 }

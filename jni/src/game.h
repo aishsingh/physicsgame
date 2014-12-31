@@ -38,6 +38,8 @@ class Game {
 
         /* All fonts, gfx, audio will is loaded here */
         void loadResources();
+
+        void applyGravity();
     public:
 
         /* Setup OpenGL

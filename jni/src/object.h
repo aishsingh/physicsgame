@@ -22,6 +22,8 @@ class Object {
         void setLength(float l);
         float getRotAngle() const;
         void setRotAngle(float angle);
+        float getCentreX() const;
+        float getCentreY() const;
 
         /* Ctor */
         Object(float x, float y, float width, float height);

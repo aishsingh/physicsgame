@@ -6,13 +6,14 @@ Object::Object(float x, float y, float width, float height) {
     _y      = y;
     _width  = width;
     _height = height;
-    // _rot_angle = 0.0f;
+    _rot_angle = 0.0f;
 }
 Object::~Object() {
     _x      = 0;
     _y      = 0;
     _width  = 0;
     _height = 0;
+    _rot_angle = 0.0f;
 }
 
 float Object::getX() const {
@@ -41,5 +42,16 @@ float Object::getRotAngle() const {
     return _rot_angle;
 }
 void Object::setRotAngle(float angle) {
+    if (angle >= 360)
+        angle = 0.0f;
+
     _rot_angle = angle;
+}
+
+float Object::getCentreX() const {
+    return getX() + (getWidth()/2);
+}
+
+float Object::getCentreY() const {
+    return getY() + (getHeight()/2);
 }

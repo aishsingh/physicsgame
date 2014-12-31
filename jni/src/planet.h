@@ -19,9 +19,11 @@ class Planet: public Object {
         Action _action;
         Colour _colour;
         float _gravity;   
+        float _mass;
 
-        vector<float> getVerticeData();
+        vector<float> getVerticeData(int vertex_count, float r_offset);
         vector<float> getColourData(int vertex_count);
+        vector<float> getColourData(int vertex_count, Colour col);
 
     public:
         // Render planet
@@ -30,10 +32,10 @@ class Planet: public Object {
         virtual void update(); 
 
         /* Getters / Setters */
-        float getGravity();
+        float getMass() const;
 
         /* Ctor - */
-        Planet(float x, float y, float d);
+        Planet(float x, float y, float d, float m);
 };
 
 #endif /* PLANET_H */
