@@ -1,25 +1,18 @@
 #include "motion.h"
 
 Motion::Motion() {
-        _ct = 0.0f;
         _t = 0.0f;
         _d = 0.0f;
         _v = 0.0f;
         _a = 0.0f;
 }
 Motion::~Motion() {
-        _ct = 0.0f;
         _t = 0.0f;
         _d = 0.0f;
         _v = 0.0f;
         _a = 0.0f;
 }
-float Motion::getChangeTime() const {
-    return _ct;
-}
-void Motion::setChangeTime(float ct) {
-    _ct = ct;
-}
+
 float Motion::getTime() const {
     return _t;
 }

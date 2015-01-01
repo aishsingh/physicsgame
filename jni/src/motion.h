@@ -4,11 +4,9 @@
 class Motion {  
     private:
         // Physics attributes
-        float _ct, _t, _d, _v, _a;
+        float _t, _d, _v, _a;
     public:
         /* Getters/Setters */
-        float getChangeTime() const;
-        void setChangeTime(float t);
         float getTime() const;
         void setTime(float t);
         float getDisp() const;

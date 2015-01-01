@@ -26,7 +26,6 @@ Motion PhysicsEngine::calcMotion(const Motion &motion) {
 
     // Recalculated motion gets returned to be validated
     Motion calc;
-    calc.setChangeTime(ct);
     calc.setDisp(d);
     calc.setVel(vFinal);
     calc.setTime(tFinal);
