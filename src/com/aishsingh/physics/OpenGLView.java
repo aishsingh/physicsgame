@@ -303,7 +303,7 @@ class OpenGLView extends GLSurfaceView {
 		this.context = context;
 	}
         public void onDrawFrame(GL10 gl) {
-            OpenGLLib.step();
+            OpenGLLib.draw();
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {

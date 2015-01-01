@@ -16,7 +16,8 @@ public class OpenGLActivity extends Activity {
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         mView = new OpenGLView(getApplication());
-	setContentView(mView);
+
+        setContentView(mView);
     }
 
     @Override protected void onPause() {

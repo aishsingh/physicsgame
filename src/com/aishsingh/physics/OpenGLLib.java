@@ -11,8 +11,9 @@ public class OpenGLLib {
      * @param width the current view width
      * @param height the current view height
      */
-     public static native void init(int width, int height);
-     public static native void step();
+     public static native void init(int width, int height); 
+     public static native void draw();
      public static native void touchMove(float x, float y);
      public static native void setAppName(String pkgname);
+
 }

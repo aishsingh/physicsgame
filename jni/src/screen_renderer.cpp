@@ -24,15 +24,12 @@ ScreenRenderer::ScreenRenderer() {
         "void main() {\n"
         "  gl_FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
         "}\n";
-}
 
-bool ScreenRenderer::setup() {
     int screen_w = Game::getScreenWidth();
     int screen_h = Game::getScreenHeight();
     _gProgram = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());
     if (!_gProgram) {
         LOGE("Could not create program.");
-        return false;
     }
 
     _gvPosHandle = glGetAttribLocation(_gProgram, "vPos");
@@ -66,8 +63,6 @@ bool ScreenRenderer::setup() {
 
     glDisable(GL_DEPTH_TEST);
     checkGlError("glDisable(GL_DEPTH_TEST)");
-    LOGI("--------------------");
-    return true;
 }
 
 void ScreenRenderer::render(vector<float> vertices, vector<float> colours, float angle, GLenum mode) {

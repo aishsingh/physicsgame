@@ -9,7 +9,6 @@ class ScreenRenderer: public Renderer {
         GLuint _gvColorHandle;
 
     public:
-        bool setup();
         void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);
         void disableAttributes();
 

@@ -33,6 +33,7 @@ class Player: public Object {
         virtual void update() = 0; 
 
         virtual void applyGravity(vector<Planet*> *g_objs);
+        virtual void resetTime();
 
         // Set current pos of the bottom of the player after rotations
         void setBasePoint(Point2D point); 

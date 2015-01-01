@@ -23,7 +23,6 @@ class Renderer {
         GLuint createProgram(const char *pVertexSource, const char *pFragmentSource);
 
     public:
-        virtual bool setup() = 0;
         virtual void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode) = 0;
         virtual void disableAttributes() = 0;
 

@@ -71,3 +71,8 @@ void Spaceman::applyGravity(vector<Planet*> *g_objs) {
     Player::applyGravity(g_objs);
     _trail.applyGravity(g_objs);
 }
+
+void Spaceman::resetTime() {
+    Player::resetTime();
+    _trail.resetTime();
+}

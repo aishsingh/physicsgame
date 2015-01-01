@@ -108,3 +108,10 @@ void Trail::applyGravity(vector<Planet*> *g_objs) {
      for (int i=0; i<(int)shapes.size(); i++)
          PhysicsEngine::applyGravityTo(shapes.at(i), g_objs);
 }
+
+void Trail::resetTime() {
+    for(int i=0; i<(int)shapes.size(); i++) {
+        shapes.at(i).vert_motion.setTime(0);
+        shapes.at(i).hori_motion.setTime(0);
+    }
+}

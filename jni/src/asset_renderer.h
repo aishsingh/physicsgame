@@ -19,7 +19,6 @@ class AssetRenderer: public Renderer {
         GLuint createSimpleTexture2D(GLuint _textureid, GLubyte* pixels, int width, int height, int channels);
 
     public:
-        bool setup();
         void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);
         void disableAttributes();
 

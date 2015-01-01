@@ -32,39 +32,40 @@ class Game {
 
         UI screen_ui;
         /* Renderers */
-        AssetRenderer _ass_rend;
-        ObjRenderer _obj_rend;
-        ScreenRenderer _scr_rend;
-
-        /* All fonts, gfx, audio will is loaded here */
-        void loadResources();
+        AssetRenderer *_ass_rend;
+        ObjRenderer *_obj_rend;
+        ScreenRenderer *_scr_rend;
 
         void applyGravity();
-    public:
 
-        /* Setup OpenGL
-         - called from java */
-        void setup(int w, int h, char &package_name);
-
-        /* Main Lewp
-         - called from java */
-        void run();
-
-        /* Respond to input events 
-         - called from java */
-        void handleInput(float x, float y);
+        void resetTime();
 
         /* Load assets in the apk by extracting it with libzip
          - called from java */
         zip *APKArchive;
         void loadAPK(const char *package_name);
 
+    public:
+        /* Setup OpenGL
+         - called from java */
+        void setupGLContext(int screen_w, int screen_h);
+
+        void setupObjs();
+
+        /* Main Lewp
+         - called from java */
+        void draw();
+
+        /* Respond to input events 
+         - called from java */
+        void handleInput(float x, float y);
+
         static int getScreenWidth();
         static int getScreenHeight();
         static float getElapsedTime();
         static float getTimeSpeed();
 
-        Game();
+        Game(char &package_name);
         ~Game();
 };
 

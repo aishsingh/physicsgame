@@ -191,8 +191,6 @@ void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
                                                  g_objs->at(i)->getY() - g_radius,
                                                  g_objs->at(i)->getWidth() + (g_radius*2));
         if (rot_angle != 0) {
-            LOGI("----");
-            LOGI("angle %.2f", rot_angle);
             float init_v = 0;
             float init_h = 0;
 

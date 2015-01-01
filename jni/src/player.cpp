@@ -87,3 +87,8 @@ void Player::draw(AssetRenderer* _ass_rend) {
 void Player::applyGravity(vector<Planet*> *g_objs) {
     PhysicsEngine::applyGravityTo(*this, g_objs);
 }
+
+void Player::resetTime() {
+    vert_motion.setTime(0);
+    hori_motion.setTime(0);
+}

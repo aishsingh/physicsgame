@@ -37,7 +37,6 @@ AssetRenderer::AssetRenderer() {
         "void main() {\n"
         "  gl_FragColor = vFragColor;\n"
         "}\n";
-}
 /*
     shad_vertex =
         "attribute vec2 vPos;\n"
@@ -74,13 +73,11 @@ AssetRenderer::AssetRenderer() {
         "}\n";
 */
 
-bool AssetRenderer::setup() {
     int screen_w = Game::getScreenWidth();
     int screen_h = Game::getScreenHeight();
     _gProgram = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());
     if (!_gProgram) {
         LOGE("Could not create program.");
-        return false;
     }
     _gvPosHandle = glGetAttribLocation(_gProgram, "vPos");
     checkGlError("glGetAttribLocation(vPos)");
@@ -132,7 +129,6 @@ bool AssetRenderer::setup() {
 
     glDisable(GL_DEPTH_TEST);
     checkGlError("glDisable(GL_DEPTH_TEST)");
-    LOGI("--------------------");
     //------------------------------------------------------------------
 
     /* Enum GL_TEXTURE_2D deprecated in ES 2 
@@ -167,8 +163,6 @@ bool AssetRenderer::setup() {
 
     // delete[] &img_pixels;
     */
-
-    return true;
 }
 
 // void AssetRenderer::renderFrame() {
