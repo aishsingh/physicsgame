@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <exception>
+#include <cstring>
 
 #include "game.h"
 #include "spaceman.h"
@@ -9,11 +10,13 @@
 #define INIT_TIME_SPEED 0.4f
 #define TRAIL_UPDATE_INTERVAL 0.5f
 #define TRAIL_PART_PER_UPDATE 1
+#define OUT_OpenGL_Ver false
 
-Game::Game(char &package_name) : _finished(false), _package_name(package_name), _previous_trail_update(0) {
-    // Static vars cannot be added to the init-list so are init here
-    // _elapsed_time = 0;
-   
+Game::Game(std::string package_name) : _finished(false), _package_name(package_name), _previous_trail_update(0) {
+    LOGI("--------------------");
+    LOGI("Created game object");
+    LOGI("pkgname: %s", _package_name.c_str());
+
     // Seed random numbers using the time to improve randomness
     srand(time(NULL));
 
@@ -30,7 +33,6 @@ Game::~Game() {
         vector<Planet*>().swap(_planets);
 }
 
-//----
 void Game::resetTime() {
     _elapsed_time = 0;
     _previous_trail_update = 0;
@@ -44,23 +46,24 @@ void Game::setupGLContext(int screen_w, int screen_h) {
     resetTime();
 
     // Log OpenGL details
-    LOGI("Loading OpenGL context");
+    LOGI("loading OpenGL context");
+    LOGI("w: %d, h: %d, pkg: %s", screen_w, screen_h, _package_name.c_str());
 
-    LOGI("--------------------");
-    LOGI("w: %d, h: %d, pkg: %s)", screen_w, screen_h, &_package_name);
-
-    /* Show device OpenGL details
-    printGLString("Version", GL_VERSION);
-    printGLString("Vendor", GL_VENDOR);
-    printGLString("Renderer", GL_RENDERER);
-    printGLString("Extensions", GL_EXTENSIONS);
-    */
-
-    _screen_width = screen_w;
-    _screen_height = screen_h;
+    // Show OpenGL details of device
+    if (OUT_OpenGL_Ver) {
+        printGLString("Version", GL_VERSION);
+        printGLString("Vendor", GL_VENDOR);
+        printGLString("Renderer", GL_RENDERER);
+        printGLString("Extensions", GL_EXTENSIONS);
+    }
 
     // Unzip apk using libzip
-    loadAPK(&_package_name);
+    LOGI("unziping assets");
+    loadAPK(_package_name.c_str());
+
+    // Update device size
+    _screen_width = screen_w;
+    _screen_height = screen_h;
 
     // Load textures here
     // TODO

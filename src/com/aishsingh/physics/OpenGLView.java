@@ -298,6 +298,7 @@ class OpenGLView extends GLSurfaceView {
 
     private static class Renderer implements GLSurfaceView.Renderer {
 	private Context context;
+    private boolean packageNameSet = false;
 
 	public Renderer (Context context) {
 		this.context = context;
@@ -307,7 +308,8 @@ class OpenGLView extends GLSurfaceView {
         }
 
         public void onSurfaceChanged(GL10 gl, int width, int height) {
-            OpenGLLib.init(width, height);
+            if (packageNameSet)
+                OpenGLLib.init(width, height);
         }
 
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
@@ -323,6 +325,7 @@ class OpenGLView extends GLSurfaceView {
             }
             apkFilePath = appInfo.sourceDir;
             OpenGLLib.setAppName( apkFilePath );
+            packageNameSet = true;
         }
     }
 }

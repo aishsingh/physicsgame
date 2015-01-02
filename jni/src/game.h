@@ -20,7 +20,7 @@ class Game {
         static float _time_speed;
 
         bool _finished;
-        char _package_name;
+        std::string _package_name;
 
         // Used to set the elepsed time since last update
         float _previous_trail_update;
@@ -50,6 +50,7 @@ class Game {
          - called from java */
         void setupGLContext(int screen_w, int screen_h);
 
+        /* Setup game objects */
         void setupObjs();
 
         /* Main Lewp
@@ -65,7 +66,7 @@ class Game {
         static float getElapsedTime();
         static float getTimeSpeed();
 
-        Game(char &package_name);
+        Game(std::string package_name);
         ~Game();
 };
 
