@@ -68,6 +68,7 @@ void Game::setupGLContext(int screen_w, int screen_h) {
     // Load textures here
     // TODO
 
+    // Setup renderers
     if (_ass_rend != NULL) {
         delete _ass_rend;
         _ass_rend = NULL;
@@ -80,7 +81,6 @@ void Game::setupGLContext(int screen_w, int screen_h) {
         delete _scr_rend;
         _scr_rend = NULL;
     }
-    // Setup renderers
     _ass_rend = new AssetRenderer();
     _obj_rend = new ObjRenderer();
     _scr_rend = new ScreenRenderer();
@@ -89,6 +89,9 @@ void Game::setupGLContext(int screen_w, int screen_h) {
 void Game::setupObjs() {
     float w = getScreenWidth();
     float h = getScreenHeight();
+
+    // Setup UI (Joystick)
+    _screen_ui = UI();
 
     // Setup Player
     try {
@@ -131,37 +134,39 @@ void Game::draw() {
     _ass_rend->disableAttributes();
 
     // Render UI
-    screen_ui.draw(_scr_rend);
+    _screen_ui.draw(_scr_rend);
 
     // Increment game time according to the current speed of time
     _elapsed_time += _time_speed;
 }
 
 void Game::handleInput(float x, float y) {
-
     // Handle joystick input
-    float js1Angle = screen_ui.getJoystickAngle(x, y);
+    float js1Angle = _screen_ui.getJoystickAngle(x, y);
 
-    // Always rotate players whenever there is new input
-    for(int p=0; p<(int)_players.size(); p++) {
-        if (js1Angle != 0)
+    // Make sure pt was inside the joystick area (-1 is returned if this is the case)
+    if (js1Angle != -1) {
+        // Always rotate players whenever there is new input
+        for(int p=0; p<(int)_players.size(); p++) {
             _players.at(p)->setRotAngle(-(360-js1Angle));
-        // _players.at(p)->setX(x);
-        // _players.at(p)->setY(y);
-    }
-
-    // Only build player trail after time interval
-    float currentUpdate = getElapsedTime();
-    float elapsedSinceUpdate = currentUpdate - _previous_trail_update;
-    if (elapsedSinceUpdate >= TRAIL_UPDATE_INTERVAL) {
-        // build all trails 
-        for (int i=1; i<=TRAIL_PART_PER_UPDATE; i++) {
-            for(int p=0; p<(int)_players.size(); p++)
-                _players.at(p)->update();
+            // _players.at(p)->setX(x);
+            // _players.at(p)->setY(y);
         }
+    }
+    else {
+        // Only build player trail after time interval
+        float currentUpdate = getElapsedTime();
+        float elapsedSinceUpdate = currentUpdate - _previous_trail_update;
+        if (elapsedSinceUpdate >= TRAIL_UPDATE_INTERVAL) {
+            // build all trails 
+            for (int i=1; i<=TRAIL_PART_PER_UPDATE; i++) {
+                for(int p=0; p<(int)_players.size(); p++)
+                    _players.at(p)->update();
+            }
 
-        // update values for next input
-        _previous_trail_update = currentUpdate;
+            // update values for next input
+            _previous_trail_update = currentUpdate;
+        }
     }
 }
 

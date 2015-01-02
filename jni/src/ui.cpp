@@ -11,7 +11,7 @@ void UI::draw(ScreenRenderer *rend) {
 }
 
 vector<float> UI::getVerticeData() {
-    /*     [p3] [p4]          Origin Cross     
+    /*     [p3] [p4]          Origin Centre
               ---             
         [p1]       [p5]          [p11]
            |   +   |     ---> [p9] + [p10]
@@ -22,10 +22,10 @@ vector<float> UI::getVerticeData() {
 
     /* This is the original (x,y) that will now be transformed
      * before being passed to the vertex shader */
-    float x = 150;
-    float y = Game::getScreenHeight() - 200;
-    float l = 200;
-    float size = 60.0f;
+    float l = 250;                         // Diameter of joystick
+    float x = 100;
+    float y = Game::getScreenHeight() - l;
+    float size = 60.0f;                    // Size of joystick side borders
     float offset = (l - size)/2;
 
     // Orgin points

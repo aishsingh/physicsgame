@@ -30,7 +30,7 @@ class Game {
         vector<Player*> _players;
         vector<Planet*> _planets;
 
-        UI screen_ui;
+        UI _screen_ui;
         /* Renderers */
         AssetRenderer *_ass_rend;
         ObjRenderer *_obj_rend;

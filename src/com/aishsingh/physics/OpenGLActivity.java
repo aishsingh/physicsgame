@@ -36,25 +36,25 @@ public class OpenGLActivity extends Activity {
         // and other input controls. In this case, you are only
         // interested in events where the touch position changed.
 
-        float x = e.getX();
-        float y = e.getY();
+        for (int i=0; i<e.getPointerCount(); i++) {
+            float x = e.getX(i);
+            float y = e.getY(i);
 
-        boolean touchDown = true;
+            switch (e.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    OpenGLLib.touchMove(x,y);
+                    break;
 
-        switch (e.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                OpenGLLib.touchMove(x,y);
-                break;
+                case MotionEvent.ACTION_MOVE:
+                    OpenGLLib.touchMove(x,y);
+                    break;
 
-            case MotionEvent.ACTION_MOVE:
-                OpenGLLib.touchMove(x,y);
-                break;
-
-            case MotionEvent.ACTION_UP:
-                touchDown = false;
-                break;
+                case MotionEvent.ACTION_UP:
+                    break;
+            }
         }
 
-        return touchDown;
+
+        return true; // event was handled
     }
 }

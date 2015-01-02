@@ -11,6 +11,8 @@ class UI {
     private:
         vector<float> getVerticeData();
         vector<float> getColourData();
+        float _x, _y;
+        float _radius;
 
     public:
         void draw(ScreenRenderer *rend);

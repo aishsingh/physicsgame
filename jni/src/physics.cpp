@@ -121,6 +121,7 @@ void PhysicsEngine::genInitVelocity(Object &obj, float rot_angle) {
 float PhysicsEngine::getAngleOfPtFromObjCentre(float x, float y, float obj_x, float obj_y, float obj_length) {
     float angle = 0;
 
+    // Check if pt is actually inside Object
     if (x >= obj_x && x <= obj_x + obj_length && 
             y >= obj_y && y <= obj_y + obj_length) {
 
@@ -173,6 +174,10 @@ float PhysicsEngine::getAngleOfPtFromObjCentre(float x, float y, float obj_x, fl
         }
 
         angle += atanf(O/A) * 180/PI;
+    }
+    else {
+        // Pt is not inside of object
+        angle = -1;
     }
     return angle;
 
