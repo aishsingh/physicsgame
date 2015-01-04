@@ -5,10 +5,11 @@
 
 #include "game.h"
 #include "spaceman.h"
+#include "collision.h"
 #include "log.h"
 
 #define INIT_TIME_SPEED 0.4f
-#define TRAIL_UPDATE_INTERVAL 0.5f
+#define TRAIL_UPDATE_INTERVAL 0.6f
 #define TRAIL_PART_PER_UPDATE 1
 #define OUT_OpenGL_Ver false
 
@@ -23,6 +24,7 @@ Game::Game(std::string package_name) : _finished(false), _package_name(package_n
     _ass_rend = NULL;
     _obj_rend = NULL;
     _scr_rend = NULL;
+    _joystick1 = NULL;
 }
 
 Game::~Game() {
@@ -91,7 +93,7 @@ void Game::setupObjs() {
     float h = getScreenHeight();
 
     // Setup UI (Joystick)
-    _screen_ui = UI();
+    _joystick1 = new Joystick(100, h - 250, 250, 60, 10);
 
     // Setup Player
     try {
@@ -119,7 +121,7 @@ void Game::draw() {
 
     // Render player trails
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->drawTrail(_obj_rend);
+        _players.at(i)->drawTrail(_obj_rend, &_planets);
 
     // Render planets
     for(int i=0; i<(int)_planets.size(); i++)
@@ -134,18 +136,19 @@ void Game::draw() {
     _ass_rend->disableAttributes();
 
     // Render UI
-    _screen_ui.draw(_scr_rend);
+    if (_joystick1)
+        _joystick1->draw(_scr_rend);
 
     // Increment game time according to the current speed of time
     _elapsed_time += _time_speed;
 }
 
 void Game::handleInput(float x, float y) {
-    // Handle joystick input
-    float js1Angle = _screen_ui.getJoystickAngle(x, y);
-
     // Make sure pt was inside the joystick area (-1 is returned if this is the case)
-    if (js1Angle != -1) {
+    if (Collision::isPtInRect(x, y, *_joystick1)) {
+        // Handle joystick input
+        float js1Angle = _joystick1->getJoystickAngle(x, y);
+
         // Always rotate players whenever there is new input
         for(int p=0; p<(int)_players.size(); p++) {
             _players.at(p)->setRotAngle(-(360-js1Angle));

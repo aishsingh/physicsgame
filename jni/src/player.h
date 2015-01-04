@@ -24,8 +24,8 @@ class Player: public Object {
 
     public:
         // Render player and trail
-        virtual void draw(AssetRenderer* _ass_rend);
-        virtual void drawTrail(ObjRenderer* _obj_rend) = 0;
+        virtual void draw(AssetRenderer *_ass_rend);
+        virtual void drawTrail(ObjRenderer *_obj_rend, vector<Planet*> *g_objs) = 0;
         vector<float> getVerticeData();
         vector<float> getColourData();
 

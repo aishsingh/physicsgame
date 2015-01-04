@@ -1,16 +1,16 @@
 #include <math.h>
-#include "ui.h"
+#include "joystick.h"
 #include "game.h"
 #include "physics.h"
 
-UI::UI() {}
+Joystick::Joystick(float x, float y, float l, float size, float origin_size) : Rect(x,y,l,l), _size(size), _ori_size(origin_size) { }
 
-void UI::draw(ScreenRenderer *rend) {
+void Joystick::draw(ScreenRenderer *rend) {
     // Render
     rend->render(getVerticeData(), getColourData(), 0, GL_LINES);
 }
 
-vector<float> UI::getVerticeData() {
+vector<float> Joystick::getVerticeData() {
     /*     [p3] [p4]          Origin Centre
               ---             
         [p1]       [p5]          [p11]
@@ -22,33 +22,29 @@ vector<float> UI::getVerticeData() {
 
     /* This is the original (x,y) that will now be transformed
      * before being passed to the vertex shader */
-    float l = 250;                         // Diameter of joystick
-    float x = 100;
-    float y = Game::getScreenHeight() - l;
-    float size = 60.0f;                    // Size of joystick side borders
-    float offset = (l - size)/2;
-
-    // Orgin points
-    float ori_size = 10.0f;
+    float x = getX();
+    float y = getY();
+    float l = getWidth();
+    float offset = (l - _size)/2;
     
     // Declare points (x,y)
-    float vec[] = { x                        , y + offset               ,
-                    x                        , y + size + offset        ,
-                    x + offset               , y                        ,
-                    x + size + offset        , y                        ,
-                    x + l                    , y + offset               ,
-                    x + l                    , y + size + offset        ,
-                    x + offset               , y + l                    ,
-                    x + size + offset        , y + l                    ,
-                    x + (l/2) - (ori_size/2) , y + (l/2)                ,
-                    x + (l/2) + (ori_size/2) , y + (l/2)                ,
-                    x + (l/2)                , y + (l/2) - (ori_size/2) ,
-                    x + (l/2)                , y + (l/2) + (ori_size/2) };
+    float vec[] = { x                         , y + offset                ,
+                    x                         , y + _size + offset        ,
+                    x + offset                , y                         ,
+                    x + _size + offset        , y                         ,
+                    x + l                     , y + offset                ,
+                    x + l                     , y + _size + offset        ,
+                    x + offset                , y + l                     ,
+                    x + _size + offset        , y + l                     ,
+                    x + (l/2) - (_ori_size/2) , y + (l/2)                 ,
+                    x + (l/2) + (_ori_size/2) , y + (l/2)                 ,
+                    x + (l/2)                 , y + (l/2) - (_ori_size/2) ,
+                    x + (l/2)                 , y + (l/2) + (_ori_size/2) };
 
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }
 
-vector<float> UI::getColourData() {
+vector<float> Joystick::getColourData() {
     Colour colour(1.0f, 0.0f, 0.0f, 1.0f);
 
     float clr[] = { colour.r, colour.g, colour.b, colour.a,
@@ -67,6 +63,6 @@ vector<float> UI::getColourData() {
     return vector<float> (clr, clr + sizeof(clr) / sizeof(float));
 }
 
-float UI::getJoystickAngle(int x, int y) {
-    return PhysicsEngine::getAngleOfPtFromObjCentre(x, y, 150, Game::getScreenHeight() - 200, 200);
+float Joystick::getJoystickAngle(int x, int y) {
+    return PhysicsEngine::getAngleOfPtFromRectCentre(x, y, 150, Game::getScreenHeight() - 200, 200/2);
 }

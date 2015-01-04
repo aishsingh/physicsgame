@@ -18,7 +18,9 @@ LOCAL_SRC_FILES := app_glue.cpp \
 			 asset_renderer.cpp \
 		    screen_renderer.cpp \
 				    physics.cpp \
-						 ui.cpp \
+				  collision.cpp \
+				   joystick.cpp \
+					   rect.cpp \
 					 object.cpp \
 					  shape.cpp \
 					 	box.cpp \

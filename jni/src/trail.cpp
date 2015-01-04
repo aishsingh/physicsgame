@@ -32,7 +32,8 @@ void Trail::shrink(Shape &shape) {
         shape.setLength(shape.getWidth() - (SHRINK_DEC*Game::getTimeSpeed())); 
 }
 
-void Trail::draw(ObjRenderer* rend) {
+
+void Trail::draw(ObjRenderer *rend, vector<Planet*> *g_objs) {
     // Draw every shape in shapes vector
     for (int i=0; i<(int)shapes.size(); i++) {
         // Effects
@@ -45,7 +46,7 @@ void Trail::draw(ObjRenderer* rend) {
 
         // Update physics attributes only if box is moving
         if (shapes.at(i).vert_motion.getVel() != 0.0f || shapes.at(i).hori_motion.getVel() != 0.0f)
-            PhysicsEngine::updatePhysics(shapes.at(i));
+            PhysicsEngine::updatePhysics(shapes.at(i), g_objs);
 
 
         // Remove shape if no longer needed
@@ -105,8 +106,8 @@ void Trail::removeBox(int index) {
 }
 
 void Trail::applyGravity(vector<Planet*> *g_objs) {
-     for (int i=0; i<(int)shapes.size(); i++)
-         PhysicsEngine::applyGravityTo(shapes.at(i), g_objs);
+    for (int i=0; i<(int)shapes.size(); i++)
+        PhysicsEngine::applyGravityTo(shapes.at(i), g_objs);
 }
 
 void Trail::resetTime() {

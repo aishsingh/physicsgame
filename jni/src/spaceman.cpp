@@ -56,9 +56,9 @@ void Spaceman::changeTheme(Theme &old_theme) {
     old_theme = new_theme;
 }
 
-void Spaceman::drawTrail(ObjRenderer *_obj_rend) {
+void Spaceman::drawTrail(ObjRenderer* _obj_rend, vector<Planet*> *g_objs) {
     // Render
-    _trail.draw(_obj_rend);
+    _trail.draw(_obj_rend, g_objs);
 }
 
 void Spaceman::update() {

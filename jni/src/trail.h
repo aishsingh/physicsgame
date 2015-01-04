@@ -22,7 +22,7 @@ class Trail {
         std::vector<Shape> shapes;
 
         /* Draw the shapes to the renderer */
-        void draw(ObjRenderer* rend);
+        void draw(ObjRenderer *rend, vector<Planet*> *g_objs);
 
         /* Creates a new box with the given values
            1. Initializes a bew instanse  */

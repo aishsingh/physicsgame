@@ -6,7 +6,7 @@
 #include "physics.h"
 #include "player.h"
 #include "planet.h"
-#include "ui.h"
+#include "joystick.h"
 #include "asset_renderer.h"
 #include "obj_renderer.h"
 #include "screen_renderer.h"
@@ -30,7 +30,8 @@ class Game {
         vector<Player*> _players;
         vector<Planet*> _planets;
 
-        UI _screen_ui;
+        Joystick *_joystick1;
+
         /* Renderers */
         AssetRenderer *_ass_rend;
         ObjRenderer *_obj_rend;

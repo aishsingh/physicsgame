@@ -9,6 +9,8 @@
 #include <vector>
 #include "object.h"
 #include "planet.h"
+#include "rect.h"
+#include "point2d.h"
 
 using std::vector;
 
@@ -29,7 +31,7 @@ class PhysicsEngine {
         static Motion calcMotion(const Motion &motion);
 
     public:
-        static void updatePhysics(Object &obj);
+        static void updatePhysics(Object &obj, vector<Planet*> *g_objs);
 
         /* Reverse gravity and give blocks some initial velocity to look natural
            1. Invert gravity value
@@ -43,17 +45,16 @@ class PhysicsEngine {
 
         /* Gets an angle calculated from the distance to a point inside of an object. 
            Angle starts at the middle-top (0*C) and increases anti-clockwise */
-        static float getAngleOfPtFromObjCentre(float x, float y, float obj_x, float obj_y, float obj_length);
+        static float getAngleOfPtFromRectCentre(float x, float y, float obj_x, float obj_y, float obj_length);
+        static float getAngleOfPtFromRectCentre(Point2D pos, Rect rect);
 
         /* Split vertical and horizontal component values based on an angle. 
            The split needs to know the min & max values that should occur for both components */
+        static void splitValueFromAngle(float value, float angle, float *hori, float *vert);
         static void splitCompValueFromAngle(float *hori_comp, float *vert_comp, float angle, float min_hori, float max_hori, float min_vert, float max_vert);
 
         /* Updates object vert/hori acceleration due to the gravity from the given planets */
         static void applyGravityTo(Object &obj, vector<Planet*> *g_objs);
-
-        /* Constructor */
-        PhysicsEngine();
 };
 
 #endif /* PHYSICS_H */
