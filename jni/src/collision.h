@@ -14,6 +14,7 @@ class Collision {
         static bool isPtInRect(Point2D pt, Rect rect);
         static bool isPtInRect(int x, int y, Rect rect);
         static bool isCircleIntersCircle(Rect circ1, Rect circ2);
+        static bool isPtInCircle(Point2D pt, Rect circ);
 };
 
 #endif /* COLLISION_H */

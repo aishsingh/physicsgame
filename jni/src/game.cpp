@@ -97,7 +97,7 @@ void Game::setupObjs() {
 
     // Setup Player
     try {
-        _players.push_back(new Spaceman((w/2) - 25, (h/2) - 50, Theme::GRAY));
+        _players.push_back(new Spaceman((w/2) - 25, (h/2) - 50, GRAY));
     }
     catch (std::exception &e) {
         LOGE("Error creating players: %s", e.what());

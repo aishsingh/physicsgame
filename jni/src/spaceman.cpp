@@ -6,8 +6,8 @@
 #include "physics.h"
 
 Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,50,100), _trail(27) {
-    _action = Action::FLYING;     // TODO use this after controls have been added -> _action = STILL;
-    _facing = Dir::RIGHT;
+    _action = FLYING;     // TODO use this after controls have been added -> _action = STILL;
+    _facing = RIGHT;
     _frame = 0;           // TODO not implemented yet
     _colour_theme = theme;
     setRotAngle(0.0f);

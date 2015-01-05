@@ -32,7 +32,7 @@ LOCAL_SRC_FILES := app_glue.cpp \
 						log.cpp
 
 LOCAL_LDLIBS    := -llog -lGLESv2 -ldl -lz
-LOCAL_CFLAGS    := -fexceptions -std=c++11
+LOCAL_CFLAGS    := -fexceptions -std=c++98
 
 include $(BUILD_SHARED_LIBRARY)
 # $(call import-module,soil)

@@ -48,13 +48,14 @@ void PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
 
     // Check all planet collisions
     for (int i=0; i<(int)g_objs->size(); i++) {
-        
-        if (Collision::isCircleIntersCircle(post_rect, *g_objs->at(i))) {
-            // TODO check for BOTH also
-            obj.hori_motion.setVel(0.0f);
-            obj.vert_motion.setVel(0.0f);
-            collision = true;
-            break;
+        if (Collision::isBoundingBox(post_rect, *g_objs->at(i))) {
+            if (Collision::isCircleIntersCircle(post_rect, *g_objs->at(i))) {
+                // TODO check for BOTH also
+                obj.hori_motion.setVel(0.0f);
+                obj.vert_motion.setVel(0.0f);
+                collision = true;
+                break;
+            }
         }
     }
 
@@ -220,7 +221,7 @@ void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
                        g_objs->at(i)->getWidth() + (g_radius*2));
 
         // Make sure obj is inside of Planet
-        if (Collision::isPtInRect(obj.getCentre(), grav_rect)) {
+        if (Collision::isCircleIntersCircle(obj, grav_rect)) {
             float rot_angle = getAngleOfPtFromRectCentre(obj.getCentre(), grav_rect);
             if (rot_angle != 0) {
                 float init_v;

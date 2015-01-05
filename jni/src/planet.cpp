@@ -3,7 +3,7 @@
 
 Planet::Planet(float x, float y, float d, float m) : Object(x,y,d,d) {
     _colour = Colour(0.647059f, 0.164706f, 0.164706f, 0.9f);
-    _action = Action::STILL;
+    _action = STILL;
     _mass = m;
 }
 

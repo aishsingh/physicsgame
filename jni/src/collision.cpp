@@ -3,8 +3,11 @@
 #include "physics.h"
 
 bool Collision::isBoundingBox(Rect box1, Rect box2) {
-    // TODO
-    return false;
+    return (box1.getX() < box2.getX() + box2.getWidth() &&
+            box1.getX() + box1.getWidth() > box2.getX() &&
+            box1.getY() < box2.getY() + box2.getHeight() &&
+            box1.getHeight() + box1.getY() > box2.getY()) 
+           ? true : false;
 }
 
 bool Collision::isPtInRect(Point2D pt, Rect rect) {
@@ -28,3 +31,13 @@ bool Collision::isCircleIntersCircle(Rect circ1, Rect circ2) {
     return (c < radius_total) ? true : false;
 }
 
+bool Collision::isPtInCircle(Point2D pt, Rect circ) {
+    float radius_total = circ.getWidth()/2;
+
+    // Pythagorean Theorem: a^2 + b^2 = c^2
+    float a = fabs(pt.getX() - circ.getCentreX());
+    float b = fabs(pt.getY() - circ.getCentreY());
+    float c = sqrt(pow(a, 2.0f) + pow(b, 2.0f));
+    
+    return (c < radius_total) ? true : false;
+}

@@ -10,7 +10,6 @@ ObjRenderer::ObjRenderer() {
         "attribute float fAngle;\n"
         "varying vec4 vFragColor;\n"
         "uniform mat4 mProj;\n"
-        "uniform mat4 mModel;\n"
 
         "void main() {\n"
         "  float PI = 3.14159265358979323846264;\n"
@@ -19,8 +18,8 @@ ObjRenderer::ObjRenderer() {
         "  pos.x = vPos.x*cos(rad_angle) - vPos.y*sin(rad_angle);\n"
         "  pos.y = vPos.y*cos(rad_angle) + vPos.x*sin(rad_angle);\n"
 
-        "  mat4 mMP = mProj * mModel;\n"
-        "  gl_Position = mMP * vec4(pos, 0.0f, 1.0f);\n"
+        "  mat4 mMVP = mProj;\n"
+        "  gl_Position = mMVP * vec4(pos, 0.0f, 1.0f);\n"
 
         "  vFragColor = vColor;\n"
         "}\n";
@@ -53,22 +52,11 @@ ObjRenderer::ObjRenderer() {
     GLuint gmProjHandle = glGetUniformLocation(_gProgram, "mProj");
     checkGlError("glGetUniformLocation(mProj)");
 
-    GLuint gmModelHandle = glGetUniformLocation(_gProgram, "mModel");
-    checkGlError("glGetUniformLocation(mModel)");
- 
     /* Projection Matrix */
     GLfloat proj[] = { 2.0f/screen_w, 0.0f,          0.0f, 0.0f,
                        0.0f,         -2.0f/screen_h, 0.0f, 0.0f,
                        0.0f,          0.0f,          0.0f, 0.0f,
                       -1.0f,          1.0f,          0.0f, 1.0f };
-
-    /* Model Matrix */
-    // Identity Matrix
-    GLfloat model[] = { 1.0f, 0.0f, 0.0f, 0.0f, 
-                        0.0f, 1.0f, 0.0f, 0.0f, 
-                        0.0f, 0.0f, 1.0f, 0.0f, 
-                        0.0f, 0.0f, 0.0f, 1.0f };
-
 
     // Pass uniforms to shader
     /* VERY IMPORTANT
@@ -80,9 +68,6 @@ ObjRenderer::ObjRenderer() {
 
     glUniformMatrix4fv(gmProjHandle, 1, GL_FALSE, &proj[0]);
     checkGlError("glUniformMatrix4fv, mProj");
-
-    glUniformMatrix4fv(gmModelHandle, 1, GL_FALSE, &model[0]);
-    checkGlError("glUniformMatrix4fv, mModel");
 
     glViewport(0, 0, screen_w, screen_h);
     checkGlError("glViewport");
