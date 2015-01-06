@@ -16,26 +16,26 @@ class Planet: public Object {
             BREAKING
         };
 
+        // The more sides (or vertices) the more round the object looks
+        static const int _SIDES;
+        static const int _GRAV_SIDES;
+        static const float _GRAV_OPACITY;
+
         Action _action;
         Colour _colour;
-        float _gravity;   
-        float _mass;
+        float _rot_speed;
 
         vector<float> getVerticeData(int vertex_count, float r_offset);
-        vector<float> getColourData(int vertex_count);
-        vector<float> getColourData(int vertex_count, Colour col);
 
     public:
         // Render planet
         virtual void draw(ObjRenderer *rend);
+        virtual void drawGrav(ObjRenderer *rend);
         // Update player based on its current action
         virtual void update(); 
 
-        /* Getters / Setters */
-        float getMass() const;
-
         /* Ctor - */
-        Planet(float x, float y, float d, float m);
+        Planet(float x, float y, float d);
 };
 
 #endif /* PLANET_H */

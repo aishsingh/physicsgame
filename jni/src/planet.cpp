@@ -1,25 +1,36 @@
-#include <math.h>
+#include <cmath>
 #include "planet.h"
+#include "colour.h"
 
-Planet::Planet(float x, float y, float d, float m) : Object(x,y,d,d) {
-    _colour = Colour(0.647059f, 0.164706f, 0.164706f, 0.9f);
-    _action = STILL;
-    _mass = m;
-}
+const int Planet::_SIDES(20);
+const int Planet::_GRAV_SIDES(30);
+const float Planet::_GRAV_OPACITY(0.2f);
 
-float Planet::getMass() const {
-    return _mass;
+Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
+    // Redish-Brown colour
+    _colour = Colour(0.647059f, 0.164706f, 0.164706f, 1.0f);    
+    _rot_speed = 0.5f;
 }
 
 void Planet::draw(ObjRenderer *rend) {
-
-    // Render Gravity area
-    rend->render(getVerticeData(10, getWidth()/2), getColourData(10, Colour(_colour.r, _colour.g, _colour.b, 0.1f)), getRotAngle(), GL_TRIANGLE_FAN);
-
     // Render circle
-    rend->render(getVerticeData(18, 0), getColourData(18), getRotAngle(), GL_TRIANGLE_FAN);
+    float vertex_count = _SIDES * getWidth()/400;
+    rend->render(getVerticeData(vertex_count, 0), 
+                 Colour::getColourData(vertex_count, _colour), 
+                 getRotAngle(), 
+                 GL_TRIANGLE_FAN);
 
-    setRotAngle(getRotAngle() + 0.5f);
+    // Rotate
+    setRotAngle(getRotAngle() + _rot_speed);
+}
+
+void Planet::drawGrav(ObjRenderer *rend) {
+    // Render Gravity area
+    float grav_vertex_count = _GRAV_SIDES * (getWidth()/400);
+    rend->render(getVerticeData(grav_vertex_count, getWidth()/2), 
+                 Colour::getColourData(grav_vertex_count, Colour(_colour.r, _colour.g, _colour.b, _GRAV_OPACITY)), 
+                 getRotAngle(), 
+                 GL_TRIANGLE_FAN);
 }
 
 void Planet::update() {
@@ -70,32 +81,4 @@ vector<float> Planet::getVerticeData(int vertex_count, float r_offset) {
     //create VBO from buffer with glBufferData()
 
     return vec;
-}
-
-vector<float> Planet::getColourData(int vertex_count) {
-    Colour colour = _colour;
-
-    vector<float> clr;
-    for (int i=0; i<=vertex_count; i++) {
-        clr.push_back(colour.r);
-        clr.push_back(colour.g);
-        clr.push_back(colour.b);
-        clr.push_back(colour.a);
-    }
-
-    return clr;
-}
-
-vector<float> Planet::getColourData(int vertex_count, Colour col) {
-    Colour colour = col;
-
-    vector<float> clr;
-    for (int i=0; i<=vertex_count; i++) {
-        clr.push_back(colour.r);
-        clr.push_back(colour.g);
-        clr.push_back(colour.b);
-        clr.push_back(colour.a);
-    }
-
-    return clr;
 }

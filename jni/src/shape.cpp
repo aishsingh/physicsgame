@@ -22,7 +22,7 @@ Colour Shape::getColour() const {
 void Shape::useTheme(Theme &theme) {
     switch(theme) {
         case GRAY:
-        _colour.r = (rand() % 256) / 256.0f;
+        _colour.r = (256 - (rand() % 100)) / 256.0f;
         _colour.g = _colour.r;
         _colour.b = _colour.r;
         break;
@@ -53,7 +53,7 @@ void Shape::useTheme(Theme &theme) {
     }
 
     // Reset Alpha value
-    _colour.a = 1.0f;
+    _colour.a = (rand() % 256) / 256.0f;
 }
 float Shape::getAlpha() const {
     return _colour.a;
@@ -71,7 +71,8 @@ void Shape::setIndex(const int index) {
 
 void Shape::draw(ObjRenderer *rend) {
     // Render
-    rend->render(getVerticeData(), getColourData(), getRotAngle(), GL_TRIANGLE_STRIP);
+    vector<float> vert = getVerticeData();
+    rend->render(vert, Colour::getColourData(vert.size(), _colour), getRotAngle(), GL_TRIANGLE_STRIP);
 }
 
 vector<float> Shape::getVerticeData() {
@@ -114,15 +115,4 @@ vector<float> Shape::getVerticeData() {
                     x + w , y + h };
 
     return vector<float> (vec, vec + sizeof(vec) / sizeof(float));
-}
-
-vector<float> Shape::getColourData() {
-    Colour colour = getColour();
-
-    float clr[] = { colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a };
-
-    return vector<float> (clr, clr + sizeof(clr) / sizeof(float));
 }

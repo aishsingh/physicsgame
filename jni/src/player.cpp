@@ -56,11 +56,11 @@ vector<float> Player::getVerticeData() {
 }
 
 std::vector<float> Player::getColourData() {
-    Colour colour(0.0f, 0.0f, 1.0f, 1.0f);
+    Colour colour(1.0f, 1.0f, 1.0f, 1.0f);
 
-    float clr[] = { 0.8f    , 0.2f    , 0.3f    , colour.a,
+    float clr[] = { 0.3f    , 0.3f    , 0.3f    , colour.a,
                     colour.r, colour.g, colour.b, colour.a,
-                    0.8f    , 0.2f    , 0.3f    , colour.a,
+                    0.3f    , 0.3f    , 0.3f    , colour.a,
                     colour.r, colour.g, colour.b, colour.a};
 
     return std::vector<float> (clr, clr + sizeof(clr) / sizeof(float));

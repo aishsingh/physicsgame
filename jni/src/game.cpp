@@ -105,8 +105,8 @@ void Game::setupObjs() {
 
     // Setup planets
     try {
-        _planets.push_back(new Planet((w/2) + 50, (h/2) - 150, 400, 10));
-        _planets.push_back(new Planet((w/2) - 350, (h/2) - 150, 200, 10));
+        _planets.push_back(new Planet((w/2) + 50, (h/2) - 150, 400));
+        _planets.push_back(new Planet((w/2) - 350, (h/2) - 150, 200));
     }
     catch (std::exception &e) {
         LOGE("Error creating planets: %s", e.what());
@@ -118,6 +118,10 @@ void Game::draw() {
     Renderer::clearScreen();
 
     applyGravity();
+
+    // Render planets gravity area
+    for(int i=0; i<(int)_planets.size(); i++)
+        _planets.at(i)->drawGrav(_obj_rend);
 
     // Render player trails
     for(int i=0; i<(int)_players.size(); i++)

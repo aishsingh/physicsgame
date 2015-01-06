@@ -15,7 +15,6 @@ class Shape: public Object {
         Colour _colour;
 
         vector<float> getVerticeData();
-        vector<float> getColourData();
 
     public:
         /* Getters / Setters */
