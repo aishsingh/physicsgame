@@ -11,7 +11,6 @@
 class Joystick : public Rect {
     private:
         vector<float> getVerticeData();
-        vector<float> getColourData();
 
         // Size of joystick side borders
         float _size;

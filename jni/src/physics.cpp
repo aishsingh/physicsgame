@@ -27,7 +27,6 @@ Motion PhysicsEngine::calcMotion(const Motion &motion) {
     return calc;
 }
 
-
 void PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
     int origin_x = 0;
     int origin_y = 0;
@@ -51,8 +50,13 @@ void PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
         if (Collision::isBoundingBox(post_rect, *g_objs->at(i))) {
             if (Collision::isCircleIntersCircle(post_rect, *g_objs->at(i))) {
                 // TODO check for BOTH also
+                obj.hori_motion.setTime(hori_comp.getTime());
+                obj.vert_motion.setTime(vert_comp.getTime());
                 obj.hori_motion.setVel(0.0f);
                 obj.vert_motion.setVel(0.0f);
+
+                // Rotate obj so it sits flat on the planet
+                obj.setRotAngle(360-getAngleOfPtFromRectCentre(obj.getCentre(), *g_objs->at(i)));
                 collision = true;
                 break;
             }
@@ -68,41 +72,6 @@ void PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
         obj.vert_motion.setTime(vert_comp.getTime());
         obj.vert_motion.setVel(vert_comp.getVel());
     }
-
-    /* Set recalculated motion only if it validates */
-    // Vertical Component
-    /*
-    if (obj.getY() + vert_comp.getDisp() + obj.getHeight() > Game::getScreenHeight()) {    // Check if not too high
-        obj.setY(Game::getScreenHeight() - obj.getHeight());
-        obj.vert_motion.setVel(0.0f);
-    } 
-    else if (obj.getY() + vert_comp.getDisp() < origin_y) {                                // Check if not too low
-        obj.setY(origin_y);
-        obj.vert_motion.setVel(0.0f);
-    }
-    else {
-        // Update VERT values
-        obj.setY(obj.getY() + vert_comp.getDisp());
-        obj.vert_motion.setTime(vert_comp.getTime());
-        obj.vert_motion.setVel(vert_comp.getVel());
-    }
-
-    // Horizontal Component
-    if (obj.getX() + hori_comp.getDisp() + obj.getWidth() > Game::getScreenWidth()) {      // Check if not too left
-        obj.setX(Game::getScreenWidth() - obj.getWidth());
-        obj.hori_motion.setVel(0.0f);
-    } 
-    else if (obj.getX() + hori_comp.getDisp() < origin_x) {                                // Check if not too right
-        obj.setX(origin_x); // usually 0
-        obj.hori_motion.setVel(0.0f);
-    }
-    else {
-        // Update HORI values
-        obj.setX(obj.getX() + hori_comp.getDisp());
-        obj.hori_motion.setTime(hori_comp.getTime());
-        obj.hori_motion.setVel(hori_comp.getVel());
-    }
-    */
 }
 
 /*
@@ -147,9 +116,7 @@ void PhysicsEngine::genInitVelocity(Object &obj, float rot_angle) {
     obj.vert_motion.setVel(init_v);
 }
 
-float PhysicsEngine::getAngleOfPtFromRectCentre(float x, float y, float obj_x, float obj_y, float obj_radius) {
-    float angle = 0;
-
+float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pt, Rect rect) {
     /* Quadrants
           ---      
          1   4
@@ -157,41 +124,43 @@ float PhysicsEngine::getAngleOfPtFromRectCentre(float x, float y, float obj_x, f
          2   3
           ---   */
 
+    float angle = 0;
     float A = 0,
           O = 0;
 
-    float origin_x = obj_x + obj_radius;
-    float origin_y = obj_y + obj_radius;
+    float radius = rect.getWidth()/2;
+    float origin_x = rect.getX() + radius;
+    float origin_y = rect.getY() + radius;
     float length_from_origin_x = 0;
     float length_from_origin_y = 0;
-    if (x >= origin_x)
-        length_from_origin_x = origin_x - x;
+    if (pt.getX() >= origin_x)
+        length_from_origin_x = origin_x - pt.getX();
     else
-        length_from_origin_x = x - origin_x;
-    if (y >= origin_y)
-        length_from_origin_y = origin_y - y;
+        length_from_origin_x = pt.getX() - origin_x;
+    if (pt.getY() >= origin_y)
+        length_from_origin_y = origin_y - pt.getY();
     else
-        length_from_origin_y = y - origin_y;
+        length_from_origin_y = pt.getY() - origin_y;
 
-    // Find out the quadrants
-    if (x <= obj_x + obj_radius && y < obj_y + obj_radius) {
+    // Find the quadrants
+    if (pt.getX() <= rect.getX() + radius && pt.getY() < rect.getY() + radius) {
         // 1st Quad
         A += length_from_origin_y;
         O += length_from_origin_x;
     }
-    else if (x < obj_x + obj_radius && y >= obj_y + obj_radius) {
+    else if (pt.getX() < rect.getX() + radius && pt.getY() >= rect.getY() + radius) {
         // 2st Quad
         angle += 90;
         A += length_from_origin_x;
         O += length_from_origin_y;
     }
-    else if (x >= obj_x + obj_radius && y > obj_y + obj_radius) {
+    else if (pt.getX() >= rect.getX() + radius && pt.getY() > rect.getY() + radius) {
         // 3st Quad
         angle += 180;
         A += length_from_origin_y;
         O += length_from_origin_x;
     }
-    else if (x > obj_x + obj_radius && y <= obj_y + obj_radius) {
+    else if (pt.getX() > rect.getX() + radius && pt.getY() <= rect.getY() + radius) {
         // 4st Quad
         angle += 270;
         A += length_from_origin_x;
@@ -199,13 +168,7 @@ float PhysicsEngine::getAngleOfPtFromRectCentre(float x, float y, float obj_x, f
     }
 
     angle += atanf(O/A) * 180/PI;
-
     return angle;
-
-}
-
-float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pos, Rect rect) {
-    return getAngleOfPtFromRectCentre(pos.getX(), pos.getY(), rect.getX(), rect.getY(), rect.getWidth()/2);
 }
 
 void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {

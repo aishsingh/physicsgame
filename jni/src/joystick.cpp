@@ -7,7 +7,8 @@ Joystick::Joystick(float x, float y, float l, float size, float origin_size) : R
 
 void Joystick::draw(ScreenRenderer *rend) {
     // Render
-    rend->render(getVerticeData(), getColourData(), 0, GL_LINES);
+    vector<float> vert = getVerticeData();
+    rend->render(vert, Colour::getColourData(vert.size(), Colour(1.0f, 0.0f, 0.0f, 1.0f)), 0, GL_LINES);
 }
 
 vector<float> Joystick::getVerticeData() {
@@ -42,25 +43,6 @@ vector<float> Joystick::getVerticeData() {
                     x + (l/2)                 , y + (l/2) + (_ori_size/2) };
 
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
-}
-
-vector<float> Joystick::getColourData() {
-    Colour colour(1.0f, 0.0f, 0.0f, 1.0f);
-
-    float clr[] = { colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a,
-                    colour.r, colour.g, colour.b, colour.a };
-
-    return vector<float> (clr, clr + sizeof(clr) / sizeof(float));
 }
 
 float Joystick::getJoystickAngle(int x, int y) {

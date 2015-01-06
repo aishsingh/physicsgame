@@ -45,8 +45,7 @@ class PhysicsEngine {
 
         /* Gets an angle calculated from the distance to a point inside of an object. 
            Angle starts at the middle-top (0*C) and increases anti-clockwise */
-        static float getAngleOfPtFromRectCentre(float x, float y, float obj_x, float obj_y, float obj_length);
-        static float getAngleOfPtFromRectCentre(Point2D pos, Rect rect);
+        static float getAngleOfPtFromRectCentre(Point2D pt, Rect rect);
 
         /* Split vertical and horizontal component values based on an angle. 
            The split needs to know the min & max values that should occur for both components */
