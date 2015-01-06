@@ -64,5 +64,5 @@ vector<float> Joystick::getColourData() {
 }
 
 float Joystick::getJoystickAngle(int x, int y) {
-    return PhysicsEngine::getAngleOfPtFromRectCentre(x, y, 150, Game::getScreenHeight() - 200, 200/2);
+    return PhysicsEngine::getAngleOfPtFromRectCentre(Point2D(x, y), *this);
 }
