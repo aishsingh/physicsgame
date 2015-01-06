@@ -155,7 +155,8 @@ void Game::handleInput(float x, float y) {
 
         // Always rotate players whenever there is new input
         for(int p=0; p<(int)_players.size(); p++) {
-            _players.at(p)->setRotAngle(-(360-js1Angle));
+            _players.at(p)->setRotAngle(js1Angle -360);
+            _rot_angle = js1Angle -360;
             // _players.at(p)->setX(x);
             // _players.at(p)->setY(y);
         }
@@ -218,6 +219,8 @@ float Game::_elapsed_time(0);
 float Game::getElapsedTime() {
     return _elapsed_time; 
 }
+
+float Game::_rot_angle(0);
 
 float Game::_time_speed(INIT_TIME_SPEED);
 float Game::getTimeSpeed() {

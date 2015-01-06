@@ -17,7 +17,7 @@ void Planet::draw(ObjRenderer *rend) {
     float vertex_count = _SIDES * getWidth()/400;
     rend->render(getVerticeData(vertex_count, 0), 
                  Colour::getColourData(vertex_count, _colour), 
-                 getRotAngle(), 
+                 getRotAngle()*PI/180, 
                  GL_TRIANGLE_FAN);
 
     // Rotate
@@ -29,7 +29,7 @@ void Planet::drawGrav(ObjRenderer *rend) {
     float grav_vertex_count = _GRAV_SIDES * (getWidth()/400);
     rend->render(getVerticeData(grav_vertex_count, getWidth()/2), 
                  Colour::getColourData(grav_vertex_count, Colour(_colour.r, _colour.g, _colour.b, _GRAV_OPACITY)), 
-                 getRotAngle(), 
+                 getRotAngle()*PI/180, 
                  GL_TRIANGLE_FAN);
 }
 

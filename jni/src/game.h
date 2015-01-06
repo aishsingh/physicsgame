@@ -18,6 +18,7 @@ class Game {
 
         static float _elapsed_time;
         static float _time_speed;
+        static float _rot_angle;
 
         bool _finished;
         std::string _package_name;

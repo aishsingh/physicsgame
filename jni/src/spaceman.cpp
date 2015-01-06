@@ -5,7 +5,7 @@
 #include "log.h"
 #include "physics.h"
 
-Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,50,100), _trail(27) {
+Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,50,55), _trail(27) {
     _action = FLYING;     // TODO use this after controls have been added -> _action = STILL;
     _facing = RIGHT;
     _frame = 0;           // TODO not implemented yet

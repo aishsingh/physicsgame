@@ -12,11 +12,9 @@ ObjRenderer::ObjRenderer() {
         "uniform mat4 mProj;\n"
 
         "void main() {\n"
-        "  float PI = 3.14159265358979323846264;\n"
-        "  float rad_angle = fAngle*PI/180.0;\n"
         "  vec2 pos = vPos;\n"
-        "  pos.x = vPos.x*cos(rad_angle) - vPos.y*sin(rad_angle);\n"
-        "  pos.y = vPos.y*cos(rad_angle) + vPos.x*sin(rad_angle);\n"
+        "  pos.x = vPos.x*cos(fAngle) - vPos.y*sin(fAngle);\n"
+        "  pos.y = vPos.y*cos(fAngle) + vPos.x*sin(fAngle);\n"
 
         "  mat4 mMVP = mProj;\n"
         "  gl_Position = mMVP * vec4(pos, 0.0f, 1.0f);\n"
