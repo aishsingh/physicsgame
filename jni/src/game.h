@@ -67,6 +67,7 @@ class Game {
         static int getScreenHeight();
         static float getElapsedTime();
         static float getTimeSpeed();
+        static float getRotAngle();
 
         Game(std::string package_name);
         ~Game();

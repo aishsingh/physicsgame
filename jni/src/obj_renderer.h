@@ -6,7 +6,8 @@
 
 class ObjRenderer: public Renderer {
     private:
-        GLuint _gfAngleHandle;
+        GLuint _gmModelHandle;
+        GLuint _gmViewHandle;
         GLuint _gvColorHandle;
 
     public:

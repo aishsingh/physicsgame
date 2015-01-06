@@ -7,7 +7,6 @@
 class AssetRenderer: public Renderer {
     private:
         GLuint _gsTexHandle;
-        GLuint _gfAngleHandle;
         GLuint _gvColorHandle;
 
         // PNG loading

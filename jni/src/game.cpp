@@ -38,6 +38,7 @@ Game::~Game() {
 void Game::resetTime() {
     _elapsed_time = 0;
     _previous_trail_update = 0;
+    _rot_angle = 0;
 
     for(int i=0; i<(int)_players.size(); i++)
         _players.at(i)->resetTime();
@@ -156,7 +157,7 @@ void Game::handleInput(float x, float y) {
         // Always rotate players whenever there is new input
         for(int p=0; p<(int)_players.size(); p++) {
             _players.at(p)->setRotAngle(js1Angle -360);
-            _rot_angle = js1Angle -360;
+            _rot_angle = -(js1Angle -360);
             // _players.at(p)->setX(x);
             // _players.at(p)->setY(y);
         }
@@ -221,6 +222,9 @@ float Game::getElapsedTime() {
 }
 
 float Game::_rot_angle(0);
+float Game::getRotAngle() {
+    return _rot_angle;
+}
 
 float Game::_time_speed(INIT_TIME_SPEED);
 float Game::getTimeSpeed() {

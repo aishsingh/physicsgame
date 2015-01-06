@@ -1,5 +1,9 @@
+#define GLM_FORCE_RADIANS 1
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <stdlib.h>
-#include <math.h>
 #include "asset_renderer.h"
 #include "log.h"
 #include "game.h"
@@ -7,25 +11,15 @@
 #define PI 3.14159265358979323846264
 #define TEXTURE_LOAD_ERROR 0
 
-
 AssetRenderer::AssetRenderer() {
     _shad_vertex =
         "attribute vec2 vPos;\n"
         "attribute vec4 vColor;\n"
-        "attribute float fAngle;\n"
         "varying vec4 vFragColor;\n"
         "uniform mat4 mProj;\n"
-        "uniform mat4 mModel;\n"
 
         "void main() {\n"
-        "  float PI = 3.14159265358979323846264;\n"
-        "  float rad_angle = fAngle*PI/180.0;\n"
-        "  vec2 pos = vPos;\n"
-        "  pos.x = vPos.x*cos(rad_angle) - vPos.y*sin(rad_angle);\n"
-        "  pos.y = vPos.y*cos(rad_angle) + vPos.x*sin(rad_angle);\n"
-
-        "  mat4 mMP = mProj * mModel;\n"
-        "  gl_Position = mMP * vec4(pos, 0.0f, 1.0f);\n"
+        "  gl_Position = mProj * vec4(vPos, 0.0f, 1.0f);\n"
 
         "  vFragColor = vColor;\n"
         "}\n";
@@ -85,14 +79,8 @@ AssetRenderer::AssetRenderer() {
     _gvColorHandle = glGetAttribLocation(_gProgram, "vColor");
     checkGlError("glGetAttribLocation(vColor)");
 
-    _gfAngleHandle = glGetAttribLocation(_gProgram, "fAngle");
-    checkGlError("glGetAttribLocation(fAngle)");
-
     GLuint gmProjHandle = glGetUniformLocation(_gProgram, "mProj");
     checkGlError("glGetUniformLocation(mProj)");
-
-    GLuint gmModelHandle = glGetUniformLocation(_gProgram, "mModel");
-    checkGlError("glGetUniformLocation(mModel)");
 
     _gsTexHandle = glGetUniformLocation(_gProgram, "sTexture");
     checkGlError("glGetUniformLocation(sTexture)");
@@ -102,13 +90,6 @@ AssetRenderer::AssetRenderer() {
                        0.0f,         -2.0f/screen_h, 0.0f, 0.0f,
                        0.0f,          0.0f,          0.0f, 0.0f,
                       -1.0f,          1.0f,          0.0f, 1.0f };
-
-    /* Model Matrix (Identity Matrix) */
-    GLfloat model[] = { 1.0f, 0.0f, 0.0f, 0.0f, 
-                        0.0f, 1.0f, 0.0f, 0.0f, 
-                        0.0f, 0.0f, 1.0f, 0.0f, 
-                        0.0f, 0.0f, 0.0f, 1.0f };
-
 
     // Pass uniforms to shader
     /* VERY IMPORTANT
@@ -120,9 +101,6 @@ AssetRenderer::AssetRenderer() {
 
     glUniformMatrix4fv(gmProjHandle, 1, GL_FALSE, &proj[0]);
     checkGlError("glUniformMatrix4fv, mProj");
-
-    glUniformMatrix4fv(gmModelHandle, 1, GL_FALSE, &model[0]);
-    checkGlError("glUniformMatrix4fv, mModel");
 
     glViewport(0, 0, screen_w, screen_h);
     checkGlError("glViewport");
@@ -228,7 +206,6 @@ void AssetRenderer::render(vector<float> vertices, vector<float> colours, float 
 
     glVertexAttribPointer(_gvPosHandle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
     glVertexAttribPointer(_gvColorHandle, 4, GL_FLOAT, GL_FALSE, 0, &colours[0]);
-    glVertexAttrib1f(_gfAngleHandle, angle);
     checkGlError("glVertexAttrib");
 
     glEnableVertexAttribArray(_gvPosHandle);

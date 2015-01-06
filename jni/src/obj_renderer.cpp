@@ -1,3 +1,8 @@
+#define GLM_FORCE_RADIANS 1
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <stdlib.h>
 #include "obj_renderer.h"
 #include "log.h"
@@ -7,17 +12,14 @@ ObjRenderer::ObjRenderer() {
     _shad_vertex =
         "attribute vec2 vPos;\n"
         "attribute vec4 vColor;\n"
-        "attribute float fAngle;\n"
         "varying vec4 vFragColor;\n"
         "uniform mat4 mProj;\n"
+        "uniform mat4 mView;\n"
+        "uniform mat4 mModel;\n"
 
         "void main() {\n"
-        "  vec2 pos = vPos;\n"
-        "  pos.x = vPos.x*cos(fAngle) - vPos.y*sin(fAngle);\n"
-        "  pos.y = vPos.y*cos(fAngle) + vPos.x*sin(fAngle);\n"
-
-        "  mat4 mMVP = mProj;\n"
-        "  gl_Position = mMVP * vec4(pos, 0.0f, 1.0f);\n"
+        "  mat4 mMVP = mProj * mView * mModel;\n"
+        "  gl_Position = mMVP * vec4(vPos, 0.0f, 1.0f);\n"
 
         "  vFragColor = vColor;\n"
         "}\n";
@@ -44,11 +46,15 @@ ObjRenderer::ObjRenderer() {
     _gvColorHandle = glGetAttribLocation(_gProgram, "vColor");
     checkGlError("glGetAttribLocation(vColor)");
 
-    _gfAngleHandle = glGetAttribLocation(_gProgram, "fAngle");
-    checkGlError("glGetAttribLocation(fAngle)");
-
     GLuint gmProjHandle = glGetUniformLocation(_gProgram, "mProj");
     checkGlError("glGetUniformLocation(mProj)");
+
+    _gmModelHandle = glGetUniformLocation(_gProgram, "mModel");
+    checkGlError("glGetUniformLocation(mModel)");
+
+    _gmViewHandle = glGetUniformLocation(_gProgram, "mView");
+    checkGlError("glGetUniformLocation(mView)");
+
 
     /* Projection Matrix */
     GLfloat proj[] = { 2.0f/screen_w, 0.0f,          0.0f, 0.0f,
@@ -81,8 +87,28 @@ void ObjRenderer::render(vector<float> vertices, vector<float> colours, float an
 
     glVertexAttribPointer(_gvPosHandle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
     glVertexAttribPointer(_gvColorHandle, 4, GL_FLOAT, GL_FALSE, 0, &colours[0]);
-    glVertexAttrib1f(_gfAngleHandle, angle);
     checkGlError("glVertexAttrib");
+
+    // Model matrix
+    glm::mat4 model_matrix;
+    model_matrix = glm::rotate(model_matrix, static_cast<float>(angle*PI/180), glm::vec3(0.0f, 0.0f, 1.0f));
+    glUniformMatrix4fv(_gmModelHandle, 1, GL_FALSE, glm::value_ptr(model_matrix));
+    checkGlError("glUniformMatrix4fv, mModel");
+
+    // View matrix
+    glm::mat4 view_matrix;
+    glm::vec3 trans_centre = glm::vec3(Game::getScreenWidth()/2, 
+                                       Game::getScreenHeight()/2, 
+                                       0.0f);
+    glm::vec3 trans_back = glm::vec3(-Game::getScreenWidth()/2, 
+                                     -Game::getScreenHeight()/2, 
+                                      0.0f);
+    view_matrix = glm::translate(view_matrix, trans_centre);
+    view_matrix = glm::rotate(view_matrix, static_cast<float>(Game::getRotAngle()*PI/180), glm::vec3(0.0f, 0.0f, 1.0f));
+    LOGI("rotangle: %.2f",Game::getRotAngle());
+    view_matrix = glm::translate(view_matrix, trans_back);
+    glUniformMatrix4fv(_gmViewHandle, 1, GL_FALSE, glm::value_ptr(view_matrix));
+    checkGlError("glUniformMatrix4fv, mView");
 
     glEnableVertexAttribArray(_gvPosHandle);
     glEnableVertexAttribArray(_gvColorHandle);
