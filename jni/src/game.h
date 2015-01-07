@@ -15,13 +15,15 @@ class Game {
     private:
         static int _screen_width;
         static int _screen_height;
-
         static float _elapsed_time;
         static float _time_speed;
-        static float _rot_angle;
 
         bool _finished;
         std::string _package_name;
+
+        // View matrix values used by renderers
+        static Point2D _view_mat_pos;
+        static float _view_mat_angle;
 
         // Used to set the elepsed time since last update
         float _previous_trail_update;
@@ -67,7 +69,8 @@ class Game {
         static int getScreenHeight();
         static float getElapsedTime();
         static float getTimeSpeed();
-        static float getRotAngle();
+        static Point2D getViewMatPos();
+        static float getViewMatAngle();
 
         Game(std::string package_name);
         ~Game();

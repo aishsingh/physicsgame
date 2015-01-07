@@ -91,22 +91,22 @@ void ObjRenderer::render(vector<float> vertices, vector<float> colours, float an
 
     // Model matrix
     glm::mat4 model_matrix;
-    model_matrix = glm::rotate(model_matrix, static_cast<float>(angle*PI/180), glm::vec3(0.0f, 0.0f, 1.0f));
+    model_matrix = glm::rotate(model_matrix, 
+                               static_cast<float>(angle*PI/180), 
+                               glm::vec3(0.0f, 0.0f, 1.0f));
     glUniformMatrix4fv(_gmModelHandle, 1, GL_FALSE, glm::value_ptr(model_matrix));
     checkGlError("glUniformMatrix4fv, mModel");
 
     // View matrix
+    float trans_x = Game::getScreenWidth()/2;
+    float trans_y = Game::getScreenHeight()/2;
     glm::mat4 view_matrix;
-    glm::vec3 trans_centre = glm::vec3(Game::getScreenWidth()/2, 
-                                       Game::getScreenHeight()/2, 
-                                       0.0f);
-    glm::vec3 trans_back = glm::vec3(-Game::getScreenWidth()/2, 
-                                     -Game::getScreenHeight()/2, 
-                                      0.0f);
-    view_matrix = glm::translate(view_matrix, trans_centre);
-    view_matrix = glm::rotate(view_matrix, static_cast<float>(Game::getRotAngle()*PI/180), glm::vec3(0.0f, 0.0f, 1.0f));
-    LOGI("rotangle: %.2f",Game::getRotAngle());
-    view_matrix = glm::translate(view_matrix, trans_back);
+    view_matrix = glm::translate(view_matrix, glm::vec3(trans_x, trans_y, 0));
+    view_matrix = glm::rotate(view_matrix, 
+                              static_cast<float>(Game::getViewMatAngle()*PI/180), 
+                              glm::vec3(0.0f, 0.0f, 1.0f));
+    view_matrix = glm::translate(view_matrix, glm::vec3(-trans_x, -trans_y, 0));
+    LOGI("angle %.2f", Game::getViewMatAngle());
     glUniformMatrix4fv(_gmViewHandle, 1, GL_FALSE, glm::value_ptr(view_matrix));
     checkGlError("glUniformMatrix4fv, mView");
 

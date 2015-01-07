@@ -38,15 +38,23 @@ Game::~Game() {
 void Game::resetTime() {
     _elapsed_time = 0;
     _previous_trail_update = 0;
-    _rot_angle = 0;
 
     for(int i=0; i<(int)_players.size(); i++)
         _players.at(i)->resetTime();
 }
 
 void Game::setupGLContext(int screen_w, int screen_h) {
-    // NOTE: for some reason the elapsed time gets set to a random value and so all time vals needs to be reset
+    /* NOTE: Static vars get destroyed when the app goes out of context, resulting 
+             in random data. Therefore static vars need need to be reset here. */
     resetTime();
+
+    if (_players.size() == 0) {
+        _view_mat_angle = 0;
+        _view_mat_pos = Point2D(0, 0);
+    } else {
+        _view_mat_angle = -_players.at(0)->getRotAngle();
+        _view_mat_pos = Point2D(0, 0); //TODO
+    }
 
     // Log OpenGL details
     LOGI("loading OpenGL context");
@@ -157,7 +165,7 @@ void Game::handleInput(float x, float y) {
         // Always rotate players whenever there is new input
         for(int p=0; p<(int)_players.size(); p++) {
             _players.at(p)->setRotAngle(js1Angle -360);
-            _rot_angle = -(js1Angle -360);
+            _view_mat_angle = 360 -js1Angle;
             // _players.at(p)->setX(x);
             // _players.at(p)->setY(y);
         }
@@ -216,17 +224,23 @@ int Game::getScreenHeight() {
     return _screen_height; 
 }
 
-float Game::_elapsed_time(0);
+float Game::_elapsed_time(0.0f);
 float Game::getElapsedTime() {
     return _elapsed_time; 
-}
-
-float Game::_rot_angle(0);
-float Game::getRotAngle() {
-    return _rot_angle;
 }
 
 float Game::_time_speed(INIT_TIME_SPEED);
 float Game::getTimeSpeed() {
     return _time_speed; 
 }
+
+Point2D Game::_view_mat_pos(Point2D(0,0));
+Point2D Game::getViewMatPos() {
+    return _view_mat_pos;
+}
+
+float Game::_view_mat_angle(0.0f);
+float Game::getViewMatAngle() {
+    return _view_mat_angle;
+}
+
