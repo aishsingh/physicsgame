@@ -1,8 +1,14 @@
 #include "renderer.h"
 #include "log.h"
 #include "jni.h"
+#include "game.h"
 
-Renderer::Renderer() {}
+Renderer::Renderer() {
+    _proj_mat = glm::mat4x4(2.0f/Game::getScreenWidth(), 0.0f,                         0.0f, 0.0f,
+                            0.0f,                       -2.0f/Game::getScreenHeight(), 0.0f, 0.0f,
+                            0.0f,                        0.0f,                         0.0f, 0.0f,
+                           -1.0f,                        1.0f,                         0.0f, 1.0f );
+}
 Renderer::~Renderer() {}
 
 GLuint Renderer::loadShader(GLenum shaderType, const char *pSource) {

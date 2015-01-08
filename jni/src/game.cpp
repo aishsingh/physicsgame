@@ -17,7 +17,7 @@ int Game::_screen_width(0);
 float Game::_elapsed_time(0.0f);
 float Game::_time_speed(0.4f);
 
-Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/2) - 50, GRAY),
+Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/2) - 27.5, GRAY),
                                                                _joystick1(100, screen_h - 250, 250, 60, 10),
                                                                _cam(&_user) {
     // Init values
@@ -73,6 +73,11 @@ void Game::setupObjs() {
         LOGE("Error creating planets: %s", e.what());
     }
 
+    glViewport(0, 0, w, h);
+    checkGlError("glViewport");
+
+    glDisable(GL_DEPTH_TEST);
+    checkGlError("glDisable(GL_DEPTH_TEST)");
 }
 
 void Game::setupGLContext(int screen_w, int screen_h) {
@@ -143,7 +148,7 @@ void Game::draw() {
 
     // Render players
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->draw(_ass_rend);
+        _players.at(i)->draw(_ass_rend, &_cam);
 
     _ass_rend->disableAttributes();
 

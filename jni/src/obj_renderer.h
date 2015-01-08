@@ -7,8 +7,6 @@
 
 class ObjRenderer: public Renderer {
     private:
-        GLuint _gmModelHandle;
-        GLuint _gmViewHandle;
         GLuint _gvColorHandle;
         void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);
 

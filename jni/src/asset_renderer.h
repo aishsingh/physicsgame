@@ -3,11 +3,13 @@
 
 #include <GLES2/gl2.h>
 #include "renderer.h"
+#include "camera.h"
 
 class AssetRenderer: public Renderer {
     private:
         GLuint _gsTexHandle;
         GLuint _gvColorHandle;
+        void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);
 
         // PNG loading
         static void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
@@ -18,7 +20,7 @@ class AssetRenderer: public Renderer {
         GLuint createSimpleTexture2D(GLuint _textureid, GLubyte* pixels, int width, int height, int channels);
 
     public:
-        void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);
+        void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode, Camera *cam);
         void disableAttributes();
 
         /* Ctor - Init Shaders */

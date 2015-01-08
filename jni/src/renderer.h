@@ -1,6 +1,11 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#define GLM_FORCE_RADIANS 1
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 #include <string>
 #include <vector>
 #include <GLES2/gl2.h>
@@ -14,7 +19,11 @@ using std::vector;
 class Renderer {
     protected:
         GLuint _gProgram;
+        GLuint _gmMVPHandle;
         GLuint _gvPosHandle;
+
+        // Projection matrix
+        glm::mat4 _proj_mat;
 
         std::string _shad_vertex;
         std::string _shad_fragment;

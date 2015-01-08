@@ -11,7 +11,7 @@ void Camera::setOffset(Point2D offset) {
 }
 
 Point2D Camera::getPos() const {
-    return _anchor->getPos();
+    return _anchor->getCentre();
 }
 
 float Camera::getRotAngle() const {
