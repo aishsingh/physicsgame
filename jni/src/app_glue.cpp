@@ -25,9 +25,8 @@ JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_init(JNIEnv * env, j
     if (width > height) {
         if (game == NULL) {
             // Create game instance if none have been created
-            game = new Game(std::string(&package_name));
+            game = new Game(std::string(&package_name), width, height);
             game->setupGLContext(width, height);
-            game->setupObjs();
         }
         else {
             // resetup OpenGL going out of context (eg. Phone sleep)

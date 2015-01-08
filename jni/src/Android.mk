@@ -29,6 +29,7 @@ LOCAL_SRC_FILES := app_glue.cpp \
 					  trail.cpp \
 					 planet.cpp \
 					 motion.cpp \
+					 camera.cpp \
 					 colour.cpp \
 						log.cpp
 

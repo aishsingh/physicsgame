@@ -3,15 +3,17 @@
 
 #include <GLES2/gl2.h>
 #include "renderer.h"
+#include "camera.h"
 
 class ObjRenderer: public Renderer {
     private:
         GLuint _gmModelHandle;
         GLuint _gmViewHandle;
         GLuint _gvColorHandle;
+        void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);
 
     public:
-        void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);
+        void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode, Camera *cam);
         void disableAttributes();
 
         /* Ctor - Init Shaders */

@@ -81,34 +81,9 @@ ObjRenderer::ObjRenderer() {
 }
 
 void ObjRenderer::render(vector<float> vertices, vector<float> colours, float angle, GLenum mode) {
-    // Change renderer
-    glUseProgram(_gProgram);
-    checkGlError("glUseProgram");
-
     glVertexAttribPointer(_gvPosHandle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
     glVertexAttribPointer(_gvColorHandle, 4, GL_FLOAT, GL_FALSE, 0, &colours[0]);
     checkGlError("glVertexAttrib");
-
-    // Model matrix
-    glm::mat4 model_matrix;
-    model_matrix = glm::rotate(model_matrix, 
-                               static_cast<float>(angle*PI/180), 
-                               glm::vec3(0.0f, 0.0f, 1.0f));
-    glUniformMatrix4fv(_gmModelHandle, 1, GL_FALSE, glm::value_ptr(model_matrix));
-    checkGlError("glUniformMatrix4fv, mModel");
-
-    // View matrix
-    float trans_x = Game::getScreenWidth()/2;
-    float trans_y = Game::getScreenHeight()/2;
-    glm::mat4 view_matrix;
-    view_matrix = glm::translate(view_matrix, glm::vec3(trans_x, trans_y, 0));
-    view_matrix = glm::rotate(view_matrix, 
-                              static_cast<float>(Game::getViewMatAngle()*PI/180), 
-                              glm::vec3(0.0f, 0.0f, 1.0f));
-    view_matrix = glm::translate(view_matrix, glm::vec3(-trans_x, -trans_y, 0));
-    LOGI("angle %.2f", Game::getViewMatAngle());
-    glUniformMatrix4fv(_gmViewHandle, 1, GL_FALSE, glm::value_ptr(view_matrix));
-    checkGlError("glUniformMatrix4fv, mView");
 
     glEnableVertexAttribArray(_gvPosHandle);
     glEnableVertexAttribArray(_gvColorHandle);
@@ -117,6 +92,36 @@ void ObjRenderer::render(vector<float> vertices, vector<float> colours, float an
     // Pass values to shader
     glDrawArrays(mode, 0, vertices.size()/2);
     checkGlError("box glDrawArrays");
+}
+
+void ObjRenderer::render(vector<float> vertices, vector<float> colours, float angle, GLenum mode, Camera *cam) {
+    // Change renderer
+    glUseProgram(_gProgram);
+    checkGlError("glUseProgram");
+
+    // Update Model matrix
+    glm::mat4 model_matrix;
+    model_matrix = glm::rotate(model_matrix, 
+                               static_cast<float>(angle*PI/180), 
+                               glm::vec3(0.0f, 0.0f, 1.0f));
+    glUniformMatrix4fv(_gmModelHandle, 1, GL_FALSE, glm::value_ptr(model_matrix));
+    checkGlError("glUniformMatrix4fv, mModel");
+
+    // Update View matrix
+    float trans_x = Game::getScreenWidth()/2;
+    float trans_y = Game::getScreenHeight()/2;
+    glm::mat4 view_matrix;
+    view_matrix = glm::translate(view_matrix, glm::vec3(trans_x, trans_y, 0));
+    view_matrix = glm::rotate(view_matrix, 
+                              static_cast<float>(cam->getRotAngle()*PI/180), 
+                              glm::vec3(0.0f, 0.0f, 1.0f));
+    view_matrix = glm::translate(view_matrix, glm::vec3(-trans_x, -trans_y, 0));
+    glUniformMatrix4fv(_gmViewHandle, 1, GL_FALSE, glm::value_ptr(view_matrix));
+    checkGlError("glUniformMatrix4fv, mView");
+    
+    LOGI("angle %.2f", cam->getRotAngle());
+
+    render(vertices, colours, angle, mode);
 }
 
 void ObjRenderer::disableAttributes() {

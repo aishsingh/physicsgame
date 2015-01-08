@@ -6,10 +6,12 @@
 #include "physics.h"
 #include "player.h"
 #include "planet.h"
+#include "spaceman.h"
 #include "joystick.h"
 #include "asset_renderer.h"
 #include "obj_renderer.h"
 #include "screen_renderer.h"
+#include "camera.h"
 
 class Game {
     private:
@@ -21,10 +23,6 @@ class Game {
         bool _finished;
         std::string _package_name;
 
-        // View matrix values used by renderers
-        static Point2D _view_mat_pos;
-        static float _view_mat_angle;
-
         // Used to set the elepsed time since last update
         float _previous_trail_update;
 
@@ -33,7 +31,9 @@ class Game {
         vector<Player*> _players;
         vector<Planet*> _planets;
 
-        Joystick *_joystick1;
+        Spaceman _user;
+        Joystick _joystick1;
+        Camera _cam;
 
         /* Renderers */
         AssetRenderer *_ass_rend;
@@ -44,6 +44,9 @@ class Game {
 
         void resetTime();
 
+        /* Setup game objects */
+        void setupObjs();
+
         /* Load assets in the apk by extracting it with libzip
          - called from java */
         zip *APKArchive;
@@ -53,9 +56,6 @@ class Game {
         /* Setup OpenGL
          - called from java */
         void setupGLContext(int screen_w, int screen_h);
-
-        /* Setup game objects */
-        void setupObjs();
 
         /* Main Lewp
          - called from java */
@@ -69,10 +69,8 @@ class Game {
         static int getScreenHeight();
         static float getElapsedTime();
         static float getTimeSpeed();
-        static Point2D getViewMatPos();
-        static float getViewMatAngle();
 
-        Game(std::string package_name);
+        Game(std::string pkg_name, int screen_w, int screen_h);
         ~Game();
 };
 

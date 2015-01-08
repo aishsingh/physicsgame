@@ -12,25 +12,27 @@ Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
     _rot_speed = 0.5f;
 }
 
-void Planet::draw(ObjRenderer *rend) {
+void Planet::draw(ObjRenderer *rend, Camera *cam) {
     // Render circle
     float vertex_count = _SIDES * getWidth()/400;
     rend->render(getVerticeData(vertex_count, 0), 
                  Colour::getColourData(vertex_count, _colour), 
                  getRotAngle(), 
-                 GL_TRIANGLE_FAN);
+                 GL_TRIANGLE_FAN,
+                 cam);
 
     // Rotate
     setRotAngle(getRotAngle() + _rot_speed);
 }
 
-void Planet::drawGrav(ObjRenderer *rend) {
+void Planet::drawGrav(ObjRenderer *rend, Camera *cam) {
     // Render Gravity area
     float grav_vertex_count = _GRAV_SIDES * (getWidth()/400);
     rend->render(getVerticeData(grav_vertex_count, getWidth()/2), 
                  Colour::getColourData(grav_vertex_count, Colour(_colour.r, _colour.g, _colour.b, _GRAV_OPACITY)), 
                  getRotAngle(), 
-                 GL_TRIANGLE_FAN);
+                 GL_TRIANGLE_FAN,
+                 cam);
 }
 
 void Planet::update() {

@@ -69,10 +69,15 @@ void Shape::setIndex(const int index) {
     _index = index;
 }
 
-void Shape::draw(ObjRenderer *rend) {
+void Shape::draw(ObjRenderer *rend, Camera *cam) {
     // Render
     vector<float> vert = getVerticeData();
-    rend->render(vert, Colour::getColourData(vert.size(), _colour), getRotAngle(), GL_TRIANGLE_STRIP);
+    rend->render(vert, 
+                 Colour::getColourData(vert.size(), 
+                 _colour), 
+                 getRotAngle(), 
+                 GL_TRIANGLE_STRIP,
+                 cam);
 }
 
 vector<float> Shape::getVerticeData() {

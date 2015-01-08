@@ -8,23 +8,37 @@
 #include "collision.h"
 #include "log.h"
 
-#define INIT_TIME_SPEED 0.4f
 #define TRAIL_UPDATE_INTERVAL 0.6f
 #define TRAIL_PART_PER_UPDATE 1
 #define OUT_OpenGL_Ver false
 
-Game::Game(std::string package_name) : _finished(false), _package_name(package_name), _previous_trail_update(0) {
+int Game::_screen_height(0);
+int Game::_screen_width(0);
+float Game::_elapsed_time(0.0f);
+float Game::_time_speed(0.4f);
+
+Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/2) - 50, GRAY),
+                                                               _joystick1(100, screen_h - 250, 250, 60, 10),
+                                                               _cam(&_user) {
+    // Init values
+    _finished = false;
+    _package_name = pkg_name;
+    _screen_height = screen_h;
+    _screen_width = screen_w;
+
     LOGI("--------------------");
     LOGI("Created game object");
-    LOGI("pkgname: %s", _package_name.c_str());
+    LOGI("pkgname: %s", pkg_name.c_str());
 
     // Seed random numbers using the time to improve randomness
     srand(time(NULL));
 
+    // Init ptrs
     _ass_rend = NULL;
     _obj_rend = NULL;
     _scr_rend = NULL;
-    _joystick1 = NULL;
+
+    setupObjs();
 }
 
 Game::~Game() {
@@ -43,18 +57,28 @@ void Game::resetTime() {
         _players.at(i)->resetTime();
 }
 
+void Game::setupObjs() {
+    const int w = getScreenWidth();
+    const int h = getScreenHeight();
+
+    // Setup Player
+    _players.push_back(&_user);
+
+    // Setup planets
+    try {
+        _planets.push_back(new Planet((w/2) + 50,  (h/2) - 150, 400));
+        _planets.push_back(new Planet((w/2) - 350, (h/2) - 150, 200));
+    }
+    catch (std::exception &e) {
+        LOGE("Error creating planets: %s", e.what());
+    }
+
+}
+
 void Game::setupGLContext(int screen_w, int screen_h) {
     /* NOTE: Static vars get destroyed when the app goes out of context, resulting 
              in random data. Therefore static vars need need to be reset here. */
     resetTime();
-
-    if (_players.size() == 0) {
-        _view_mat_angle = 0;
-        _view_mat_pos = Point2D(0, 0);
-    } else {
-        _view_mat_angle = -_players.at(0)->getRotAngle();
-        _view_mat_pos = Point2D(0, 0); //TODO
-    }
 
     // Log OpenGL details
     LOGI("loading OpenGL context");
@@ -97,31 +121,6 @@ void Game::setupGLContext(int screen_w, int screen_h) {
     _scr_rend = new ScreenRenderer();
 }
 
-void Game::setupObjs() {
-    float w = getScreenWidth();
-    float h = getScreenHeight();
-
-    // Setup UI (Joystick)
-    _joystick1 = new Joystick(100, h - 250, 250, 60, 10);
-
-    // Setup Player
-    try {
-        _players.push_back(new Spaceman((w/2) - 25, (h/2) - 50, GRAY));
-    }
-    catch (std::exception &e) {
-        LOGE("Error creating players: %s", e.what());
-    }
-
-    // Setup planets
-    try {
-        _planets.push_back(new Planet((w/2) + 50, (h/2) - 150, 400));
-        _planets.push_back(new Planet((w/2) - 350, (h/2) - 150, 200));
-    }
-    catch (std::exception &e) {
-        LOGE("Error creating planets: %s", e.what());
-    }
-}
-
 void Game::draw() {
     /* MAIN GAME LOOP */
     Renderer::clearScreen();
@@ -130,15 +129,15 @@ void Game::draw() {
 
     // Render planets gravity area
     for(int i=0; i<(int)_planets.size(); i++)
-        _planets.at(i)->drawGrav(_obj_rend);
+        _planets.at(i)->drawGrav(_obj_rend, &_cam);
 
     // Render player trails
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->drawTrail(_obj_rend, &_planets);
+        _players.at(i)->drawTrail(_obj_rend, &_planets, &_cam);
 
     // Render planets
     for(int i=0; i<(int)_planets.size(); i++)
-        _planets.at(i)->draw(_obj_rend);
+        _planets.at(i)->draw(_obj_rend, &_cam);
 
     _obj_rend->disableAttributes();
 
@@ -149,8 +148,7 @@ void Game::draw() {
     _ass_rend->disableAttributes();
 
     // Render UI
-    if (_joystick1)
-        _joystick1->draw(_scr_rend);
+    _joystick1.draw(_scr_rend);
 
     // Increment game time according to the current speed of time
     _elapsed_time += _time_speed;
@@ -158,14 +156,13 @@ void Game::draw() {
 
 void Game::handleInput(float x, float y) {
     // Make sure pt was inside the joystick area (-1 is returned if this is the case)
-    if (Collision::isPtInRect(x, y, *_joystick1)) {
+    if (Collision::isPtInRect(x, y, _joystick1)) {
         // Handle joystick input
-        float js1Angle = _joystick1->getJoystickAngle(x, y);
+        float js1Angle = _joystick1.getJoystickAngle(x, y);
 
         // Always rotate players whenever there is new input
         for(int p=0; p<(int)_players.size(); p++) {
             _players.at(p)->setRotAngle(js1Angle -360);
-            _view_mat_angle = 360 -js1Angle;
             // _players.at(p)->setX(x);
             // _players.at(p)->setY(y);
         }
@@ -214,33 +211,18 @@ void Game::loadAPK(const char *package_name) {
 }
 
 /* Static Members */
-int Game::_screen_width(0);
 int Game::getScreenWidth() { 
     return _screen_width; 
 }
 
-int Game::_screen_height(0);
 int Game::getScreenHeight() { 
     return _screen_height; 
 }
 
-float Game::_elapsed_time(0.0f);
 float Game::getElapsedTime() {
     return _elapsed_time; 
 }
 
-float Game::_time_speed(INIT_TIME_SPEED);
 float Game::getTimeSpeed() {
     return _time_speed; 
 }
-
-Point2D Game::_view_mat_pos(Point2D(0,0));
-Point2D Game::getViewMatPos() {
-    return _view_mat_pos;
-}
-
-float Game::_view_mat_angle(0.0f);
-float Game::getViewMatAngle() {
-    return _view_mat_angle;
-}
-

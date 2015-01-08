@@ -10,6 +10,7 @@
 #include "asset_renderer.h"
 #include "obj_renderer.h"
 #include "planet.h"
+#include "camera.h"
 
 class Player: public Object {
     protected:
@@ -25,7 +26,7 @@ class Player: public Object {
     public:
         // Render player and trail
         virtual void draw(AssetRenderer *_ass_rend);
-        virtual void drawTrail(ObjRenderer *_obj_rend, vector<Planet*> *g_objs) = 0;
+        virtual void drawTrail(ObjRenderer *_obj_rend, vector<Planet*> *g_objs, Camera *cam) = 0;
         vector<float> getVerticeData();
         vector<float> getColourData();
 

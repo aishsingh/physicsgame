@@ -20,7 +20,7 @@ class Spaceman: public Player {
 
     public:
         // Render player and trail
-        void drawTrail(ObjRenderer *_obj_rend, vector<Planet*> *g_objs);
+        void drawTrail(ObjRenderer *_obj_rend, vector<Planet*> *g_objs, Camera *cam);
 
         // Do according to its current action, and update physics
         void update();
