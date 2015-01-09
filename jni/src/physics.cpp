@@ -102,9 +102,6 @@ void PhysicsEngine::switchGravity(Object objs[], const int &objs_count, const in
 */
 
 void PhysicsEngine::genInitVelocity(Object &obj, float rot_angle) {
-    // Remove neg values
-    rot_angle /= -1;
-
     float init_h = 0;
     float init_v = 0;
 

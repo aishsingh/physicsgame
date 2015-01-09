@@ -166,13 +166,12 @@ void Game::handleInput(float x, float y) {
         float js1Angle = _joystick1.getJoystickAngle(x, y);
 
         // Always rotate players whenever there is new input
-        for(int p=0; p<(int)_players.size(); p++) {
-            _players.at(p)->setRotAngle(js1Angle -360);
-            // _players.at(p)->setX(x);
-            // _players.at(p)->setY(y);
-        }
+        _user.setRotAngle(js1Angle);
     }
     else {
+        _user.setX(x);
+        _user.setY(y);
+
         // Only build player trail after time interval
         float currentUpdate = getElapsedTime();
         float elapsedSinceUpdate = currentUpdate - _previous_trail_update;

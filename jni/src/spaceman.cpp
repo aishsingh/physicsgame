@@ -63,7 +63,9 @@ void Spaceman::drawTrail(ObjRenderer* _obj_rend, vector<Planet*> *g_objs, Camera
 
 void Spaceman::update() {
     if (_action == FLYING) {
-        _trail.buildTrail(_base.getX(), _base.getY(), getRotAngle(), _colour_theme);
+        // Convert angle to anti-clockwise direction
+        float angle = 360 - getRotAngle();
+        _trail.buildTrail(_base.getX(), _base.getY(), angle, _colour_theme);
     }
 }
 

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "obj_renderer.h"
 #include "log.h"
+#include "game.h"
 
 ObjRenderer::ObjRenderer() {
     _shad_vertex =
@@ -64,8 +65,10 @@ void ObjRenderer::render(vector<float> vertices, vector<float> colours, float an
                            glm::vec3(0.0f, 0.0f, 1.0f));
 
     // View matrix
+    Point2D ctr = Point2D(Game::getScreenWidth()/2, Game::getScreenHeight()/2);
     Point2D anchor_pt = cam->getPos();
     glm::mat4 view_mat;
+    view_mat = glm::translate(view_mat, glm::vec3(ctr.getX() - anchor_pt.getX(), ctr.getY() - anchor_pt.getY(), 0));
     view_mat = glm::translate(view_mat, glm::vec3(anchor_pt.getX(), anchor_pt.getY(), 0));
     view_mat = glm::rotate(view_mat, 
                            static_cast<float>(cam->getRotAngle()*PI/180), 
