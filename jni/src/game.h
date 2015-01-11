@@ -12,6 +12,7 @@
 #include "obj_renderer.h"
 #include "screen_renderer.h"
 #include "camera.h"
+#include "input_handler.h"
 
 class Game {
     private:
@@ -32,7 +33,7 @@ class Game {
         vector<Planet*> _planets;
 
         Spaceman _user;
-        Joystick _joystick1;
+        // Joystick _joystick1;
         Camera _cam;
 
         /* Renderers */
@@ -40,30 +41,27 @@ class Game {
         ObjRenderer *_obj_rend;
         ScreenRenderer *_scr_rend;
 
+        void updatePlayers();
         void applyGravity();
-
         void resetTime();
-
-        /* Setup game objects */
         void setupObjs();
 
-        /* Load assets in the apk by extracting it with libzip
-         - called from java */
+        /* Load assets in the apk by extracting it with libzip */
         zip *APKArchive;
         void loadAPK(const char *package_name);
 
     public:
+        /* Respond to input events 
+         - called from JNI */
+        InputHandler input;
+
         /* Setup OpenGL
-         - called from java */
+         - called from JNI */
         void setupGLContext(int screen_w, int screen_h);
 
         /* Main Lewp
-         - called from java */
+         - called from JNI */
         void draw();
-
-        /* Respond to input events 
-         - called from java */
-        void handleInput(float x, float y);
 
         static int getScreenWidth();
         static int getScreenHeight();

@@ -2,6 +2,7 @@
 #include "joystick.h"
 #include "game.h"
 #include "physics.h"
+#include "log.h"
 
 Joystick::Joystick(float x, float y, float l, float size, float origin_size) : Rect(x,y,l,l), _size(size), _ori_size(origin_size) { }
 
@@ -47,4 +48,11 @@ vector<float> Joystick::getVerticeData() {
 
 float Joystick::getJoystickAngle(int x, int y) {
     return PhysicsEngine::getAngleOfPtFromRectCentre(Point2D(x, y), *this);
+}
+
+float Joystick::getJoystickAngle(Point2D pos, float obj_rot_angle) {
+    float angle = PhysicsEngine::getAngleOfPtFromRectCentre(pos, *this);
+    // angle += obj_rot_angle;
+    // LOGI("angle %.2f", angle);
+    return angle;
 }

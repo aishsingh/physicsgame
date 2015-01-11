@@ -127,16 +127,8 @@ float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pt, Rect rect) {
     float radius = rect.getWidth()/2;
     float origin_x = rect.getX() + radius;
     float origin_y = rect.getY() + radius;
-    float length_from_origin_x = 0;
-    float length_from_origin_y = 0;
-    if (pt.getX() >= origin_x)
-        length_from_origin_x = origin_x - pt.getX();
-    else
-        length_from_origin_x = pt.getX() - origin_x;
-    if (pt.getY() >= origin_y)
-        length_from_origin_y = origin_y - pt.getY();
-    else
-        length_from_origin_y = pt.getY() - origin_y;
+    float length_from_origin_x = abs(origin_x - pt.getX());
+    float length_from_origin_y = abs(origin_y - pt.getY());
 
     // Find the quadrants
     if (pt.getX() <= rect.getX() + radius && pt.getY() < rect.getY() + radius) {

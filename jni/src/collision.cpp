@@ -1,6 +1,7 @@
 #include <cmath>
 #include "collision.h"
 #include "physics.h"
+#include "math.h"
 
 bool Collision::isBoundingBox(Rect box1, Rect box2) {
     return (box1.getX() < box2.getX() + box2.getWidth() &&
@@ -12,7 +13,7 @@ bool Collision::isBoundingBox(Rect box1, Rect box2) {
 
 bool Collision::isPtInRect(Point2D pt, Rect rect) {
     return (pt.getX() >= rect.getX() && pt.getX() <= rect.getX() + rect.getWidth() && 
-            pt.getY() >= rect.getY() && pt.getY() <= rect.getY() + rect.getWidth())
+            pt.getY() >= rect.getY() && pt.getY() <= rect.getY() + rect.getHeight())
            ? true : false;
 }
 
@@ -26,7 +27,7 @@ bool Collision::isCircleIntersCircle(Rect circ1, Rect circ2) {
     // Pythagorean Theorem: a^2 + b^2 = c^2
     float a = fabs(circ1.getCentreX() - circ2.getCentreX());
     float b = fabs(circ1.getCentreY() - circ2.getCentreY());
-    float c = sqrt(pow(a, 2.0f) + pow(b, 2.0f));
+    float c = Math::getHypotenuse(a, b);
     
     return (c < radius_total) ? true : false;
 }
@@ -37,7 +38,7 @@ bool Collision::isPtInCircle(Point2D pt, Rect circ) {
     // Pythagorean Theorem: a^2 + b^2 = c^2
     float a = fabs(pt.getX() - circ.getCentreX());
     float b = fabs(pt.getY() - circ.getCentreY());
-    float c = sqrt(pow(a, 2.0f) + pow(b, 2.0f));
+    float c = Math::getHypotenuse(a, b);
     
     return (c < radius_total) ? true : false;
 }

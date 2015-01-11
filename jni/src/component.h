@@ -9,8 +9,6 @@
 typedef enum Component {
     VERT, 
     HORI,
-    BOTH,
-    NONE
 } Comp;
 
 #endif /* COMPONENT_H */

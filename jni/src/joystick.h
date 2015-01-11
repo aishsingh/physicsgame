@@ -20,6 +20,7 @@ class Joystick : public Rect {
     public:
         void draw(ScreenRenderer *rend);
         float getJoystickAngle(int x, int y);
+        float getJoystickAngle(Point2D pos, float obj_rot_angle);
 
         /* Ctor */
         Joystick(float x, float y, float l, float size, float origin_size);

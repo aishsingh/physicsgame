@@ -32,29 +32,35 @@ public class OpenGLActivity extends Activity {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        // MotionEvent reports input details from the touch screen
-        // and other input controls. In this case, you are only
-        // interested in events where the touch position changed.
+        int i = e.getActionIndex();
+        float x = e.getX(i);
+        float y = e.getY(i);
 
-        for (int i=0; i<e.getPointerCount(); i++) {
-            float x = e.getX(i);
-            float y = e.getY(i);
+        switch (e.getAction() & e.getActionMasked() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                OpenGLLib.touchDown(x, y, i);
+                break;
 
-            switch (e.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    OpenGLLib.touchMove(x,y);
-                    break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                OpenGLLib.touchPointerDown(x, y, i);
+                break;
 
-                case MotionEvent.ACTION_MOVE:
-                    OpenGLLib.touchMove(x,y);
-                    break;
+            case MotionEvent.ACTION_MOVE:
+                for (int p=0; p<e.getPointerCount(); p++) {
+                    OpenGLLib.touchMove(e.getX(p), e.getY(p), p);
+                }
+                break;
 
-                case MotionEvent.ACTION_UP:
-                    break;
-            }
+            case MotionEvent.ACTION_UP:
+                OpenGLLib.touchUp(i);
+                break;
+
+            case MotionEvent.ACTION_POINTER_UP:
+                OpenGLLib.touchPointerUp(i);
+                break;
         }
 
-
-        return true; // event was handled
+        // Event was handled
+        return true; 
     }
 }

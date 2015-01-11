@@ -7,6 +7,7 @@
 #include "spaceman.h"
 #include "collision.h"
 #include "log.h"
+#include "math.h"
 
 #define TRAIL_UPDATE_INTERVAL 0.6f
 #define TRAIL_PART_PER_UPDATE 1
@@ -18,8 +19,8 @@ float Game::_elapsed_time(0.0f);
 float Game::_time_speed(0.4f);
 
 Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/2) - 27.5, GRAY),
-                                                               _joystick1(100, screen_h - 250, 250, 60, 10),
-                                                               _cam(&_user) {
+                                                               _cam(&_user),
+                                                               input(true, VERT, &_user) {
     // Init values
     _finished = false;
     _package_name = pkg_name;
@@ -151,30 +152,19 @@ void Game::draw() {
         _players.at(i)->draw(_ass_rend, &_cam);
 
     _ass_rend->disableAttributes();
-
-    // Render UI
-    _joystick1.draw(_scr_rend);
-
-    // Increment game time according to the current speed of time
-    _elapsed_time += _time_speed;
+    
+    // Update all players (eg build player trail)
+    updatePlayers();
 }
 
-void Game::handleInput(float x, float y) {
-    // Make sure pt was inside the joystick area (-1 is returned if this is the case)
-    if (Collision::isPtInRect(x, y, _joystick1)) {
-        // Handle joystick input
-        float js1Angle = _joystick1.getJoystickAngle(x, y);
-
-        // Always rotate players whenever there is new input
-        _user.setRotAngle(js1Angle);
-    }
-    else {
-        _user.setX(x);
-        _user.setY(y);
-
+void Game::updatePlayers() {
+    // Check if there is a touch that should cause an action
+    int touch_count = input.getCount();
+    bool nav_active = input.isNavActive();
+    if ((!nav_active && touch_count > 0) || (nav_active && touch_count > 1)) {
         // Only build player trail after time interval
-        float currentUpdate = getElapsedTime();
-        float elapsedSinceUpdate = currentUpdate - _previous_trail_update;
+        float cur_update = getElapsedTime();
+        float elapsedSinceUpdate = cur_update - _previous_trail_update;
         if (elapsedSinceUpdate >= TRAIL_UPDATE_INTERVAL) {
             // build all trails 
             for (int i=1; i<=TRAIL_PART_PER_UPDATE; i++) {
@@ -183,9 +173,11 @@ void Game::handleInput(float x, float y) {
             }
 
             // update values for next input
-            _previous_trail_update = currentUpdate;
+            _previous_trail_update = cur_update;
         }
     }
+    // Increment game time according to the current speed of time
+    _elapsed_time += _time_speed;
 }
 
 void Game::applyGravity() {
