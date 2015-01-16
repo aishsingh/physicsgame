@@ -10,13 +10,13 @@
 #include "point2d.h"
 
 class Object: public Rect {
-    private:
+    protected:
         float _rot_angle;
 
     public:
         Motion vert_motion, hori_motion;
 
-        float getRotAngle() const;
+        virtual float getRotAngle() const;
         void setRotAngle(float angle);
         Point2D getPos() const;
 

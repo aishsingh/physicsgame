@@ -8,18 +8,22 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#define CAM_RotateViewToFollowPlayer true
+
 class Camera {
     private:
         const Object *_anchor;
-        Point2D _offset;
+        Point2D _pos_offset;
+        float _rot_offset_angle;
 
     public:
         /* Mutators */
         void setAnchorObj(const Object *obj);
-        void setOffset(Point2D offset);
+        void setPosOffset(Point2D offset);
+        void setRotAngleOffset(float offset);
 
         /* Accessors */
-        Point2D getPos() const;
+        Point2D getPos();
         float getRotAngle() const;
 
         /* Ctor */

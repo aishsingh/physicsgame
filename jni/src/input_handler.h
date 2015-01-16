@@ -8,6 +8,7 @@
 #include <vector>
 #include "point2d.h"
 #include "player.h"
+#include "camera.h"
 #include "component.h"
 
 class InputHandler {
@@ -21,6 +22,7 @@ class InputHandler {
         };
         std::vector<Touch> _touches;
         Player *_user; // Needed to rotate player
+        Camera *_cam;
 
         Comp _nav_axis;
         bool _nav_active;
@@ -44,7 +46,7 @@ class InputHandler {
         void touchUp(unsigned int index);
 
         /* Ctor */
-        InputHandler(bool nav_left_hand, Comp nav_axis, Player *user);
+        InputHandler(bool nav_left_hand, Comp nav_axis, Player *user, Camera *cam);
 };
 
 #endif /* INPUT_HANDLER_H */

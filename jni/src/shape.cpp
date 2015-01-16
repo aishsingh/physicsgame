@@ -53,7 +53,7 @@ void Shape::useTheme(Theme &theme) {
     }
 
     // Reset Alpha value
-    _colour.a = (rand() % 256) / 256.0f;
+    _colour.a = 1.0f;
 }
 float Shape::getAlpha() const {
     return _colour.a;

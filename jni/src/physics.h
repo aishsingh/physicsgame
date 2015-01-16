@@ -31,7 +31,7 @@ class PhysicsEngine {
         static Motion calcMotion(const Motion &motion);
 
     public:
-        static void updatePhysics(Object &obj, vector<Planet*> *g_objs);
+        static bool updatePhysics(Object &obj, vector<Planet*> *g_objs);
 
         /* Reverse gravity and give blocks some initial velocity to look natural
            1. Invert gravity value
@@ -41,7 +41,7 @@ class PhysicsEngine {
         */
 
         /* Generated a suitable initial velocity using based on the angle the object is rotated in */
-        static void genInitVelocity(Object &obj, float rot_angle);
+        static void genInitVel(Object &obj, float rot_angle, float min, float max, float offset);
 
         /* Gets an angle calculated from the distance to a point inside of an object. 
            Angle starts at the middle-top (0*C) and increases anti-clockwise */
@@ -54,6 +54,7 @@ class PhysicsEngine {
 
         /* Updates object vert/hori acceleration due to the gravity from the given planets */
         static void applyGravityTo(Object &obj, vector<Planet*> *g_objs);
+        static void applyGravityTo(Object &obj, vector<Planet*> *g_objs, Camera *cam);
 };
 
 #endif /* PHYSICS_H */

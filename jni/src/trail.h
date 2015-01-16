@@ -30,7 +30,7 @@ class Trail {
         void buildTrail(float x, float y, float rot_angle, Theme theme);
 
         void applyGravity(vector<Planet*> *g_objs);
-        void resetTime();
+        void resetTime(float t);
 
         /* Removes the box at the given index
            1. Shifts boxes that are right of the index one pos left 

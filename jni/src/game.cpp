@@ -18,9 +18,9 @@ int Game::_screen_width(0);
 float Game::_elapsed_time(0.0f);
 float Game::_time_speed(0.4f);
 
-Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/2) - 27.5, GRAY),
+Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/2) + 700, GRAY),
                                                                _cam(&_user),
-                                                               input(true, VERT, &_user) {
+                                                               input(true, VERT, &_user, &_cam) {
     // Init values
     _finished = false;
     _package_name = pkg_name;
@@ -55,7 +55,7 @@ void Game::resetTime() {
     _previous_trail_update = 0;
 
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->resetTime();
+        _players.at(i)->resetTime(0);
 }
 
 void Game::setupObjs() {
@@ -67,8 +67,8 @@ void Game::setupObjs() {
 
     // Setup planets
     try {
-        _planets.push_back(new Planet((w/2) + 50,  (h/2) - 150, 400));
-        _planets.push_back(new Planet((w/2) - 350, (h/2) - 150, 200));
+        _planets.push_back(new Planet((w/2) + 100,  (h/2) - 150, 400));
+        _planets.push_back(new Planet((w/2) - 800, (h/2) - 150, 300));
     }
     catch (std::exception &e) {
         LOGE("Error creating planets: %s", e.what());
@@ -128,7 +128,7 @@ void Game::setupGLContext(int screen_w, int screen_h) {
 }
 
 void Game::draw() {
-    /* MAIN GAME LOOP */
+    /* MAIN GAME LOOP */ 
     Renderer::clearScreen();
 
     applyGravity();
@@ -141,17 +141,19 @@ void Game::draw() {
     for(int i=0; i<(int)_players.size(); i++)
         _players.at(i)->drawTrail(_obj_rend, &_planets, &_cam);
 
+    _obj_rend->disableAttributes();
+
+    // Render players
+    for(int i=0; i<(int)_players.size(); i++)
+        _players.at(i)->draw(_ass_rend, &_planets, &_cam);
+
+    _ass_rend->disableAttributes();
+
     // Render planets
     for(int i=0; i<(int)_planets.size(); i++)
         _planets.at(i)->draw(_obj_rend, &_cam);
 
     _obj_rend->disableAttributes();
-
-    // Render players
-    for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->draw(_ass_rend, &_cam);
-
-    _ass_rend->disableAttributes();
     
     // Update all players (eg build player trail)
     updatePlayers();
@@ -182,7 +184,7 @@ void Game::updatePlayers() {
 
 void Game::applyGravity() {
     for (int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->applyGravity(&_planets);
+        _players.at(i)->applyGravity(&_planets, &_cam);
 }
 
 //---

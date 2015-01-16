@@ -4,6 +4,7 @@
 #include "point2d.h"
 #include "log.h"
 #include "physics.h"
+#include "math.h"
 
 Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,50,55), _trail(27) {
     _action = FLYING;     // TODO use this after controls have been added -> _action = STILL;
@@ -62,19 +63,32 @@ void Spaceman::drawTrail(ObjRenderer* _obj_rend, vector<Planet*> *g_objs, Camera
 }
 
 void Spaceman::update() {
-    if (_action == FLYING) {
+    if (_action == STILL) {
         // Convert angle to anti-clockwise direction
-        float angle = 360 - getRotAngle();
-        _trail.buildTrail(_base.getX(), _base.getY(), angle, _colour_theme);
+        float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
+
+        PhysicsEngine::genInitVel(*this, angle, 2, 1, 0);
+        resetTime(Game::getElapsedTime());
+
+        _trail.buildTrail(_base.getX(), _base.getY(), 360 - getRotAngle(), _colour_theme);
+        _action = FLYING;
+    }
+    else if (_action == FLYING) {
+        // Convert angle to anti-clockwise direction
+        float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
+
+        PhysicsEngine::genInitVel(*this, angle, 2, 1, 0);
+        _trail.buildTrail(_base.getX(), _base.getY(), 360 - getRotAngle(), _colour_theme);
+        // LOGI("V.vel(%.2f), H.vel(%.2f), V.acc(%.2f), H.acc(%.2f), angle(%.2f)", vert_motion.getVel(), hori_motion.getVel(), vert_motion.getAccel(), hori_motion.getAccel(), angle);
     }
 }
 
-void Spaceman::applyGravity(vector<Planet*> *g_objs) {
-    Player::applyGravity(g_objs);
+void Spaceman::applyGravity(vector<Planet*> *g_objs, Camera *cam) {
+    Player::applyGravity(g_objs, cam);
     _trail.applyGravity(g_objs);
 }
 
-void Spaceman::resetTime() {
-    Player::resetTime();
-    _trail.resetTime();
+void Spaceman::resetTime(float t) {
+    Player::resetTime(t);
+    _trail.resetTime(t);
 }

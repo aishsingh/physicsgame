@@ -2,13 +2,13 @@
 #include "planet.h"
 #include "colour.h"
 
-const int Planet::_SIDES(20);
-const int Planet::_GRAV_SIDES(30);
-const float Planet::_GRAV_OPACITY(0.2f);
+const int Planet::_SIDES(30);
+const int Planet::_GRAV_SIDES(40);
+const float Planet::_GRAV_OPACITY(0.1f);
 
 Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
     // Redish-Brown colour
-    _colour = Colour(0.647059f, 0.164706f, 0.164706f, 1.0f);    
+    _colour = Colour(0.375f, 0.375f, 0.375f, 1.0f);
     _rot_speed = 0.5f;
 }
 
@@ -22,13 +22,13 @@ void Planet::draw(ObjRenderer *rend, Camera *cam) {
                  cam);
 
     // Rotate
-    setRotAngle(getRotAngle() + _rot_speed);
+    // setRotAngle(getRotAngle() + _rot_speed);
 }
 
 void Planet::drawGrav(ObjRenderer *rend, Camera *cam) {
     // Render Gravity area
     float grav_vertex_count = _GRAV_SIDES * (getWidth()/400);
-    rend->render(getVerticeData(grav_vertex_count, getWidth()/2), 
+    rend->render(getVerticeData(grav_vertex_count, getWidth()),
                  Colour::getColourData(grav_vertex_count, Colour(_colour.r, _colour.g, _colour.b, _GRAV_OPACITY)), 
                  getRotAngle(), 
                  GL_TRIANGLE_FAN,

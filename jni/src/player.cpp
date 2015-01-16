@@ -1,8 +1,10 @@
 #include <math.h>
 #include "player.h"
 #include "physics.h"
+#include "math.h"
 
 Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
+    _rot_offset_angle = 0.0f;
 }
 
 void Player::setBasePoint(Point2D point) {
@@ -69,7 +71,7 @@ std::vector<float> Player::getColourData() {
     return std::vector<float> (clr, clr + sizeof(clr) / sizeof(float));
 }
 
-void Player::draw(AssetRenderer* _ass_rend, Camera *cam) {
+void Player::draw(AssetRenderer* _ass_rend, vector<Planet*> *g_objs, Camera *cam) {
     // Render
     _ass_rend->render(getVerticeData(), 
                       getColourData(), 
@@ -77,15 +79,30 @@ void Player::draw(AssetRenderer* _ass_rend, Camera *cam) {
                       GL_TRIANGLE_STRIP,
                       cam);
 
-    // Attributes need to be disabled to avoid different shaders from reading in random values
-    _ass_rend->disableAttributes();
+    // Update physics attributes only if box is moving
+    if (_action == FLYING) {
+        bool collision = PhysicsEngine::updatePhysics(*this, g_objs);
+        _action = (collision) ? STILL : FLYING;
+    }
 }
 
-void Player::applyGravity(vector<Planet*> *g_objs) {
-    PhysicsEngine::applyGravityTo(*this, g_objs);
+void Player::applyGravity(vector<Planet*> *g_objs, Camera *cam) {
+    PhysicsEngine::applyGravityTo(*this, g_objs, cam);
 }
 
-void Player::resetTime() {
-    vert_motion.setTime(0);
-    hori_motion.setTime(0);
+void Player::resetTime(float t) {
+    vert_motion.setTime(t);
+    hori_motion.setTime(t);
+}
+
+float Player::getRotAngle() const {
+    return Math::normalizeAngle(_rot_angle - _rot_offset_angle, 0, 360);
+}
+
+float Player::getRealRotAngle() const {
+    return _rot_angle;
+}
+
+void Player::setRotAngleOffset(float angle) {
+    _rot_offset_angle = angle;
 }

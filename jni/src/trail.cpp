@@ -4,8 +4,8 @@
 #include "game.h"
 #include "math.h"
 
-#define FADE_DEC 0.02f
-#define SHRINK_DEC 0.4f
+#define FADE_DEC 0.03f
+#define SHRINK_DEC 1.2f
 #define OUT_ShapesCount false
 
 Trail::Trail(int obj_length) {
@@ -38,8 +38,8 @@ void Trail::draw(ObjRenderer *rend, vector<Planet*> *g_objs, Camera *cam) {
     for (int i=0; i<(int)shapes.size(); i++) {
         // Effects
         shrink(shapes.at(i));
-        if (shapes.at(i).vert_motion.getVel() == 0)
-            fade(shapes.at(i));
+        // if (shapes.at(i).vert_motion.getVel() == 0)
+        fade(shapes.at(i));
 
         // Send shape to renderer
         shapes.at(i).draw(rend, cam);
@@ -67,10 +67,7 @@ void Trail::buildTrail(float x, float y, float rot_angle, Theme theme) {
     Box box(x, y, (int)shapes.size(), rot_angle, _boxes_length, theme);
 
     // Apply initial velocity using player rotation
-    PhysicsEngine::genInitVelocity(box, rot_angle);
-
-    // box.vert_motion.setAccel(-10);
-    // box.hori_motion.setAccel(-10); // lop left
+    PhysicsEngine::genInitVel(box, rot_angle, 20, 18, 4);
 
     /* Increase size of array and check for exceptions */
     try {
@@ -110,9 +107,9 @@ void Trail::applyGravity(vector<Planet*> *g_objs) {
         PhysicsEngine::applyGravityTo(shapes.at(i), g_objs);
 }
 
-void Trail::resetTime() {
+void Trail::resetTime(float t) {
     for(int i=0; i<(int)shapes.size(); i++) {
-        shapes.at(i).vert_motion.setTime(0);
-        shapes.at(i).hori_motion.setTime(0);
+        shapes.at(i).vert_motion.setTime(t);
+        shapes.at(i).hori_motion.setTime(t);
     }
 }

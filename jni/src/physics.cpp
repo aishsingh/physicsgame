@@ -5,8 +5,8 @@
 #include "game.h"
 #include "collision.h"
 
-const float PhysicsEngine::_MAX_INIT_V(20.0f);
-const float PhysicsEngine::_MIN_INIT_V(18.0f);
+const float PhysicsEngine::_MAX_INIT_V(14.0f);
+const float PhysicsEngine::_MIN_INIT_V(12.0f);
 const float PhysicsEngine::_INIT_V_OFFSET(4.0f);
 const float PhysicsEngine::_MAX_G_SWITCH_MISCALC(3.0f);
 
@@ -27,7 +27,7 @@ Motion PhysicsEngine::calcMotion(const Motion &motion) {
     return calc;
 }
 
-void PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
+bool PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
     int origin_x = 0;
     int origin_y = 0;
     Motion vert_comp = calcMotion(obj.vert_motion);
@@ -35,8 +35,8 @@ void PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
 
     // Circular motion - keep rotating object relative to the horizontal vel
     // TODO make it relative to both hori/vert depending on grav dir
-    float offset = 0.4f;
-    obj.setRotAngle(obj.getRotAngle() + (obj.hori_motion.getVel() * offset));
+    // float offset = 0.4f;
+    // obj.setRotAngle(obj.getRotAngle() + (obj.hori_motion.getVel() * offset));
 
     bool collision = false;
     // Rect containing updated dimensions
@@ -71,6 +71,8 @@ void PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
         obj.vert_motion.setTime(vert_comp.getTime());
         obj.vert_motion.setVel(vert_comp.getVel());
     }
+
+    return collision;
 }
 
 /*
@@ -101,15 +103,15 @@ void PhysicsEngine::switchGravity(Object objs[], const int &objs_count, const in
 }
 */
 
-void PhysicsEngine::genInitVelocity(Object &obj, float rot_angle) {
+void PhysicsEngine::genInitVel(Object &obj, float rot_angle, float min, float max, float offset) {
     float init_h = 0;
     float init_v = 0;
 
-    splitCompValueFromAngle(&init_h, &init_v, rot_angle, -_INIT_V_OFFSET, _INIT_V_OFFSET, _MIN_INIT_V, _MAX_INIT_V);
+    splitCompValueFromAngle(&init_h, &init_v, rot_angle, -offset, offset, min, max);
 
     // Apply velocity
-    obj.hori_motion.setVel(init_h);
-    obj.vert_motion.setVel(init_v);
+    obj.hori_motion.setVel(obj.hori_motion.getVel() + init_h);
+    obj.vert_motion.setVel(obj.vert_motion.getVel() + init_v);
 }
 
 float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pt, Rect rect) {
@@ -159,13 +161,14 @@ float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pt, Rect rect) {
     return angle;
 }
 
+
 void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
 
     for (int i=0; i<(int)g_objs->size(); i++) {
         // Create rect to rep the planets gravity area
-        float g_radius = g_objs->at(i)->getWidth()/2;
+        float g_radius = g_objs->at(i)->getWidth();
         Rect grav_rect(g_objs->at(i)->getX() - g_radius,
                        g_objs->at(i)->getY() - g_radius,
                        g_objs->at(i)->getWidth() + (g_radius*2),
@@ -174,17 +177,52 @@ void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
         // Make sure obj is inside of Planet
         if (Collision::isCircleIntersCircle(obj, grav_rect)) {
             float rot_angle = getAngleOfPtFromRectCentre(obj.getCentre(), grav_rect);
-            if (rot_angle != 0) {
-                float init_v;
-                float init_h;
-                splitCompValueFromAngle(&init_h, &init_v, rot_angle, 0, 0, 0, 5);
+            float init_v;
+            float init_h;
+            splitCompValueFromAngle(&init_h, &init_v, rot_angle, 0, 0, 0, 3);
 
-                // Add to net grav
-                netg_h += init_h;
-                netg_v += init_v;
-            }
+            // Add to net grav
+            netg_h += init_h;
+            netg_v += init_v;
         }
     }
+    // Apply gravity
+    obj.hori_motion.setAccel(netg_h);
+    obj.vert_motion.setAccel(netg_v);
+}
+void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs, Camera *cam) {
+    float netg_h = 0;
+    float netg_v = 0;
+
+    bool affected_by_G = false;
+    for (int i=0; i<(int)g_objs->size(); i++) {
+        // Create rect to rep the planets gravity area
+        float g_radius = g_objs->at(i)->getWidth();
+        Rect grav_rect(g_objs->at(i)->getX() - g_radius,
+                       g_objs->at(i)->getY() - g_radius,
+                       g_objs->at(i)->getWidth() + (g_radius*2),
+                       g_objs->at(i)->getWidth() + (g_radius*2));
+
+        // Make sure obj is inside of Planet
+        if (Collision::isCircleIntersCircle(obj, grav_rect)) {
+            float new_angle = getAngleOfPtFromRectCentre(obj.getCentre(), *g_objs->at(i));
+            // cam->setRotAngleOffset(obj.getRotAngle() - new_angle);
+            obj.setRotAngle(-new_angle);
+            affected_by_G = true;
+
+            float rot_angle = getAngleOfPtFromRectCentre(obj.getCentre(), grav_rect);
+            float init_v;
+            float init_h;
+            splitCompValueFromAngle(&init_h, &init_v, rot_angle, 0, 0, 0, 3);
+
+            // Add to net grav
+            netg_h += init_h;
+            netg_v += init_v;
+        }
+    }
+    if (!affected_by_G)
+        obj.setRotAngle(0);
+
     // Apply gravity
     obj.hori_motion.setAccel(netg_h);
     obj.vert_motion.setAccel(netg_v);
