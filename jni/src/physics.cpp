@@ -190,11 +190,11 @@ void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
     obj.hori_motion.setAccel(netg_h);
     obj.vert_motion.setAccel(netg_v);
 }
-void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs, Camera *cam) {
+void PhysicsEngine::applyGravityTo(Player &obj, vector<Planet*> *g_objs, Camera *cam) {
     float netg_h = 0;
     float netg_v = 0;
 
-    bool affected_by_G = false;
+    bool player_on_planet = false;
     for (int i=0; i<(int)g_objs->size(); i++) {
         // Create rect to rep the planets gravity area
         float g_radius = g_objs->at(i)->getWidth();
@@ -205,25 +205,34 @@ void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs, Camera 
 
         // Make sure obj is inside of Planet
         if (Collision::isCircleIntersCircle(obj, grav_rect)) {
-            float new_angle = getAngleOfPtFromRectCentre(obj.getCentre(), *g_objs->at(i));
-            // cam->setRotAngleOffset(obj.getRotAngle() - new_angle);
-            obj.setRotAngle(-new_angle);
-            affected_by_G = true;
+            player_on_planet = true;
 
-            float rot_angle = getAngleOfPtFromRectCentre(obj.getCentre(), grav_rect);
+            // Rotate obj relative to planet
+            float new_angle = getAngleOfPtFromRectCentre(obj.getCentre(), grav_rect);
+            if (obj.getOnPlanet() != i+1) {
+                float angle_before = obj.getRotAngle();
+                obj.setRotAngleOffset(-new_angle - angle_before);
+                obj.setOnPlanet(i+1);
+            }
+            obj.setRotAngle(-new_angle);
+
+            // Determine planet gravity from new rot angle
             float init_v;
             float init_h;
-            splitCompValueFromAngle(&init_h, &init_v, rot_angle, 0, 0, 0, 3);
+            splitCompValueFromAngle(&init_h, &init_v, new_angle, 0, 0, 0, 3);
 
             // Add to net grav
             netg_h += init_h;
             netg_v += init_v;
         }
     }
-    if (!affected_by_G)
-        obj.setRotAngle(0);
 
-    // Apply gravity
+    // If obj was not on any planets
+    if (!player_on_planet && obj.getOnPlanet() != 0) {
+        obj.setOnPlanet(0);
+    }
+
+    // Apply gravityto obj
     obj.hori_motion.setAccel(netg_h);
     obj.vert_motion.setAccel(netg_v);
 }

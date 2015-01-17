@@ -1,4 +1,4 @@
-/* Description: Player header
+/* Description: Player class is used for the user and also when playing multiplayer
  * Created On: 2014-11-25 
  */
 
@@ -20,10 +20,10 @@ class Player: public Object {
             FLYING
         };
 
-        float _rot_offset_angle;
-
         Action _action;
         Point2D _base;
+        float _rot_offset_angle;
+        int _on_planet;
 
     public:
         // Render player and trail
@@ -34,16 +34,19 @@ class Player: public Object {
 
         // Update player based on its current action
         virtual void update() = 0; 
-
         virtual void applyGravity(vector<Planet*> *g_objs, Camera *cam);
         virtual void resetTime(float t);
 
+        // Set current pos of the bottom of the player after rotations
+        void setBasePoint(Point2D point); 
+
+        int getOnPlanet() const;
+        void setOnPlanet(int index);
         float getRotAngle() const;
+        float getRotAngleOffset() const;
         float getRealRotAngle() const;
         void setRotAngleOffset(float angle);
 
-        // Set current pos of the bottom of the player after rotations
-        void setBasePoint(Point2D point); 
         /* Ctor - */
         Player(float x, float y, float width, float height);
 };

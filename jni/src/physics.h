@@ -9,6 +9,7 @@
 #include <vector>
 #include "object.h"
 #include "planet.h"
+#include "player.h"
 #include "rect.h"
 #include "point2d.h"
 
@@ -54,7 +55,7 @@ class PhysicsEngine {
 
         /* Updates object vert/hori acceleration due to the gravity from the given planets */
         static void applyGravityTo(Object &obj, vector<Planet*> *g_objs);
-        static void applyGravityTo(Object &obj, vector<Planet*> *g_objs, Camera *cam);
+        static void applyGravityTo(Player &obj, vector<Planet*> *g_objs, Camera *cam);
 };
 
 #endif /* PHYSICS_H */

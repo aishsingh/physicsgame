@@ -5,6 +5,7 @@
 
 Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
     _rot_offset_angle = 0.0f;
+    _on_planet = 0;
 }
 
 void Player::setBasePoint(Point2D point) {
@@ -99,10 +100,22 @@ float Player::getRotAngle() const {
     return Math::normalizeAngle(_rot_angle - _rot_offset_angle, 0, 360);
 }
 
+float Player::getRotAngleOffset() const {
+    return _rot_offset_angle;
+}
+
 float Player::getRealRotAngle() const {
     return _rot_angle;
 }
 
 void Player::setRotAngleOffset(float angle) {
     _rot_offset_angle = angle;
+}
+
+int Player::getOnPlanet() const {
+    return _on_planet;
+}
+
+void Player::setOnPlanet(int index) {
+    _on_planet = index;
 }
