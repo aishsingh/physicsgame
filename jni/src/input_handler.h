@@ -15,10 +15,9 @@ class InputHandler {
     private:
         struct Touch {
             Point2D pos;
-            unsigned int index;
 
             // Ctor
-            Touch(float x, float y, unsigned int i) : pos(x, y), index(i) {};
+            Touch(float x, float y) : pos(x, y) {};
         };
         std::vector<Touch> _touches;
         Player *_user; // Needed to rotate player

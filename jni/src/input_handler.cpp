@@ -11,7 +11,7 @@ InputHandler::InputHandler(bool nav_left_hand, Comp nav_axis, Player *user, Came
 
 void InputHandler::touchDown(float x, float y, unsigned int index) {
     LOGI("touch down %d", index);
-    _touches.push_back(Touch(x, y, index));
+    _touches.push_back(Touch(x, y));
 
     // Make sure touch pos was inside the navigation area
     Rect nav_rect = 
@@ -47,11 +47,13 @@ void InputHandler::touchMove(float x, float y, unsigned int index) {
 
 void InputHandler::touchUp(unsigned int index) {
     LOGI("touch up %d", index);
+
     _touches.erase(_touches.begin() + index);
 
-    if (_nav_touch_index == index) {
+    if (_nav_touch_index == index)
         _nav_active = false;
-    }
+    else if (_nav_touch_index > index)
+        _nav_touch_index--;
 }
 
 void InputHandler::touchPointerUp(unsigned int index) {
