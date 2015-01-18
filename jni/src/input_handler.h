@@ -28,6 +28,7 @@ class InputHandler {
         bool _nav_left_hand;
         Point2D _nav_starting_pt;
         float _nav_starting_angle;
+        float _nav_starting_real_angle;
         unsigned int _nav_touch_index;
 
     public:
