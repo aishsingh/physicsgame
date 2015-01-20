@@ -24,15 +24,17 @@ class InputHandler {
         Camera *_cam;
 
         Comp _nav_axis;
-        bool _nav_active;
         bool _nav_left_hand;
+        bool _nav_active;
         Point2D _nav_starting_pt;
+        unsigned _nav_touch_index;
         float _nav_starting_angle;
         float _nav_starting_real_angle;
-        unsigned int _nav_touch_index;
+        int _nav_started_on_planet;
+
+        void restartValues(Point2D pos, int index);
 
     public:
-
         /* Functions called from game class */
         Point2D getTouchPos(unsigned int index) const;
         unsigned int getCount() const;

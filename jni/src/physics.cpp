@@ -228,13 +228,15 @@ void PhysicsEngine::applyGravityTo(Player &obj, vector<Planet*> *g_objs, Camera 
     }
 
     // If obj was not on any planets
-    if (!player_on_planet && obj.getOnPlanet() != 0) {
+    if (!player_on_planet && obj.getOnPlanet())
         obj.setOnPlanet(0);
+    else {
+        // Or apply gravity to obj
+        obj.hori_motion.setAccel(netg_h);
+        obj.vert_motion.setAccel(netg_v);
     }
 
-    // Apply gravityto obj
-    obj.hori_motion.setAccel(netg_h);
-    obj.vert_motion.setAccel(netg_v);
+    LOGI("RotAngle %.2f, RealRotAngle %.2f, RotAngleOffset %.2f", obj.getRotAngle(), obj.getRealRotAngle(), obj.getRotAngleOffset());
 }
 
 void PhysicsEngine::splitValueFromAngle(float value, float angle, float *hori, float *vert) {
