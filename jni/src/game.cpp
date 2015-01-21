@@ -122,8 +122,8 @@ void Game::setupGLContext(int screen_w, int screen_h) {
         delete _scr_rend;
         _scr_rend = NULL;
     }
-    _ass_rend = new AssetRenderer();
-    _obj_rend = new ObjRenderer();
+    _ass_rend = new AssetRenderer(&_cam);
+    _obj_rend = new ObjRenderer(&_cam);
     _scr_rend = new ScreenRenderer();
 }
 
@@ -135,31 +135,38 @@ void Game::draw() {
 
     // Render planets gravity area
     for(int i=0; i<(int)_planets.size(); i++)
-        _planets.at(i)->drawGrav(_obj_rend, &_cam);
+        _planets.at(i)->drawGrav(_obj_rend);
 
     // Render player trails
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->drawTrail(_obj_rend, &_planets, &_cam);
+        _players.at(i)->drawTrail(_obj_rend, &_planets);
 
     _obj_rend->disableAttributes();
 
     // Render players
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->draw(_ass_rend, &_planets, &_cam);
+        _players.at(i)->draw(_ass_rend, &_planets);
 
     _ass_rend->disableAttributes();
 
     // Render planets
     for(int i=0; i<(int)_planets.size(); i++)
-        _planets.at(i)->draw(_obj_rend, &_cam);
+        _planets.at(i)->draw(_obj_rend);
 
     _obj_rend->disableAttributes();
-    
+
+    // Scale camera
+    if (_user.getAction() == FLYING)
+        _cam.setScaleFromDisp(_user.getClosestPlanetDisp());
+
     // Update all players (eg build player trail)
-    updatePlayers();
+    respondToInput();
+
+    // Increment game time according to the current speed of time
+    _elapsed_time += _time_speed;
 }
 
-void Game::updatePlayers() {
+void Game::respondToInput() {
     // Check if there is a touch that should cause an action
     int touch_count = input.getCount();
     bool nav_active = input.isNavActive();
@@ -178,13 +185,11 @@ void Game::updatePlayers() {
             _previous_trail_update = cur_update;
         }
     }
-    // Increment game time according to the current speed of time
-    _elapsed_time += _time_speed;
 }
 
 void Game::applyGravity() {
     for (int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->applyGravity(&_planets, &_cam);
+        _players.at(i)->applyGravity(&_planets);
 }
 
 //---

@@ -7,14 +7,14 @@
 #include "math.h"
 
 Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,50,55), _trail(27) {
-    _action = FLYING;     // TODO use this after controls have been added -> _action = STILL;
+    _action = FLYING;
     _facing = RIGHT;
     _frame = 0;           // TODO not implemented yet
     _colour_theme = theme;
     setRotAngle(0.0f);
 }
 
-Player::Action Spaceman::getAction() {
+Action Spaceman::getAction() {
     return _action;
 }
 
@@ -57,9 +57,9 @@ void Spaceman::changeTheme(Theme &old_theme) {
     old_theme = new_theme;
 }
 
-void Spaceman::drawTrail(ObjRenderer* _obj_rend, vector<Planet*> *g_objs, Camera *cam) {
+void Spaceman::drawTrail(ObjRenderer* _obj_rend, vector<Planet*> *g_objs) {
     // Render
-    _trail.draw(_obj_rend, g_objs, cam);
+    _trail.draw(_obj_rend, g_objs);
 }
 
 void Spaceman::update() {
@@ -83,8 +83,8 @@ void Spaceman::update() {
     }
 }
 
-void Spaceman::applyGravity(vector<Planet*> *g_objs, Camera *cam) {
-    Player::applyGravity(g_objs, cam);
+void Spaceman::applyGravity(vector<Planet*> *g_objs) {
+    Player::applyGravity(g_objs);
     _trail.applyGravity(g_objs);
 }
 

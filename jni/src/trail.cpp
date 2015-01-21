@@ -33,7 +33,7 @@ void Trail::shrink(Shape &shape) {
 }
 
 
-void Trail::draw(ObjRenderer *rend, vector<Planet*> *g_objs, Camera *cam) {
+void Trail::draw(ObjRenderer *rend, vector<Planet*> *g_objs) {
     // Draw every shape in shapes vector
     for (int i=0; i<(int)shapes.size(); i++) {
         // Effects
@@ -42,7 +42,7 @@ void Trail::draw(ObjRenderer *rend, vector<Planet*> *g_objs, Camera *cam) {
         fade(shapes.at(i));
 
         // Send shape to renderer
-        shapes.at(i).draw(rend, cam);
+        shapes.at(i).draw(rend);
 
         // Update physics attributes only if box is moving
         if (shapes.at(i).vert_motion.getVel() != 0.0f || shapes.at(i).hori_motion.getVel() != 0.0f)

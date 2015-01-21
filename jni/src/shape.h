@@ -8,7 +8,6 @@
 #include "colour.h"
 #include "theme.h"
 #include "obj_renderer.h"
-#include "camera.h"
 
 class Shape: public Object {
     private:
@@ -25,7 +24,7 @@ class Shape: public Object {
         void setAlpha(float alpha);
         int getIndex() const;
         void setIndex(int index);
-        void draw(ObjRenderer *rend, Camera *cam);
+        void draw(ObjRenderer *rend);
 
         /* Ctor - Creates a new box instance and adds it to the array */
         Shape(float x, float y, int index, float angle, float width, float height, Theme &theme);

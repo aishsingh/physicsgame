@@ -7,12 +7,7 @@ Rect::Rect(float x, float y, float width, float height) {
     _width  = width;
     _height = height;
 }
-Rect::~Rect() {
-    _x      = 0;
-    _y      = 0;
-    _width  = 0;
-    _height = 0;
-}
+Rect::~Rect() { }
 
 float Rect::getX() const {
     return _x;

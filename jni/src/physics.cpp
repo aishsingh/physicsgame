@@ -4,6 +4,7 @@
 #include "log.h"
 #include "game.h"
 #include "collision.h"
+#include "math.h"
 
 const float PhysicsEngine::_MAX_INIT_V(14.0f);
 const float PhysicsEngine::_MIN_INIT_V(12.0f);
@@ -75,34 +76,6 @@ bool PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
     return collision;
 }
 
-/*
-void PhysicsEngine::switchGravity(Object objs[], const int &objs_count, const int &elapsed_time) {
-    // Invert gravity
-    _gravity /= -1;
-
-    // Reset block time
-    // and set initial velocity
-    for (int i = 0; i < objs_count; i++) {
-        Motion motion = calcMotion(objs[i].vert_motion, elapsed_time);
-        float miscalc_g = (float)(rand()) / (float)(RAND_MAX/_MAX_G_SWITCH_MISCALC);
-        if (objs[i].vert_motion.getVel() != 0) {               // Object is moving
-            objs[i].vert_motion.setAccel(_gravity);
-            objs[i].vert_motion.setTime(motion.getTime());
-            objs[i].vert_motion.setVel(objs[i].vert_motion.getVel() + (_gravity * motion.getChangeTime()) + miscalc_g);
-
-        }
-        else {                                                 // Object is stationary
-            objs[i].vert_motion.setAccel(_gravity);
-            objs[i].vert_motion.setTime(motion.getTime());
-            if (_gravity < 0)
-                objs[i].vert_motion.setVel(miscalc_g/-1);
-            else
-                objs[i].vert_motion.setVel(miscalc_g);
-        }
-    }
-}
-*/
-
 void PhysicsEngine::genInitVel(Object &obj, float rot_angle, float min, float max, float offset) {
     float init_h = 0;
     float init_v = 0;
@@ -161,7 +134,6 @@ float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pt, Rect rect) {
     return angle;
 }
 
-
 void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
@@ -190,11 +162,12 @@ void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
     obj.hori_motion.setAccel(netg_h);
     obj.vert_motion.setAccel(netg_v);
 }
-void PhysicsEngine::applyGravityTo(Player &obj, vector<Planet*> *g_objs, Camera *cam) {
+void PhysicsEngine::applyGravityTo(Player &plyr, vector<Planet*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
 
     bool player_on_planet = false;
+    float closest_planet_disp = 0.0f;
     for (int i=0; i<(int)g_objs->size(); i++) {
         // Create rect to rep the planets gravity area
         float g_radius = g_objs->at(i)->getWidth();
@@ -204,17 +177,17 @@ void PhysicsEngine::applyGravityTo(Player &obj, vector<Planet*> *g_objs, Camera 
                        g_objs->at(i)->getWidth() + (g_radius*2));
 
         // Make sure obj is inside of Planet
-        if (Collision::isCircleIntersCircle(obj, grav_rect)) {
+        if (Collision::isCircleIntersCircle(plyr, grav_rect)) {
             player_on_planet = true;
 
             // Rotate obj relative to planet
-            float new_angle = getAngleOfPtFromRectCentre(obj.getCentre(), grav_rect);
-            if (obj.getOnPlanet() != i+1) {
-                float angle_before = obj.getRotAngle();
-                obj.setRotAngleOffset(-new_angle - angle_before);
-                obj.setOnPlanet(i+1);
+            float new_angle = getAngleOfPtFromRectCentre(plyr.getCentre(), grav_rect);
+            if (plyr.getOnPlanet() != i+1) {
+                float angle_before = plyr.getRotAngle();
+                plyr.setRotAngleOffset(-new_angle - angle_before);
+                plyr.setOnPlanet(i+1);
             }
-            obj.setRotAngle(-new_angle);
+            plyr.setRotAngle(-new_angle);
 
             // Determine planet gravity from new rot angle
             float init_v;
@@ -225,18 +198,24 @@ void PhysicsEngine::applyGravityTo(Player &obj, vector<Planet*> *g_objs, Camera 
             netg_h += init_h;
             netg_v += init_v;
         }
+        
+        // Find the distance fro the closest planet
+        float disp = Math::getHypotenuse(fabs(plyr.getCentreX() - grav_rect.getCentreX()),
+                                         fabs(plyr.getCentreY() - grav_rect.getCentreY()));
+        if (disp < closest_planet_disp || closest_planet_disp == 0)
+            closest_planet_disp = disp;        
     }
+
+    plyr.setClosestPlanetDisp(closest_planet_disp);
 
     // If obj was not on any planets
-    if (!player_on_planet && obj.getOnPlanet())
-        obj.setOnPlanet(0);
+    if (!player_on_planet && plyr.getOnPlanet())
+        plyr.setOnPlanet(0);
     else {
         // Or apply gravity to obj
-        obj.hori_motion.setAccel(netg_h);
-        obj.vert_motion.setAccel(netg_v);
+        plyr.hori_motion.setAccel(netg_h);
+        plyr.vert_motion.setAccel(netg_v);
     }
-
-    LOGI("RotAngle %.2f, RealRotAngle %.2f, RotAngleOffset %.2f", obj.getRotAngle(), obj.getRealRotAngle(), obj.getRotAngleOffset());
 }
 
 void PhysicsEngine::splitValueFromAngle(float value, float angle, float *hori, float *vert) {

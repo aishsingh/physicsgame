@@ -8,14 +8,14 @@
 class ObjRenderer: public Renderer {
     private:
         GLuint _gvColorHandle;
-        void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);
+        Camera *_cam;
 
     public:
-        void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode, Camera *cam);
+        void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);
         void disableAttributes();
 
         /* Ctor - Init Shaders */
-        ObjRenderer();
+        ObjRenderer(Camera *cam);
 };
 
 #endif /* OBJ_RENDERER_H */

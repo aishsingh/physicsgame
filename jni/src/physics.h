@@ -34,13 +34,6 @@ class PhysicsEngine {
     public:
         static bool updatePhysics(Object &obj, vector<Planet*> *g_objs);
 
-        /* Reverse gravity and give blocks some initial velocity to look natural
-           1. Invert gravity value
-           2. Reset block time
-           3. give blocks some initial velocity to make blocks fall with different levels
-        void switchGravity(Object objs[], const int &boxes_count, const int &elapsed_time);
-        */
-
         /* Generated a suitable initial velocity using based on the angle the object is rotated in */
         static void genInitVel(Object &obj, float rot_angle, float min, float max, float offset);
 
@@ -55,7 +48,7 @@ class PhysicsEngine {
 
         /* Updates object vert/hori acceleration due to the gravity from the given planets */
         static void applyGravityTo(Object &obj, vector<Planet*> *g_objs);
-        static void applyGravityTo(Player &obj, vector<Planet*> *g_objs, Camera *cam);
+        static void applyGravityTo(Player &plyr, vector<Planet*> *g_objs);
 };
 
 #endif /* PHYSICS_H */

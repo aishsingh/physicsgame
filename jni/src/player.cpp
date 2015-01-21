@@ -7,6 +7,7 @@ Player::Player(float x, float y, float width, float height) : Object(x,y,width,h
     _rot_offset_angle = 0.0f;
     _on_planet = 0;
 }
+Player::~Player() { }
 
 void Player::setBasePoint(Point2D point) {
     _base = point;
@@ -72,13 +73,12 @@ std::vector<float> Player::getColourData() {
     return std::vector<float> (clr, clr + sizeof(clr) / sizeof(float));
 }
 
-void Player::draw(AssetRenderer* _ass_rend, vector<Planet*> *g_objs, Camera *cam) {
+void Player::draw(AssetRenderer* _ass_rend, vector<Planet*> *g_objs) {
     // Render
     _ass_rend->render(getVerticeData(), 
                       getColourData(), 
                       getRotAngle(), 
-                      GL_TRIANGLE_STRIP,
-                      cam);
+                      GL_TRIANGLE_STRIP);
 
     // Update physics attributes only if box is moving
     if (_action == FLYING) {
@@ -87,8 +87,8 @@ void Player::draw(AssetRenderer* _ass_rend, vector<Planet*> *g_objs, Camera *cam
     }
 }
 
-void Player::applyGravity(vector<Planet*> *g_objs, Camera *cam) {
-    PhysicsEngine::applyGravityTo(*this, g_objs, cam);
+void Player::applyGravity(vector<Planet*> *g_objs) {
+    PhysicsEngine::applyGravityTo(*this, g_objs);
 }
 
 void Player::resetTime(float t) {
@@ -118,4 +118,12 @@ int Player::getOnPlanet() const {
 
 void Player::setOnPlanet(int index) {
     _on_planet = index;
+}
+
+float Player::getClosestPlanetDisp() const {
+    return _closest_planet_disp;
+}
+
+void Player::setClosestPlanetDisp(float d) {
+    _closest_planet_disp = d;
 }

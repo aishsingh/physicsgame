@@ -41,7 +41,7 @@ class Game {
         ObjRenderer *_obj_rend;
         ScreenRenderer *_scr_rend;
 
-        void updatePlayers();
+        void respondToInput();
         void applyGravity();
         void resetTime();
         void setupObjs();

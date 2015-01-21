@@ -7,7 +7,6 @@
 
 #include "object.h"
 #include "obj_renderer.h"
-#include "camera.h"
 
 class Planet: public Object {
     protected:
@@ -30,13 +29,14 @@ class Planet: public Object {
 
     public:
         // Render planet
-        virtual void draw(ObjRenderer *rend, Camera *cam);
-        virtual void drawGrav(ObjRenderer *rend, Camera *cam);
+        virtual void draw(ObjRenderer *rend);
+        virtual void drawGrav(ObjRenderer *rend);
         // Update player based on its current action
         virtual void update(); 
 
         /* Ctor - */
         Planet(float x, float y, float d);
+        virtual ~Planet();
 };
 
 #endif /* PLANET_H */

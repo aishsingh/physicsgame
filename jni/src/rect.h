@@ -26,11 +26,9 @@ class Rect {
         float getCentreY() const;
         Point2D getCentre() const;
 
-        /* Ctor */
+        /* Ctor / Dtor */
         Rect(float x, float y, float width, float height);
-
-        /* Dtor */
-        ~Rect();
+        virtual ~Rect();
 };
 
 #endif /* RECT_H */
