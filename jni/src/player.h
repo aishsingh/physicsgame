@@ -15,10 +15,11 @@
 class Player: public Object {
     protected:
         Action _action;
-        Point2D _base;
+        Point2D _base; // Current pos of the bottom of the player after rotations
         float _rot_offset_angle;
         int _on_planet;
         float _closest_planet_disp;
+
 
     public:
         // Render player and trail
@@ -32,8 +33,6 @@ class Player: public Object {
         virtual void applyGravity(vector<Planet*> *g_objs);
         virtual void resetTime(float t);
 
-        // Set current pos of the bottom of the player after rotations
-        void setBasePoint(Point2D point); 
         float getClosestPlanetDisp() const;
         void setClosestPlanetDisp(float d);
         int getOnPlanet() const;

@@ -47,7 +47,8 @@ class Game {
         void setupObjs();
 
         /* Load assets in the apk by extracting it with libzip */
-        zip *APKArchive;
+        zip *apk_file;
+        zip_file *file;
         void loadAPK(const char *package_name);
 
     public:

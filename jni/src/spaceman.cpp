@@ -6,7 +6,7 @@
 #include "physics.h"
 #include "math.h"
 
-Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,50,55), _trail(27) {
+Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,105,125.3), _trail(27) {
     _action = FLYING;
     _facing = RIGHT;
     _frame = 0;           // TODO not implemented yet
@@ -69,8 +69,10 @@ void Spaceman::update() {
 
         PhysicsEngine::genInitVel(*this, angle, 2, 1, 0);
         resetTime(Game::getElapsedTime());
-
-        _trail.buildTrail(_base.getX(), _base.getY(), 360 - getRotAngle(), _colour_theme);
+        _trail.buildTrail(_base.getX(), 
+                          _base.getY(), 
+                          360 - getRotAngle(), 
+                          _colour_theme);
         _action = FLYING;
     }
     else if (_action == FLYING) {
@@ -78,7 +80,10 @@ void Spaceman::update() {
         float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
 
         PhysicsEngine::genInitVel(*this, angle, 2, 1, 0);
-        _trail.buildTrail(_base.getX(), _base.getY(), 360 - getRotAngle(), _colour_theme);
+        _trail.buildTrail(_base.getX(), 
+                          _base.getY(), 
+                          360 - getRotAngle(), 
+                          _colour_theme);
         // LOGI("V.vel(%.2f), H.vel(%.2f), V.acc(%.2f), H.acc(%.2f), angle(%.2f)", vert_motion.getVel(), hori_motion.getVel(), vert_motion.getAccel(), hori_motion.getAccel(), angle);
     }
 }

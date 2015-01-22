@@ -9,10 +9,6 @@ Player::Player(float x, float y, float width, float height) : Object(x,y,width,h
 }
 Player::~Player() { }
 
-void Player::setBasePoint(Point2D point) {
-    _base = point;
-}
-
 vector<float> Player::getVerticeData() {
     /*  [p1]----[p3]   
          |        |  
@@ -58,8 +54,12 @@ vector<float> Player::getVerticeData() {
      * These calculations ensure that the base pos is the same as it would be after it went through the vshader.
      * The vshader rotates the pos, so the same rotation is applyed here */
     Point2D mid_bottom((vec[2] + vec[6])/2, (vec[3] + vec[7])/2);
-    setBasePoint(Point2D(mid_bottom.getX()*cos(rad_angle) - mid_bottom.getY()*sin(rad_angle), 
-                         mid_bottom.getY()*cos(rad_angle) + mid_bottom.getX()*sin(rad_angle)));
+    // Offset trail pos so it comes out from the bottom of the spaceman's jet
+    Point2D trail_off(30, 30);
+    mid_bottom.setX(mid_bottom.getX() - trail_off.getX());
+    mid_bottom.setY(mid_bottom.getY() - trail_off.getY());
+    _base = (Point2D(mid_bottom.getX()*cos(rad_angle) - mid_bottom.getY()*sin(rad_angle), 
+                     mid_bottom.getY()*cos(rad_angle) + mid_bottom.getX()*sin(rad_angle)));
 
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }

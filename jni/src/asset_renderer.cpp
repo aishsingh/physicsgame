@@ -6,61 +6,27 @@
 #define PI 3.14159265358979323846264
 #define TEXTURE_LOAD_ERROR 0
 
-AssetRenderer::AssetRenderer(Camera *cam) : _cam(cam) {
+AssetRenderer::AssetRenderer(Camera *cam, zip* apk) : _cam(cam) {
     _shad_vertex =
         "attribute vec2 vPos;\n"
-        "attribute vec4 vColor;\n"
-        "varying vec4 vFragColor;\n"
+        "attribute vec2 tex_coord;\n"
+        "varying vec2 tex_coord_from_vshader;\n"
         "uniform mat4 mMVP;\n"
 
         "void main() {\n"
         "  gl_Position = mMVP * vec4(vPos, 0.0f, 1.0f);\n"
 
-        "  vFragColor = vColor;\n"
+        "  tex_coord_from_vshader = tex_coord;\n"
         "}\n";
 
     _shad_fragment = 
         "precision mediump float;\n"
-        "varying vec4 vFragColor;\n"
+        "uniform sampler2D mytexture;\n"
+        "varying vec2 tex_coord_from_vshader;\n"
 
         "void main() {\n"
-        "  gl_FragColor = vFragColor;\n"
+        "  gl_FragColor = texture2D(mytexture, tex_coord_from_vshader);\n"
         "}\n";
-/*
-    shad_vertex =
-        "attribute vec2 vPos;\n"
-        "attribute vec4 vColor;\n"
-        "attribute float fAngle;\n"
-        "varying vec4 vFragColor;\n"
-        "uniform mat4 mProj;\n"
-        "uniform mat4 mModel;\n"
-
-        "void main() {\n"
-        "  float PI = 3.14159265358979323846264;\n"
-        "  float rad_angle = fAngle*PI/180.0;\n"
-        "  vec2 pos = vPos;\n"
-        "  pos.x = vPos.x*cos(rad_angle) - vPos.y*sin(rad_angle);\n"
-        "  pos.y = vPos.y*cos(rad_angle) + vPos.x*sin(rad_angle);\n"
-
-        "  mat4 mMP = mProj * mModel;\n"
-        "  gl_Position = mMP * vec4(pos, 0.0f, 1.0f);\n"
-
-        "  vFragColor = vColor;\n"
-        "}\n";
-
-    shad_fragment = 
-        "precision mediump float;\n"
-        "uniform sampler2D sTexture;\n"
-        "varying vec4 vFragColor;\n"
-
-        "void main() {\n"
-        "  vec2 texCoord = vec2(0.0f, 0.0f);\n"
-        "  vec4 baseTex = texture2D(sTexture, texCoord);\n"
-        "  vec4 lightCol = vFragColor;\n"
-        // "  gl_FragColor = baseTex * (lightCol + 0.25);\n"
-        "  gl_FragColor = lightCol;\n"
-        "}\n";
-*/
 
     _gProgram = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());
     if (!_gProgram) {
@@ -69,105 +35,15 @@ AssetRenderer::AssetRenderer(Camera *cam) : _cam(cam) {
     _gvPosHandle = glGetAttribLocation(_gProgram, "vPos");
     checkGlError("glGetAttribLocation(vPos)");
 
-    _gvColorHandle = glGetAttribLocation(_gProgram, "vColor");
-    checkGlError("glGetAttribLocation(vColor)");
-
-    _gsTexHandle = glGetUniformLocation(_gProgram, "sTexture");
-    checkGlError("glGetUniformLocation(sTexture)");
+    _texcoord = glGetAttribLocation(_gProgram, "tex_coord");
+    checkGlError("glGetAttribLocation(tex_coord)");
 
     _gmMVPHandle = glGetUniformLocation(_gProgram, "mMVP");
     checkGlError("glGetUniformLocation(mMVP)");
-    //------------------------------------------------------------------
 
-    /* Enum GL_TEXTURE_2D deprecated in ES 2 
-     * Use glActiveTexture() */
-    // glEnable(GL_TEXTURE_2D);
-    // checkGlError("glEnable(GL_TEXTURE_2D)");
-
-    /*
-    // Bind the texture
-    glActiveTexture(GL_TEXTURE0);
-    checkGlError("glActiveTexture");
-
-    // Bind the texture object
-    glBindTexture(GL_TEXTURE_2D, tex);
-    checkGlError("glBindTexture");
-
-    // Use tightly packed data
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    checkGlError("glPixelStorei()");
-
-    // Generate a texture object
-    glGenTextures(1, &tex);
-
-    // // Load assets
-    // int tex_w, tex_h; // Value init by libpng
-    // GLubyte *img_pixels = getBytesFromPNG("assets/player.png", APKArchive, tex_w, tex_h);
-    // if (img_pixels == NULL)
-    //     LOGI("Failed to load tex");
-    // LOGI("TEX Width:%i, TEX Height:%i", tex_w, tex_h);
-    // LOGI("BYTEZ->%s", (char*)&img_pixels);
-    // tex = createSimpleTexture2D(tex, img_pixels, tex_w, tex_h, 4);
-
-    // delete[] &img_pixels;
-    */
+    int tex_w, tex_h; // Value init by libpng
+    _texture_id = getBytesFromPNG("assets/player.png", apk, tex_w, tex_h);
 }
-
-// void AssetRenderer::renderFrame() {
-//     float bg = 0.0f;
-//     glClearColor(bg, bg, bg, 1.0f);
-//     checkGlError("glClearColor");
-//     glClear(GL_COLOR_BUFFER_BIT);
-//     checkGlError("glClear");
-//
-//     glUseProgram(gProgram);
-//     checkGlError("glUseProgram");
-//
-//     //---
-//     // glGenTextures(1, &tex);
-//     // glActiveTexture(GL_TEXTURE0);
-//     // glBindTexture(GL_TEXTURE_2D, tex);
-//     // GLubyte *img_pixels = SOIL_load_image("assets/player.mp3", &w, &h, 0, SOIL_LOAD_RGBA);
-//     // tex = createSimpleTexture2D(tex, img_pixels, w, h, 4)
-//
-//     // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-//     // SOIL_free_image_data(image);
-//
-//     // Bind the texture
-//     // glActiveTexture(GL_TEXTURE0);
-//     // glBindTexture(GL_TEXTURE_2D, tex);
-//     //
-//     // // Set the sampler texture unit to 0
-//     glUniform1i(gsTexHandle, 0);
-//     checkGlError("glUniform1i(sTexture)");
-//
-//
-//     /* load an image file directly as a new OpenGL texture */
-//     // GLuint tex_2d = SOIL_load_OGL_texture
-//     //     (
-//     //      "assets/player.mp3",
-//     //      SOIL_LOAD_AUTO,
-//     //      SOIL_CREATE_NEW_ID,
-//     //      SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
-//     //     );
-//     //
-//     // glGenTextures(1, &tex_2d);
-//     //
-//     // glActiveTexture(GL_TEXTURE0);
-//     // glBindTexture(GL_TEXTURE_2D, tex_2d);
-//     //
-//     // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-//     // glGenerateMipmap(GL_TEXTURE_2D);
-//     // glBindTexture(GL_TEXTURE_2D, 0);
-//     //
-//     // glUniform1i(gsTexHandle, 0);
-//     //---
-//
-//     // Enable Transparancy
-//     glEnable(GL_BLEND);
-//     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-// }
-//
 
 void AssetRenderer::render(vector<float> vertices, vector<float> colours, float angle, GLenum mode) {
     // Change renderer
@@ -199,12 +75,26 @@ void AssetRenderer::render(vector<float> vertices, vector<float> colours, float 
     glUniformMatrix4fv(_gmMVPHandle, 1, GL_FALSE, glm::value_ptr(MVP_mat));
     checkGlError("glUniformMatrix4fv, mMVP");
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, _texture_id);
+    _uniform_mytexture = glGetUniformLocation(_gProgram, "mytexture");
+    glUniform1i(_uniform_mytexture, /*GL_TEXTURE*/0);
+    checkGlError("glUniform1i, _uniform_mytexture");
+
     glVertexAttribPointer(_gvPosHandle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
-    glVertexAttribPointer(_gvColorHandle, 4, GL_FLOAT, GL_FALSE, 0, &colours[0]);
+
+    GLfloat tex_pos[] = {
+        0.0, 1.0,
+        0.0, 0.0,
+        1.0, 1.0,
+        1.0, 0.0
+    };
+
+    glVertexAttribPointer(_texcoord, 2, GL_FLOAT, GL_FALSE, 0, &tex_pos[0]);
     checkGlError("glVertexAttrib");
 
     glEnableVertexAttribArray(_gvPosHandle);
-    glEnableVertexAttribArray(_gvColorHandle);
+    glEnableVertexAttribArray(_texcoord);
     checkGlError("glEnableVertexAttribArray");
 
     // Pass attributes to shader
@@ -214,15 +104,15 @@ void AssetRenderer::render(vector<float> vertices, vector<float> colours, float 
 
 void AssetRenderer::disableAttributes() {
     glDisableVertexAttribArray(_gvPosHandle);
-    glDisableVertexAttribArray(_gvColorHandle);
+    glDisableVertexAttribArray(_texcoord);
 }
 
 //----------------
-zip_file* file = NULL;
+zip_file *file = NULL;
 void AssetRenderer::png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length) {
     zip_fread(file, data, length);
 }
-GLubyte* AssetRenderer::getBytesFromPNG(const char* filename, zip *APKArchive, int &width, int &height) {
+GLuint AssetRenderer::getBytesFromPNG(const char* filename, zip *APKArchive, int &width, int &height) {
     file = zip_fopen(APKArchive, filename, 0);
     if (!file) {
         LOGE("Error opening %s from APK", filename);
@@ -334,44 +224,29 @@ GLubyte* AssetRenderer::getBytesFromPNG(const char* filename, zip *APKArchive, i
     png_read_image(png_ptr, row_pointers);
 
     //Now generate the OpenGL texture object
-    // GLuint texture;
-    // glGenTextures(1, &texture);
-    // glBindTexture(GL_TEXTURE_2D, texture);
-    // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-    //         GL_UNSIGNED_BYTE, (GLvoid*) image_data);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    GLuint texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+            GL_UNSIGNED_BYTE, (GLvoid*) image_data);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    glTexParameteri(GL_TEXTURE_2D,
+                    GL_TEXTURE_WRAP_S,
+                    GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D,
+                    GL_TEXTURE_WRAP_T,
+                    GL_REPEAT);
+
+    LOGI("Loaded '%s' [%d x %d]", filename, width, height);
 
     //clean up memory and close stuff
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
-    // delete[] image_data;
+    delete[] image_data;
     delete[] row_pointers;
     zip_fclose(file);
 
-    // return texture;
-    return image_data;
-}
-
-GLuint AssetRenderer::createSimpleTexture2D(GLuint _textureid, GLubyte* pixels, int width, int height, int channels) {
-
-    GLenum format;
-    switch (channels) {
-        case 3:
-            format = GL_RGB;
-            break;
-        case 1:
-            format = GL_LUMINANCE;
-            break;
-        case 4:
-            format = GL_RGBA;
-            break;
-    }
-    // Load the texture
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, (GLvoid*) pixels);
-    checkGlError("glTexImage2D");
-
-    // Set the filtering mode
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST );
-
-    return _textureid;
+    return texture;
 }

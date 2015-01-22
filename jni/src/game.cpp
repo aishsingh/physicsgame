@@ -122,7 +122,7 @@ void Game::setupGLContext(int screen_w, int screen_h) {
         delete _scr_rend;
         _scr_rend = NULL;
     }
-    _ass_rend = new AssetRenderer(&_cam);
+    _ass_rend = new AssetRenderer(&_cam, apk_file);
     _obj_rend = new ObjRenderer(&_cam);
     _scr_rend = new ScreenRenderer();
 }
@@ -195,18 +195,18 @@ void Game::applyGravity() {
 //---
 void Game::loadAPK(const char *package_name) {
     LOGI("Loading APK %s", package_name);
-    APKArchive = zip_open(package_name, 0, NULL);
-    if (APKArchive == NULL) {
+    apk_file = zip_open(package_name, 0, NULL);
+    if (apk_file == NULL) {
         LOGE("Error loading APK");
         return;
     }
 
     //Just for debug, print APK contents
-    int numFiles = zip_get_num_files(APKArchive);
+    int numFiles = zip_get_num_files(apk_file);
     for (int i=0; i<numFiles; i++) {
-        const char* name = zip_get_name(APKArchive, i, 0);
+        const char* name = zip_get_name(apk_file, i, 0);
         if (name == NULL) {
-            LOGE("Error reading zip file name at index %i : %s", i, zip_strerror(APKArchive));
+            LOGE("Error reading zip file name at index %i : %s", i, zip_strerror(apk_file));
             return;
         }
         LOGI("File %i : %s\n", i, name);

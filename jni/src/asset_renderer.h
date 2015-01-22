@@ -7,14 +7,15 @@
 
 class AssetRenderer: public Renderer {
     private:
-        GLuint _gsTexHandle;
-        GLuint _gvColorHandle;
+        GLuint _texture_id;
+        GLuint _texcoord;
+        GLint _uniform_mytexture;
 
         Camera *_cam;
 
         // PNG loading
         static void png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length);
-        GLubyte* getBytesFromPNG(const char* filename, zip *APKArchive, int &width, int &height);
+        GLuint getBytesFromPNG(const char* filename, zip *APKArchive, int &width, int &height);
 
         // Texture loading
         GLuint tex;
@@ -25,7 +26,7 @@ class AssetRenderer: public Renderer {
         void disableAttributes();
 
         /* Ctor - Init Shaders */
-        AssetRenderer(Camera *cam);
+        AssetRenderer(Camera *cam, zip *apk);
 };
 
 #endif /* ASSET_RENDERER_H */
