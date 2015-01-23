@@ -13,6 +13,7 @@
 #include "screen_renderer.h"
 #include "camera.h"
 #include "input_handler.h"
+#include "texture_handler.h"
 
 class Game {
     private:
@@ -33,8 +34,8 @@ class Game {
         vector<Planet*> _planets;
 
         Spaceman _user;
-        // Joystick _joystick1;
         Camera _cam;
+        TextureHandler _tex;
 
         /* Renderers */
         AssetRenderer *_ass_rend;
@@ -45,11 +46,6 @@ class Game {
         void applyGravity();
         void resetTime();
         void setupObjs();
-
-        /* Load assets in the apk by extracting it with libzip */
-        zip *apk_file;
-        zip_file *file;
-        void loadAPK(const char *package_name);
 
     public:
         /* Respond to input events 

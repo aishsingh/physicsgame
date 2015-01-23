@@ -6,7 +6,7 @@
 
 class ScreenRenderer: public Renderer {
     private:
-        GLuint _gvColorHandle;
+        GLuint _vColor_handle;
 
     public:
         void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);

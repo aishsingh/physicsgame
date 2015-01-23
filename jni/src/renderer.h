@@ -9,8 +9,6 @@
 #include <string>
 #include <vector>
 #include <GLES2/gl2.h>
-#include <png.h>
-#include "zip.h"
 #include "colour.h"
 
 #define PI 3.14159265358979323846264
@@ -18,9 +16,9 @@ using std::vector;
 
 class Renderer {
     protected:
-        GLuint _gProgram;
-        GLuint _gmMVPHandle;
-        GLuint _gvPosHandle;
+        GLuint _program;
+        GLuint _mMVP_handle;
+        GLuint _vPos_handle;
 
         // Projection matrix
         glm::mat4 _proj_mat;
@@ -32,7 +30,7 @@ class Renderer {
         GLuint createProgram(const char *pVertexSource, const char *pFragmentSource);
 
     public:
-        virtual void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode) = 0;
+        // virtual void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode) = 0;
         virtual void disableAttributes() = 0;
 
         static void clearScreen();

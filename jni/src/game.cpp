@@ -64,10 +64,11 @@ void Game::setupObjs() {
 
     // Setup Player
     _players.push_back(&_user);
+    _players.push_back(new Spaceman((w/3), (h/2) + 700, RAINBOW));
 
     // Setup planets
     try {
-        _planets.push_back(new Planet((w/2) + 100,  (h/2) - 150, 400));
+        _planets.push_back(new Planet((w/2) + 100, (h/2) - 150, 400));
         _planets.push_back(new Planet((w/2) - 800, (h/2) - 150, 300));
     }
     catch (std::exception &e) {
@@ -100,14 +101,14 @@ void Game::setupGLContext(int screen_w, int screen_h) {
 
     // Unzip apk using libzip
     LOGI("unziping assets");
-    loadAPK(_package_name.c_str());
+    _tex.loadAPK(_package_name.c_str());
+
+    // Load textures here
+    _tex.loadTextures();
 
     // Update device size
     _screen_width = screen_w;
     _screen_height = screen_h;
-
-    // Load textures here
-    // TODO
 
     // Setup renderers
     if (_ass_rend != NULL) {
@@ -122,7 +123,7 @@ void Game::setupGLContext(int screen_w, int screen_h) {
         delete _scr_rend;
         _scr_rend = NULL;
     }
-    _ass_rend = new AssetRenderer(&_cam, apk_file);
+    _ass_rend = new AssetRenderer(&_cam);
     _obj_rend = new ObjRenderer(&_cam);
     _scr_rend = new ScreenRenderer();
 }
@@ -145,7 +146,7 @@ void Game::draw() {
 
     // Render players
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->draw(_ass_rend, &_planets);
+        _players.at(i)->draw(_ass_rend, &_planets, &_tex);
 
     _ass_rend->disableAttributes();
 
@@ -190,27 +191,6 @@ void Game::respondToInput() {
 void Game::applyGravity() {
     for (int i=0; i<(int)_players.size(); i++)
         _players.at(i)->applyGravity(&_planets);
-}
-
-//---
-void Game::loadAPK(const char *package_name) {
-    LOGI("Loading APK %s", package_name);
-    apk_file = zip_open(package_name, 0, NULL);
-    if (apk_file == NULL) {
-        LOGE("Error loading APK");
-        return;
-    }
-
-    //Just for debug, print APK contents
-    int numFiles = zip_get_num_files(apk_file);
-    for (int i=0; i<numFiles; i++) {
-        const char* name = zip_get_name(apk_file, i, 0);
-        if (name == NULL) {
-            LOGE("Error reading zip file name at index %i : %s", i, zip_strerror(apk_file));
-            return;
-        }
-        LOGI("File %i : %s\n", i, name);
-    }
 }
 
 /* Static Members */

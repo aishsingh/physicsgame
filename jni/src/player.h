@@ -11,6 +11,7 @@
 #include "obj_renderer.h"
 #include "planet.h"
 #include "action.h"
+#include "texture_handler.h"
 
 class Player: public Object {
     protected:
@@ -23,10 +24,9 @@ class Player: public Object {
 
     public:
         // Render player and trail
-        virtual void draw(AssetRenderer *_ass_rend, vector<Planet*> *g_objs);
+        virtual void draw(AssetRenderer *_ass_rend, vector<Planet*> *g_objs, TextureHandler *tex);
         virtual void drawTrail(ObjRenderer *_obj_rend, vector<Planet*> *g_objs) = 0;
         vector<float> getVerticeData();
-        vector<float> getColourData();
 
         // Update player based on its current action
         virtual void update() = 0; 

@@ -2,6 +2,7 @@
 #include "player.h"
 #include "physics.h"
 #include "math.h"
+#include "texture_handler.h"
 
 Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
     _rot_offset_angle = 0.0f;
@@ -64,22 +65,7 @@ vector<float> Player::getVerticeData() {
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }
 
-std::vector<float> Player::getColourData() {
-    float clr[] = { 0.3f, 0.3f, 0.3f, 1.0f,
-                    1.0f, 1.0f, 1.0f, 1.0f,
-                    0.3f, 0.3f, 0.3f, 1.0f,
-                    1.0f, 1.0f, 1.0f, 1.0f};
-
-    return std::vector<float> (clr, clr + sizeof(clr) / sizeof(float));
-}
-
-void Player::draw(AssetRenderer* _ass_rend, vector<Planet*> *g_objs) {
-    // Render
-    _ass_rend->render(getVerticeData(), 
-                      getColourData(), 
-                      getRotAngle(), 
-                      GL_TRIANGLE_STRIP);
-
+void Player::draw(AssetRenderer* _ass_rend, vector<Planet*> *g_objs, TextureHandler *tex) {
     // Update physics attributes only if box is moving
     if (_action == FLYING) {
         bool collision = PhysicsEngine::updatePhysics(*this, g_objs);

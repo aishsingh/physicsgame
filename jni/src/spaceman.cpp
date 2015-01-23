@@ -6,7 +6,7 @@
 #include "physics.h"
 #include "math.h"
 
-Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,105,125.3), _trail(27) {
+Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,105,125.3), _trail(22) {
     _action = FLYING;
     _facing = RIGHT;
     _frame = 0;           // TODO not implemented yet
@@ -57,34 +57,61 @@ void Spaceman::changeTheme(Theme &old_theme) {
     old_theme = new_theme;
 }
 
+void Spaceman::draw(AssetRenderer* _ass_rend, vector<Planet*> *g_objs, TextureHandler *tex) {
+    float tex_vert[] = {
+        0.0, 1.0,
+        0.0, 0.0,
+        1.0, 1.0,
+        1.0, 0.0
+    };
+
+    // Render
+    _ass_rend->render(getVerticeData(),
+                      vector<float> (tex_vert, tex_vert + sizeof(tex_vert) / sizeof(float)),
+                      tex->getTex(TEX_SPACEMAN), 
+                      getRotAngle(), 
+                      GL_TRIANGLE_STRIP);
+
+    Player::draw(_ass_rend, g_objs, tex);
+}
+
 void Spaceman::drawTrail(ObjRenderer* _obj_rend, vector<Planet*> *g_objs) {
     // Render
     _trail.draw(_obj_rend, g_objs);
 }
 
 void Spaceman::update() {
-    if (_action == STILL) {
-        // Convert angle to anti-clockwise direction
-        float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
+    switch (_action) {
+        case STILL: {
+            // Convert angle to anti-clockwise direction
+            float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
 
-        PhysicsEngine::genInitVel(*this, angle, 2, 1, 0);
-        resetTime(Game::getElapsedTime());
-        _trail.buildTrail(_base.getX(), 
-                          _base.getY(), 
-                          360 - getRotAngle(), 
-                          _colour_theme);
-        _action = FLYING;
-    }
-    else if (_action == FLYING) {
-        // Convert angle to anti-clockwise direction
-        float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
+            PhysicsEngine::genInitVel(*this, angle, 2, 1, 0);
+            resetTime(Game::getElapsedTime());
+            _trail.buildTrail(_base.getX(), 
+                    _base.getY(), 
+                    360 - getRotAngle(), 
+                    _colour_theme);
+            _action = FLYING;
+            break;
+        }
 
-        PhysicsEngine::genInitVel(*this, angle, 2, 1, 0);
-        _trail.buildTrail(_base.getX(), 
-                          _base.getY(), 
-                          360 - getRotAngle(), 
-                          _colour_theme);
-        // LOGI("V.vel(%.2f), H.vel(%.2f), V.acc(%.2f), H.acc(%.2f), angle(%.2f)", vert_motion.getVel(), hori_motion.getVel(), vert_motion.getAccel(), hori_motion.getAccel(), angle);
+        case FLYING: {
+            // Convert angle to anti-clockwise direction
+            float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
+
+            PhysicsEngine::genInitVel(*this, angle, 2, 1, 0);
+            _trail.buildTrail(_base.getX(), 
+                    _base.getY(), 
+                    360 - getRotAngle(), 
+                    _colour_theme);
+            break;
+        }
+
+        case RUNNING: {
+            // TODO
+            break;
+        }
     }
 }
 

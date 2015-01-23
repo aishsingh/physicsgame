@@ -19,6 +19,7 @@ LOCAL_SRC_FILES := app_glue.cpp \
 		    screen_renderer.cpp \
 					   math.cpp \
 				    physics.cpp \
+			texture_handler.cpp \
 			  input_handler.cpp \
 				  collision.cpp \
 				   joystick.cpp \

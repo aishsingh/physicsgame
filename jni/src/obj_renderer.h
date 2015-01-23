@@ -7,7 +7,7 @@
 
 class ObjRenderer: public Renderer {
     private:
-        GLuint _gvColorHandle;
+        GLuint _vColor_handle;
         Camera *_cam;
 
     public:

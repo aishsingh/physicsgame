@@ -4,7 +4,7 @@
 #include "game.h"
 #include "math.h"
 
-#define FADE_DEC 0.03f
+#define FADE_DEC 0.04f
 #define SHRINK_DEC 1.2f
 #define OUT_ShapesCount false
 

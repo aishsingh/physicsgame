@@ -25,46 +25,46 @@ ScreenRenderer::ScreenRenderer() {
         "  gl_FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
         "}\n";
 
-    _gProgram = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());
-    if (!_gProgram) {
+    _program = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());
+    if (!_program) {
         LOGE("Could not create program.");
     }
 
-    _gvPosHandle = glGetAttribLocation(_gProgram, "vPos");
+    _vPos_handle = glGetAttribLocation(_program, "vPos");
     checkGlError("glGetAttribLocation(vPos)");
 
-    _gvColorHandle = glGetAttribLocation(_gProgram, "vColor");
+    _vColor_handle = glGetAttribLocation(_program, "vColor");
     checkGlError("glGetAttribLocation(vColor)");
 
-    _gmMVPHandle = glGetUniformLocation(_gProgram, "mMVP");
+    _mMVP_handle = glGetUniformLocation(_program, "mMVP");
     checkGlError("glGetUniformLocation(mMVP)");
 
     /* glUseProgram() needs to be called before you setup a uniform 
      * but not needed before glGetUniformLocation() 
      * http://www.opengl.org/wiki/GLSL_:_common_mistakes */
-    glUseProgram(_gProgram);
+    glUseProgram(_program);
     checkGlError("glUseProgram");
 
     // Pass MVP to shader
-    glUniformMatrix4fv(_gmMVPHandle, 1, GL_FALSE, glm::value_ptr(_proj_mat));
+    glUniformMatrix4fv(_mMVP_handle, 1, GL_FALSE, glm::value_ptr(_proj_mat));
     checkGlError("glUniformMatrix4fv, mMVP");
 }
 
 void ScreenRenderer::render(vector<float> vertices, vector<float> colours, float angle, GLenum mode) {
     // Change renderer
-    glUseProgram(_gProgram);
+    glUseProgram(_program);
     
-    glVertexAttribPointer(_gvPosHandle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
-    glVertexAttribPointer(_gvColorHandle, 4, GL_FLOAT, GL_FALSE, 0, &colours[0]);
+    glVertexAttribPointer(_vPos_handle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
+    glVertexAttribPointer(_vColor_handle, 4, GL_FLOAT, GL_FALSE, 0, &colours[0]);
     checkGlError("glVertexAttribPointer");
 
-    glEnableVertexAttribArray(_gvPosHandle);
-    glEnableVertexAttribArray(_gvColorHandle);
+    glEnableVertexAttribArray(_vPos_handle);
+    glEnableVertexAttribArray(_vColor_handle);
     checkGlError("glEnableVertexAttribArray");
 
     // Pass attributes to shader
     glDrawArrays(mode, 0, vertices.size()/2);
-    checkGlError("ui glDrawArrays");
+    checkGlError("glDrawArrays");
 
     // Can be called directly by the renderer as this will be the only UI renderer instance
     disableAttributes();
@@ -72,6 +72,6 @@ void ScreenRenderer::render(vector<float> vertices, vector<float> colours, float
 
 void ScreenRenderer::disableAttributes() {
     // Any unique attributes in these shaders needs to be disabled here
-    glDisableVertexAttribArray(_gvPosHandle);
-    glDisableVertexAttribArray(_gvColorHandle);
+    glDisableVertexAttribArray(_vPos_handle);
+    glDisableVertexAttribArray(_vColor_handle);
 }

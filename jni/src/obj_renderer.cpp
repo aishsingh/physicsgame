@@ -24,25 +24,27 @@ ObjRenderer::ObjRenderer(Camera *cam) : _cam(cam) {
         "  gl_FragColor = vFragColor;\n"
         "}\n";
 
-    _gProgram = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());
-    if (!_gProgram) {
+    _program = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());
+    if (!_program) {
         LOGE("Could not create program.");
     }
 
-    _gvPosHandle = glGetAttribLocation(_gProgram, "vPos");
+    _vPos_handle = glGetAttribLocation(_program, "vPos");
     checkGlError("glGetAttribLocation(vPos)");
 
-    _gvColorHandle = glGetAttribLocation(_gProgram, "vColor");
+    _vColor_handle = glGetAttribLocation(_program, "vColor");
     checkGlError("glGetAttribLocation(vColor)");
 
-    _gmMVPHandle = glGetUniformLocation(_gProgram, "mMVP");
+    _mMVP_handle = glGetUniformLocation(_program, "mMVP");
     checkGlError("glGetUniformLocation(mMVP)");
 }
 
 void ObjRenderer::render(vector<float> vertices, vector<float> colours, float angle, GLenum mode) {
     // Change renderer
-    glUseProgram(_gProgram);
+    glUseProgram(_program);
     checkGlError("glUseProgram");
+
+    /* Matrix transformations -------- */
 
     // Model matrix
     glm::mat4 model_mat;
@@ -55,37 +57,36 @@ void ObjRenderer::render(vector<float> vertices, vector<float> colours, float an
     Point2D anchor_pt = _cam->getPos();
     glm::mat4 view_mat;
     view_mat = glm::translate(view_mat, glm::vec3(ctr.getX() - anchor_pt.getX(), ctr.getY() - anchor_pt.getY(), 0));
-    if (CAM_RotateViewToFollowPlayer) {
-
-        view_mat = glm::translate(view_mat, glm::vec3(anchor_pt.getX(), anchor_pt.getY(), 0));
-        view_mat = glm::rotate(view_mat, 
-                               static_cast<float>(_cam->getRotAngle()*PI/180), 
-                               glm::vec3(0.0f, 0.0f, 1.0f));
-        view_mat = glm::scale(view_mat, glm::vec3(_cam->getScale(), _cam->getScale(), _cam->getScale()));
-        view_mat = glm::translate(view_mat, glm::vec3(-anchor_pt.getX(), -anchor_pt.getY(), 0));
-    }
+    view_mat = glm::translate(view_mat, glm::vec3(anchor_pt.getX(), anchor_pt.getY(), 0));
+    view_mat = glm::rotate(view_mat, 
+                           static_cast<float>(_cam->getRotAngle()*PI/180), 
+                           glm::vec3(0.0f, 0.0f, 1.0f));
+    view_mat = glm::scale(view_mat, glm::vec3(_cam->getScale(), _cam->getScale(), _cam->getScale()));
+    view_mat = glm::translate(view_mat, glm::vec3(-anchor_pt.getX(), -anchor_pt.getY(), 0));
 
     // MVP
     glm::mat4 MVP_mat = _proj_mat * view_mat * model_mat;
 
+    /* ------------------------------- */
+
     // Pass MVP to shader
-    glUniformMatrix4fv(_gmMVPHandle, 1, GL_FALSE, glm::value_ptr(MVP_mat));
+    glUniformMatrix4fv(_mMVP_handle, 1, GL_FALSE, glm::value_ptr(MVP_mat));
     checkGlError("glUniformMatrix4fv, mMVP");
 
-    glVertexAttribPointer(_gvPosHandle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
-    glVertexAttribPointer(_gvColorHandle, 4, GL_FLOAT, GL_FALSE, 0, &colours[0]);
+    glVertexAttribPointer(_vPos_handle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
+    glVertexAttribPointer(_vColor_handle, 4, GL_FLOAT, GL_FALSE, 0, &colours[0]);
     checkGlError("glVertexAttrib");
 
-    glEnableVertexAttribArray(_gvPosHandle);
-    glEnableVertexAttribArray(_gvColorHandle);
+    glEnableVertexAttribArray(_vPos_handle);
+    glEnableVertexAttribArray(_vColor_handle);
     checkGlError("glEnableVertexAttribArray");
 
     // Pass attributes to shader
     glDrawArrays(mode, 0, vertices.size()/2);
-    checkGlError("box glDrawArrays");
+    checkGlError("glDrawArrays");
 }
 
 void ObjRenderer::disableAttributes() {
-    glDisableVertexAttribArray(_gvPosHandle);
-    glDisableVertexAttribArray(_gvColorHandle);
+    glDisableVertexAttribArray(_vPos_handle);
+    glDisableVertexAttribArray(_vColor_handle);
 }
