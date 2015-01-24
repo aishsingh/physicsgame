@@ -2,14 +2,15 @@
 #include "planet.h"
 #include "colour.h"
 
-const int Planet::_SIDES(30);
-const int Planet::_GRAV_SIDES(40);
-const float Planet::_GRAV_OPACITY(0.1f);
+const int Planet::_SIDES(60);
+const int Planet::_GRAV_SIDES(70);
+const float Planet::_GRAV_OPACITY(0.6f);
 
 Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
     // Redish-Brown colour
     _colour = Colour(0.375f, 0.375f, 0.375f, 1.0f);
     _rot_speed = 0.5f;
+    _grav_r_off = d;
 }
 Planet::~Planet() { }
 
@@ -26,12 +27,26 @@ void Planet::draw(ObjRenderer *rend) {
 }
 
 void Planet::drawGrav(ObjRenderer *rend) {
-    // Render Gravity area
     float grav_vertex_count = _GRAV_SIDES * (getWidth()/400);
-    rend->render(getVerticeData(grav_vertex_count, getWidth()),
-                 Colour::getColourData(grav_vertex_count, Colour(_colour.r, _colour.g, _colour.b, _GRAV_OPACITY)), 
-                 getRotAngle(), 
-                 GL_TRIANGLE_FAN);
+
+    _grav_r_off = (_grav_r_off <=0) ? getWidth() : 
+                                      _grav_r_off-=3.5f;
+
+    // Render Gravity area with rings
+    for (int i=0; i<3; i++) {
+        float offset = 80.0f * i;
+        float radius = _grav_r_off - offset;
+        float alpha = (radius > getWidth()/2) ? 2 - radius/(getWidth()/2) : 
+                                                radius/(getWidth()/2);
+        alpha *= _GRAV_OPACITY;
+
+        // Render Gravity ring
+        if (radius > 0)
+            rend->render(getVerticeData(grav_vertex_count, radius),
+                    Colour::getColourData(grav_vertex_count, Colour(_colour.r, _colour.g, _colour.b, alpha)), 
+                    getRotAngle(), 
+                    GL_LINE_LOOP);
+    }
 }
 
 void Planet::update() {

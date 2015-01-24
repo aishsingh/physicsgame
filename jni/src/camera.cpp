@@ -35,7 +35,7 @@ Point2D Camera::getPos() {
 }
 
 float Camera::getRotAngle() const {
-    return -_anchor->getRotAngle() + _rot_offset_angle;
+    return 0.0f;//-_anchor->getRotAngle() + _rot_offset_angle;
 }
 
 float Camera::getScale() const {

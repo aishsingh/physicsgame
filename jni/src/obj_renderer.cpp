@@ -12,7 +12,6 @@ ObjRenderer::ObjRenderer(Camera *cam) : _cam(cam) {
 
         "void main() {\n"
         "  gl_Position = mMVP * vec4(vPos, 0.0f, 1.0f);\n"
-
         "  vFragColor = vColor;\n"
         "}\n";
 
@@ -48,7 +47,7 @@ void ObjRenderer::render(vector<float> vertices, vector<float> colours, float an
 
     // Model matrix
     glm::mat4 model_mat;
-    model_mat= glm::rotate(model_mat, 
+    model_mat = glm::rotate(model_mat, 
                            static_cast<float>(angle*PI/180), 
                            glm::vec3(0.0f, 0.0f, 1.0f));
 

@@ -22,8 +22,20 @@ AssetRenderer::AssetRenderer(Camera *cam) : _cam(cam) {
         "uniform sampler2D sTexture;\n"
         "varying vec2 f_vTex_coord;\n"
 
+        "float rand(vec2 n) {\n"
+        "  return 0.5 + 0.5 * fract(sin(dot(n.xy, vec2(12.9898, 78.233)))* 43758.5453);\n"
+        "}\n"
+
         "void main() {\n"
-        "  gl_FragColor = texture2D(sTexture, f_vTex_coord);\n"
+        "  vec4 vColor = texture2D(sTexture, f_vTex_coord);\n"
+        "  float average_color = (vColor.r + vColor.g + vColor.b)/3.0;\n"
+        "  float x = rand(gl_PointCoord.xy);\n"
+        "  if (vColor.b >= 0.98f) {"
+        "    discard;\n"
+        // "    gl_FragColor = vec4(average_color, 0, 0, vColor.a);\n"
+        "  } else {\n"
+        "    gl_FragColor = vec4(1, 1, 1, vColor.a);\n"
+        "  }"
         "}\n";
 
     _program = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());
@@ -52,7 +64,7 @@ void AssetRenderer::render(vector<float> vertices, vector<float> tex_vertices, G
 
     // Model matrix
     glm::mat4 model_mat;
-    model_mat= glm::rotate(model_mat, 
+    model_mat = glm::rotate(model_mat, 
                            static_cast<float>(angle*PI/180), 
                            glm::vec3(0.0f, 0.0f, 1.0f));
 

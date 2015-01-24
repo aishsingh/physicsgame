@@ -14,7 +14,7 @@ TextureHandler::~TextureHandler() {
 }
 
 void TextureHandler::loadAPK(const char *package_name) {
-    LOGI("Loading APK %s", package_name);
+    LOGI("-> Opening APK");
     _APK = zip_open(package_name, 0, NULL);
     if (_APK == NULL) {
         LOGE("Error loading APK");
@@ -29,7 +29,7 @@ void TextureHandler::loadAPK(const char *package_name) {
                 LOGE("Error reading zip file name at index %i : %s", i, zip_strerror(_APK));
                 return;
             }
-            LOGI("File %i : %s\n", i, name);
+            LOGI("-> File %i : %s\n", i, name);
         }
     }
 }
@@ -179,7 +179,7 @@ GLuint TextureHandler::loadTexFromPNG(const char* filename) {
                     GL_TEXTURE_WRAP_T,
                     GL_CLAMP_TO_EDGE);
 
-    LOGI("Loaded '%s' [%d x %d]", filename, twidth, theight);
+    LOGI("-> Loaded '%s' : [%d x %d]", filename, twidth, theight);
 
     //clean up memory and close stuff
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);

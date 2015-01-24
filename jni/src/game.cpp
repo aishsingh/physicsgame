@@ -18,7 +18,7 @@ int Game::_screen_width(0);
 float Game::_elapsed_time(0.0f);
 float Game::_time_speed(0.4f);
 
-Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/2) + 700, GRAY),
+Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/2) + 700, RAINBOW),
                                                                _cam(&_user),
                                                                input(true, VERT, &_user, &_cam) {
     // Init values
@@ -27,9 +27,10 @@ Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2
     _screen_height = screen_h;
     _screen_width = screen_w;
 
+    LOGI(" ");
     LOGI("--------------------");
     LOGI("Created game object");
-    LOGI("pkgname: %s", pkg_name.c_str());
+    LOGI("-> APK: '%s'", pkg_name.c_str());
 
     // Seed random numbers using the time to improve randomness
     srand(time(NULL));
@@ -64,7 +65,7 @@ void Game::setupObjs() {
 
     // Setup Player
     _players.push_back(&_user);
-    _players.push_back(new Spaceman((w/3), (h/2) + 700, RAINBOW));
+    // _players.push_back(new Spaceman((w/3), (h/2) + 700, RAINBOW));
 
     // Setup planets
     try {
@@ -88,8 +89,8 @@ void Game::setupGLContext(int screen_w, int screen_h) {
     resetTime();
 
     // Log OpenGL details
-    LOGI("loading OpenGL context");
-    LOGI("w: %d, h: %d, pkg: %s", screen_w, screen_h, _package_name.c_str());
+    LOGI("Loading OpenGL context");
+    LOGI("-> Screen Res [%d x %d]", screen_w, screen_h);
 
     // Show OpenGL details of device
     if (OUT_OpenGL_Ver) {
@@ -100,7 +101,7 @@ void Game::setupGLContext(int screen_w, int screen_h) {
     }
 
     // Unzip apk using libzip
-    LOGI("unziping assets");
+    LOGI("Unziping assets");
     _tex.loadAPK(_package_name.c_str());
 
     // Load textures here
@@ -126,6 +127,8 @@ void Game::setupGLContext(int screen_w, int screen_h) {
     _ass_rend = new AssetRenderer(&_cam);
     _obj_rend = new ObjRenderer(&_cam);
     _scr_rend = new ScreenRenderer();
+
+    glLineWidth(1.0f);
 }
 
 void Game::draw() {
