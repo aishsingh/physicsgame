@@ -17,6 +17,7 @@ LOCAL_SRC_FILES := app_glue.cpp \
 		       obj_renderer.cpp \
 			 asset_renderer.cpp \
 		    screen_renderer.cpp \
+			player_renderer.cpp \
 					   math.cpp \
 				    physics.cpp \
 			texture_handler.cpp \

@@ -21,7 +21,6 @@ vector<float> Player::getVerticeData() {
          |        |
         [p2]----[p4]  */
 
-
     /* This is the original (x,y) that will now be transformed
      * before being passed to the vertex shader */
     float x = getX();
@@ -65,7 +64,7 @@ vector<float> Player::getVerticeData() {
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }
 
-void Player::draw(AssetRenderer* _ass_rend, vector<Planet*> *g_objs, TextureHandler *tex) {
+void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler *tex) {
     // Update physics attributes only if box is moving
     if (_action == FLYING) {
         bool collision = PhysicsEngine::updatePhysics(*this, g_objs);

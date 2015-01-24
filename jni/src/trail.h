@@ -13,6 +13,7 @@
 class Trail {
     private:
         float _boxes_length;
+        Colour _cur_colour;
 
         void fade(Shape &shape);
         void shrink(Shape &shape);
@@ -36,10 +37,11 @@ class Trail {
            2. Decreases the memory allocation of the array */
         void removeBox(int index);
 
-        /* Ctor */
-        Trail(int obj_length);
+        /* Used by player renderer */
+        Colour getCurColour() const;
 
-        /* Dtor */
+        /* Ctor / Dtor */
+        Trail(int obj_length);
         ~Trail();
 };
 

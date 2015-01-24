@@ -39,6 +39,7 @@ Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2
     _ass_rend = NULL;
     _obj_rend = NULL;
     _scr_rend = NULL;
+    _player_rend = NULL;
 
     setupObjs();
 }
@@ -124,10 +125,16 @@ void Game::setupGLContext(int screen_w, int screen_h) {
         delete _scr_rend;
         _scr_rend = NULL;
     }
+    if (_player_rend != NULL) {
+        delete _player_rend;
+        _player_rend = NULL;
+    }
     _ass_rend = new AssetRenderer(&_cam);
     _obj_rend = new ObjRenderer(&_cam);
     _scr_rend = new ScreenRenderer();
+    _player_rend = new PlayerRenderer(&_cam);
 
+    // Lines used by planet gravity rings
     glLineWidth(1.0f);
 }
 
@@ -149,9 +156,9 @@ void Game::draw() {
 
     // Render players
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->draw(_ass_rend, &_planets, &_tex);
+        _players.at(i)->draw(_player_rend, &_planets, &_tex);
 
-    _ass_rend->disableAttributes();
+    _player_rend->disableAttributes();
 
     // Render planets
     for(int i=0; i<(int)_planets.size(); i++)

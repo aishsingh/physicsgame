@@ -65,6 +65,7 @@ void Trail::buildTrail(float x, float y, float rot_angle, Theme theme) {
 
     /* Setup new box */
     Box box(x, y, (int)shapes.size(), rot_angle, _boxes_length, theme);
+    _cur_colour = box.getColour();
 
     // Apply initial velocity using player rotation
     PhysicsEngine::genInitVel(box, rot_angle, 20, 18, 4);
@@ -112,4 +113,9 @@ void Trail::resetTime(float t) {
         shapes.at(i).vert_motion.setTime(t);
         shapes.at(i).hori_motion.setTime(t);
     }
+}
+
+
+Colour Trail::getCurColour() const {
+    return _cur_colour;
 }

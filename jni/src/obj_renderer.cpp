@@ -7,20 +7,20 @@ ObjRenderer::ObjRenderer(Camera *cam) : _cam(cam) {
     _shad_vertex =
         "attribute vec2 vPos;\n"
         "attribute vec4 vColor;\n"
-        "varying vec4 vFragColor;\n"
+        "varying vec4 f_vColor;\n"
         "uniform mat4 mMVP;\n"
 
         "void main() {\n"
         "  gl_Position = mMVP * vec4(vPos, 0.0f, 1.0f);\n"
-        "  vFragColor = vColor;\n"
+        "  f_vColor = vColor;\n"
         "}\n";
 
     _shad_fragment = 
         "precision mediump float;\n"
-        "varying vec4 vFragColor;\n"
+        "varying vec4 f_vColor;\n"
 
         "void main() {\n"
-        "  gl_FragColor = vFragColor;\n"
+        "  gl_FragColor = f_vColor;\n"
         "}\n";
 
     _program = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());

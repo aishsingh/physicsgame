@@ -1,29 +1,38 @@
 #include <stdlib.h>
-#include "asset_renderer.h"
+#include "player_renderer.h"
 #include "log.h"
 #include "game.h"
 
 #define PI 3.14159265358979323846264
 
-AssetRenderer::AssetRenderer(Camera *cam) : _cam(cam) {
+PlayerRenderer::PlayerRenderer(Camera *cam) : AssetRenderer(cam) {
     _shad_vertex =
         "attribute vec2 vPos;\n"
+        "attribute vec4 vColor;\n"
+        "varying vec4 f_vColor;\n"
         "attribute vec2 vTex_coord;\n"
         "varying vec2 f_vTex_coord;\n"
         "uniform mat4 mMVP;\n"
 
         "void main() {\n"
         "  gl_Position = mMVP * vec4(vPos, 0.0f, 1.0f);\n"
+        "  f_vColor = vColor;\n"
         "  f_vTex_coord = vTex_coord;\n"
         "}\n";
 
     _shad_fragment = 
         "precision mediump float;\n"
+        "varying vec4 f_vColor;\n"
         "varying vec2 f_vTex_coord;\n"
         "uniform sampler2D sTexture;\n"
 
         "void main() {\n"
-        "  gl_FragColor = texture2D(sTexture, f_vTex_coord);\n"
+        "  vec4 vTexColor = texture2D(sTexture, f_vTex_coord);\n"
+        "  if (vTexColor.b >= 0.98f || vTexColor.r >= 0.98f) {\n"
+        "    gl_FragColor = f_vColor;\n"
+        "  } else {\n"
+        "    gl_FragColor = vec4(1.0f, 1.0f, 1.0f, vTexColor.a);\n"
+        "  }\n"
         "}\n";
 
     _program = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());
@@ -32,6 +41,9 @@ AssetRenderer::AssetRenderer(Camera *cam) : _cam(cam) {
     }
     _vPos_handle = glGetAttribLocation(_program, "vPos");
     checkGlError("glGetAttribLocation(vPos)");
+
+    _vColor_handle = glGetAttribLocation(_program, "vColor");
+    checkGlError("glGetAttribLocation(vColor)");
 
     _vTexCoord_handle = glGetAttribLocation(_program, "vTex_coord");
     checkGlError("glGetAttribLocation(vTex_coord)");
@@ -43,7 +55,7 @@ AssetRenderer::AssetRenderer(Camera *cam) : _cam(cam) {
     checkGlError("glGetUniformLocation(mMVP)");
 }
 
-void AssetRenderer::render(vector<float> vertices, vector<float> tex_vertices, GLuint texture_id, float angle, GLenum mode) {
+void PlayerRenderer::render(vector<float> vertices, vector<float> theme_col, vector<float> tex_vertices, GLuint texture_id, float angle, GLenum mode) {
     // Change renderer
     glUseProgram(_program);
     checkGlError("glUseProgram");
@@ -83,10 +95,12 @@ void AssetRenderer::render(vector<float> vertices, vector<float> tex_vertices, G
     checkGlError("glUniform1i, sTexture");
 
     glVertexAttribPointer(_vPos_handle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
+    glVertexAttribPointer(_vColor_handle, 4, GL_FLOAT, GL_FALSE, 0, &theme_col[0]);
     glVertexAttribPointer(_vTexCoord_handle, 2, GL_FLOAT, GL_FALSE, 0, &tex_vertices[0]);
     checkGlError("glVertexAttrib");
 
     glEnableVertexAttribArray(_vPos_handle);
+    glEnableVertexAttribArray(_vColor_handle);
     glEnableVertexAttribArray(_vTexCoord_handle);
     checkGlError("glEnableVertexAttribArray");
 
@@ -95,7 +109,8 @@ void AssetRenderer::render(vector<float> vertices, vector<float> tex_vertices, G
     checkGlError("glDrawArrays");
 }
 
-void AssetRenderer::disableAttributes() {
+void PlayerRenderer::disableAttributes() {
     glDisableVertexAttribArray(_vPos_handle);
+    glDisableVertexAttribArray(_vColor_handle);
     glDisableVertexAttribArray(_vTexCoord_handle);
 }

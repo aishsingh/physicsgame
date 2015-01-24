@@ -57,7 +57,7 @@ void Spaceman::changeTheme(Theme &old_theme) {
     old_theme = new_theme;
 }
 
-void Spaceman::draw(AssetRenderer* _ass_rend, vector<Planet*> *g_objs, TextureHandler *tex) {
+void Spaceman::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler *tex) {
     float tex_vert[] = {
         0.0, 1.0,
         0.0, 0.0,
@@ -66,18 +66,20 @@ void Spaceman::draw(AssetRenderer* _ass_rend, vector<Planet*> *g_objs, TextureHa
     };
 
     // Render
-    _ass_rend->render(getVerticeData(),
-                      vector<float> (tex_vert, tex_vert + sizeof(tex_vert) / sizeof(float)),
-                      tex->getTex(TEX_SPACEMAN), 
-                      getRotAngle(), 
-                      GL_TRIANGLE_STRIP);
+    vector<float> vert = getVerticeData();
+    rend->render(vert,
+                 Colour::getColourData(vert.size()/2, _trail.getCurColour()),
+                 vector<float> (tex_vert, tex_vert + sizeof(tex_vert) / sizeof(float)),
+                 tex->getTex(TEX_SPACEMAN), 
+                 getRotAngle(), 
+                 GL_TRIANGLE_STRIP);
 
-    Player::draw(_ass_rend, g_objs, tex);
+    Player::draw(rend, g_objs, tex);
 }
 
-void Spaceman::drawTrail(ObjRenderer* _obj_rend, vector<Planet*> *g_objs) {
+void Spaceman::drawTrail(ObjRenderer* rend, vector<Planet*> *g_objs) {
     // Render
-    _trail.draw(_obj_rend, g_objs);
+    _trail.draw(rend, g_objs);
 }
 
 void Spaceman::update() {

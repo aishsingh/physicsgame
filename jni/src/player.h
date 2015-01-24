@@ -7,7 +7,7 @@
 
 #include "object.h"
 #include "point2d.h"
-#include "asset_renderer.h"
+#include "player_renderer.h"
 #include "obj_renderer.h"
 #include "planet.h"
 #include "action.h"
@@ -24,8 +24,8 @@ class Player: public Object {
 
     public:
         // Render player and trail
-        virtual void draw(AssetRenderer *_ass_rend, vector<Planet*> *g_objs, TextureHandler *tex);
-        virtual void drawTrail(ObjRenderer *_obj_rend, vector<Planet*> *g_objs) = 0;
+        virtual void draw(PlayerRenderer *rend, vector<Planet*> *g_objs, TextureHandler *tex);
+        virtual void drawTrail(ObjRenderer *rend, vector<Planet*> *g_objs) = 0;
         vector<float> getVerticeData();
 
         // Update player based on its current action

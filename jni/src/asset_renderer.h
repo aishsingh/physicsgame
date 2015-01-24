@@ -6,15 +6,15 @@
 #include "camera.h"
 
 class AssetRenderer: public Renderer {
-    private:
+    protected:
         GLuint _vTexCoord_handle;
         GLint _sTexture_handle;
 
         Camera *_cam;
 
     public:
-        void render(vector<float> vertices, vector<float> tex_vertices, GLuint texture_id, float angle, GLenum mode);
-        void disableAttributes();
+        virtual void render(vector<float> vertices, vector<float> tex_vertices, GLuint texture_id, float angle, GLenum mode);
+        virtual void disableAttributes();
 
         /* Ctor - Init Shaders */
         AssetRenderer(Camera *cam);
