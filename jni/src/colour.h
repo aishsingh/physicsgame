@@ -5,6 +5,7 @@
 #define COLOUR_H
 
 #include <vector>
+#include "theme.h"
 
 using std::vector;
 
@@ -14,6 +15,8 @@ class Colour {
 
         // Used for objects that need to be rendered
         static vector<float> getColourData(int vertex_count, Colour colour);
+
+        static Colour getColour(Theme theme);
 
         /* Ctor
            - Convert RGBA values into a Colour type */

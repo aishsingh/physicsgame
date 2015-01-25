@@ -68,7 +68,7 @@ void Spaceman::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandle
     // Render
     vector<float> vert = getVerticeData();
     rend->render(vert,
-                 Colour::getColourData(vert.size()/2, _trail.getCurColour()),
+                 Colour::getColourData(vert.size()/2, Colour::getColour(_colour_theme)),
                  vector<float> (tex_vert, tex_vert + sizeof(tex_vert) / sizeof(float)),
                  tex->getTex(TEX_SPACEMAN), 
                  getRotAngle(), 

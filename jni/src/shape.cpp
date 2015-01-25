@@ -2,7 +2,6 @@
 #include <math.h>
 #include "shape.h"
 #include "game.h"
-#include "log.h"
 
 #define PI 3.14159265358979323846264
 
@@ -29,20 +28,20 @@ void Shape::useTheme(Theme &theme) {
 
         case RED:
         _colour.r = (rand() % 256) / 256.0f;
-        _colour.g = (rand() % 100) / 256.0f;
+        _colour.g = _colour.r/2.6f;
         _colour.b = _colour.g;
         break;
 
         case PURPLE:
-        _colour.g = (rand() % 50)  / 256.0f;
         _colour.b = (rand() % 256) / 256.0f;
-        _colour.r = _colour.b/2;
+        _colour.r = _colour.b/4;
+        _colour.g = _colour.b/5.2f;
         break;
 
         case BLUE:
-        _colour.b = (rand() % 255)   / 256.0f;
-        _colour.r = (_colour.b/6)    / 256.0f;
-        _colour.g = (_colour.b/1.35) / 256.0f;
+        _colour.b = (rand() % 256) / 256.0f;
+        _colour.r = _colour.b/4;
+        _colour.g = _colour.b/1.5f;
         break;
 
         case RAINBOW:

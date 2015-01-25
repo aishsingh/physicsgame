@@ -21,7 +21,6 @@ class Player: public Object {
         int _on_planet;
         float _closest_planet_disp;
 
-
     public:
         // Render player and trail
         virtual void draw(PlayerRenderer *rend, vector<Planet*> *g_objs, TextureHandler *tex);

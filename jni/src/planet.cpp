@@ -4,11 +4,11 @@
 
 const int Planet::_SIDES(60);
 const int Planet::_GRAV_SIDES(70);
-const float Planet::_GRAV_OPACITY(0.6f);
+const float Planet::_GRAV_OPACITY(1.0f);
 
 Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
     // Redish-Brown colour
-    _colour = Colour(0.375f, 0.375f, 0.375f, 1.0f);
+    _colour = Colour(0.258f, 0.258f, 0.258f, 1.0f);
     _rot_speed = 0.5f;
     _grav_r_off = d;
 }

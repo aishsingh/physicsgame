@@ -18,7 +18,7 @@ int Game::_screen_width(0);
 float Game::_elapsed_time(0.0f);
 float Game::_time_speed(0.4f);
 
-Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/2) + 700, RAINBOW),
+Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/3) + 700, PURPLE),
                                                                _cam(&_user),
                                                                input(true, VERT, &_user, &_cam) {
     // Init values
