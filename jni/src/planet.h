@@ -21,7 +21,7 @@ class Planet: public Object {
         static const int _GRAV_SIDES;
         static const float _GRAV_OPACITY;
 
-        float _grav_r_off;
+        float _grav_r_off[3];
 
         Action _action;
         Colour _colour;

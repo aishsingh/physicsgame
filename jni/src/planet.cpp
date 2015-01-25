@@ -4,13 +4,17 @@
 
 const int Planet::_SIDES(60);
 const int Planet::_GRAV_SIDES(70);
-const float Planet::_GRAV_OPACITY(1.0f);
+const float Planet::_GRAV_OPACITY(0.5f);
 
 Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
-    // Redish-Brown colour
-    _colour = Colour(0.258f, 0.258f, 0.258f, 1.0f);
+    _colour = Colour(0.9294f, 0.898f, 0.88627f, 1.0f);
     _rot_speed = 0.5f;
-    _grav_r_off = d;
+
+    // Position grav rings
+    for (int i=0; i<3; i++) {
+        float offset = (getWidth()/5) * i;
+        _grav_r_off[i] = d + offset;
+    }
 }
 Planet::~Planet() { }
 
@@ -29,20 +33,18 @@ void Planet::draw(ObjRenderer *rend) {
 void Planet::drawGrav(ObjRenderer *rend) {
     float grav_vertex_count = _GRAV_SIDES * (getWidth()/400);
 
-    _grav_r_off = (_grav_r_off <=0) ? getWidth() : 
-                                      _grav_r_off-=3.5f;
-
     // Render Gravity area with rings
     for (int i=0; i<3; i++) {
-        float offset = 80.0f * i;
-        float radius = _grav_r_off - offset;
-        float alpha = (radius > getWidth()/2) ? 2 - radius/(getWidth()/2) : 
-                                                radius/(getWidth()/2);
+        _grav_r_off[i] = (_grav_r_off[i] <=0) ? getWidth() : 
+                                                _grav_r_off[i]-=3.0f;
+
+        float alpha = (_grav_r_off[i] > getWidth()/2) ? 2 - _grav_r_off[i]/(getWidth()/2) : 
+                                                        _grav_r_off[i]/(getWidth()/2);
         alpha *= _GRAV_OPACITY;
 
         // Render Gravity ring
-        if (radius > 0)
-            rend->render(getVerticeData(grav_vertex_count, radius),
+        if (_grav_r_off[i] > 0)
+            rend->render(getVerticeData(grav_vertex_count, _grav_r_off[i]),
                     Colour::getColourData(grav_vertex_count, Colour(_colour.r, _colour.g, _colour.b, alpha)), 
                     getRotAngle(), 
                     GL_LINE_LOOP);

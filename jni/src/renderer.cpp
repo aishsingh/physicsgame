@@ -83,21 +83,9 @@ GLuint Renderer::createProgram(const char *pVertexSource, const char *pFragmentS
 
 void Renderer::clearScreen() {
     float bg = 0.0f;
-    glClearColor(bg, bg, bg, 1.0f);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
+    glClearColor(bg, bg, bg, 0.0f);
     checkGlError("glClearColor");
     glClear(GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
-
-    // Disable depth rendering
-    glDisable(GL_DEPTH_TEST);
-    checkGlError("glDisable(GL_DEPTH_TEST)");
-
-    // Use tightly packed data
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-    checkGlError("glPixelStorei()");
-
-    // Enable Alpha blending
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    checkGlError("glBlendFunc");
 }

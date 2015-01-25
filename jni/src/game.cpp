@@ -134,8 +134,21 @@ void Game::setupGLContext(int screen_w, int screen_h) {
     _scr_rend = new ScreenRenderer();
     _player_rend = new PlayerRenderer(&_cam);
 
+    // Disable depth rendering
+    glDisable(GL_DEPTH_TEST);
+    checkGlError("glDisable(GL_DEPTH_TEST)");
+
+    // Use tightly packed data
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+    checkGlError("glPixelStorei()");
+
+    // Enable Alpha blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    checkGlError("glBlendFunc");
+
     // Lines used by planet gravity rings
-    glLineWidth(1.0f);
+    glLineWidth(2.0f);
 }
 
 void Game::draw() {

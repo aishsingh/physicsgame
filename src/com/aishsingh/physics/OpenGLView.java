@@ -125,6 +125,8 @@ class OpenGLView extends GLSurfaceView {
             EGL10.EGL_GREEN_SIZE, 4,
             EGL10.EGL_BLUE_SIZE, 4,
             EGL10.EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+            EGL10.EGL_SAMPLE_BUFFERS, 1 /* Enable multisampling (FSAA) */,
+            EGL10.EGL_SAMPLES, 2 /* FSAAx2 (2 samples per pixel)*/,
             EGL10.EGL_NONE
         };
 

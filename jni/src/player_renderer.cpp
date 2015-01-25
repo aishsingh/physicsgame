@@ -31,7 +31,7 @@ PlayerRenderer::PlayerRenderer(Camera *cam) : AssetRenderer(cam) {
         "  if (vTexColor.b >= 0.98f || vTexColor.r >= 0.98f) {\n"
         "    gl_FragColor = f_vColor;\n"
         "  } else {\n"
-        "    gl_FragColor = vec4(1.0f, 1.0f, 1.0f, vTexColor.a);\n"
+        "    gl_FragColor = vec4(0.9294f, 0.898f, 0.88627f, vTexColor.a);\n"
         "  }\n"
         "}\n";
 
@@ -72,8 +72,7 @@ void PlayerRenderer::render(vector<float> vertices, vector<float> theme_col, vec
     Point2D ctr = Point2D(Game::getScreenWidth()/2, Game::getScreenHeight()/2);
     Point2D anchor_pt = _cam->getPos();
     glm::mat4 view_mat;
-    view_mat = glm::translate(view_mat, glm::vec3(ctr.getX() - anchor_pt.getX(), ctr.getY() - anchor_pt.getY(), 0));
-    view_mat = glm::translate(view_mat, glm::vec3(anchor_pt.getX(), anchor_pt.getY(), 0));
+    view_mat = glm::translate(view_mat, glm::vec3(ctr.getX(), ctr.getY(), 0));
     view_mat = glm::rotate(view_mat, 
                            static_cast<float>(_cam->getRotAngle()*PI/180), 
                            glm::vec3(0.0f, 0.0f, 1.0f));
