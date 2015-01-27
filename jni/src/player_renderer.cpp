@@ -15,7 +15,7 @@ PlayerRenderer::PlayerRenderer(Camera *cam) : AssetRenderer(cam) {
         "uniform mat4 mMVP;\n"
 
         "void main() {\n"
-        "  gl_Position = mMVP * vec4(vPos, 0.0f, 1.0f);\n"
+        "  gl_Position = mMVP * vec4(vPos, 0.0, 1.0);\n"
         "  f_vColor = vColor;\n"
         "  f_vTex_coord = vTex_coord;\n"
         "}\n";
@@ -28,10 +28,10 @@ PlayerRenderer::PlayerRenderer(Camera *cam) : AssetRenderer(cam) {
 
         "void main() {\n"
         "  vec4 vTexColor = texture2D(sTexture, f_vTex_coord);\n"
-        "  if (vTexColor.b >= 0.98f || vTexColor.r >= 0.98f) {\n"
+        "  if (vTexColor.b >= 0.98 || vTexColor.r >= 0.98) {\n"
         "    gl_FragColor = f_vColor;\n"
         "  } else {\n"
-        "    gl_FragColor = vec4(0.9294f, 0.898f, 0.88627f, vTexColor.a);\n"
+        "    gl_FragColor = vec4(0.9294, 0.898, 0.88627, vTexColor.a);\n"
         "  }\n"
         "}\n";
 

@@ -65,6 +65,10 @@ GLuint Renderer::createProgram(const char *pVertexSource, const char *pFragmentS
                 if (buf) {
                     glGetProgramInfoLog(program, bufLength, NULL, buf);
                     LOGE("Could not link program:\n%s\n", buf);
+                    glGetShaderInfoLog(vertexShader, bufLength, NULL, buf);
+                    LOGE("vs log -> %s", buf);
+                    glGetShaderInfoLog(pixelShader, bufLength, NULL, buf);
+                    LOGE("fs log ->: %s", buf);
                     free(buf);
                 }
             }

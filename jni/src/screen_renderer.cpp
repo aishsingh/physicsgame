@@ -12,7 +12,7 @@ ScreenRenderer::ScreenRenderer() {
         "uniform mat4 mMVP;\n"
 
         "void main() {\n"
-        "  gl_Position = mMVP * vec4(vPos, 0.0f, 1.0f);\n"
+        "  gl_Position = mMVP * vec4(vPos, 0.0, 1.0);\n"
 
         "  vFragColor = vColor;\n"
         "}\n";
@@ -22,7 +22,7 @@ ScreenRenderer::ScreenRenderer() {
         "varying vec4 vFragColor;\n"
 
         "void main() {\n"
-        "  gl_FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
+        "  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);\n"
         "}\n";
 
     _program = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());

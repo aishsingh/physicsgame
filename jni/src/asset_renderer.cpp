@@ -13,7 +13,7 @@ AssetRenderer::AssetRenderer(Camera *cam) : _cam(cam) {
         "uniform mat4 mMVP;\n"
 
         "void main() {\n"
-        "  gl_Position = mMVP * vec4(vPos, 0.0f, 1.0f);\n"
+        "  gl_Position = mMVP * vec4(vPos, 0.0, 1.0);\n"
         "  f_vTex_coord = vTex_coord;\n"
         "}\n";
 
