@@ -40,6 +40,7 @@ Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2
     _obj_rend = NULL;
     _scr_rend = NULL;
     _player_rend = NULL;
+    _back_rend = NULL;
 
     setupObjs();
 }
@@ -129,14 +130,20 @@ void Game::setupGLContext(int screen_w, int screen_h) {
         delete _player_rend;
         _player_rend = NULL;
     }
+    if (_back_rend != NULL) {
+        delete _back_rend;
+        _back_rend = NULL;
+    }
     _ass_rend = new AssetRenderer(&_cam);
     _obj_rend = new ObjRenderer(&_cam);
     _scr_rend = new ScreenRenderer();
     _player_rend = new PlayerRenderer(&_cam);
+    _back_rend = new BackgroundRenderer();
 
     // Disable depth rendering
     glDisable(GL_DEPTH_TEST);
     checkGlError("glDisable(GL_DEPTH_TEST)");
+
     glDisable(GL_DITHER);
     checkGlError("glDisable(GL_DITHER)");
 
@@ -161,13 +168,7 @@ void Game::draw() {
     Renderer::clearScreen();
     applyGravity();
 
-    // float vec[] {
-    //     -1,1, 
-    //      1,1, 
-    //     -1,-1, 
-    //      1,-1
-    // };
-    // _scr_rend->render(vector<float> (vec, vec + sizeof(vec) / sizeof(float)), GL_TRIANGLE_STRIP);
+    _back_rend->render();
 
     // Render planets gravity area
     for(int i=0; i<(int)_planets.size(); i++)

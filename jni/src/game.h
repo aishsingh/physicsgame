@@ -12,6 +12,7 @@
 #include "obj_renderer.h"
 #include "screen_renderer.h"
 #include "player_renderer.h"
+#include "background_renderer.h"
 #include "camera.h"
 #include "input_handler.h"
 #include "texture_handler.h"
@@ -43,6 +44,7 @@ class Game {
         ObjRenderer *_obj_rend;
         ScreenRenderer *_scr_rend;
         PlayerRenderer *_player_rend;
+        BackgroundRenderer *_back_rend;
 
         void respondToInput();
         void applyGravity();
