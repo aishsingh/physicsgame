@@ -4,8 +4,8 @@
 #include "game.h"
 #include "math.h"
 
-#define FADE_DEC 0.04f
-#define SHRINK_DEC 1.2f
+#define FADE_DEC 0.1f
+#define SHRINK_DEC 0.6f
 #define OUT_ShapesCount false
 
 Trail::Trail(int obj_length) {
@@ -38,8 +38,8 @@ void Trail::draw(ObjRenderer *rend, vector<Planet*> *g_objs) {
     for (int i=0; i<(int)shapes.size(); i++) {
         // Effects
         shrink(shapes.at(i));
-        // if (shapes.at(i).vert_motion.getVel() == 0)
-        fade(shapes.at(i));
+        if (shapes.at(i).vert_motion.getVel() == 0)
+            fade(shapes.at(i));
 
         // Send shape to renderer
         shapes.at(i).draw(rend);
@@ -68,7 +68,7 @@ void Trail::buildTrail(float x, float y, float rot_angle, Theme theme) {
     _cur_colour = box.getColour();
 
     // Apply initial velocity using player rotation
-    PhysicsEngine::genInitVel(box, rot_angle, 20, 18, 4);
+    PhysicsEngine::genInitVel(box, rot_angle, 20, 18, 5);
 
     /* Increase size of array and check for exceptions */
     try {

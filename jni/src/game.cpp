@@ -137,6 +137,11 @@ void Game::setupGLContext(int screen_w, int screen_h) {
     // Disable depth rendering
     glDisable(GL_DEPTH_TEST);
     checkGlError("glDisable(GL_DEPTH_TEST)");
+    glDisable(GL_DITHER);
+    checkGlError("glDisable(GL_DITHER)");
+
+    glDepthMask(GL_FALSE);
+    checkGlError("glDepthMask()");
 
     // Use tightly packed data
     glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
@@ -154,8 +159,15 @@ void Game::setupGLContext(int screen_w, int screen_h) {
 void Game::draw() {
     /* MAIN GAME LOOP */ 
     Renderer::clearScreen();
-
     applyGravity();
+
+    // float vec[] {
+    //     -1,1, 
+    //      1,1, 
+    //     -1,-1, 
+    //      1,-1
+    // };
+    // _scr_rend->render(vector<float> (vec, vec + sizeof(vec) / sizeof(float)), GL_TRIANGLE_STRIP);
 
     // Render planets gravity area
     for(int i=0; i<(int)_planets.size(); i++)

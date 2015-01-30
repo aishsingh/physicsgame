@@ -1,18 +1,20 @@
 #include <cmath>
 #include "planet.h"
 #include "colour.h"
+#include "math.h"
 
 const int Planet::_SIDES(60);
 const int Planet::_GRAV_SIDES(70);
-const float Planet::_GRAV_OPACITY(0.5f);
+const float Planet::_GRAV_OPACITY(0.3f);
 
 Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
     _colour = Colour(0.9294f, 0.898f, 0.88627f, 1.0f);
     _rot_speed = 0.5f;
+    _radius_offset = getWidth()/5;
 
     // Position grav rings
-    for (int i=0; i<3; i++) {
-        float offset = (getWidth()/5) * i;
+    for (int i=1; i<=3; i++) {
+        float offset = _radius_offset / i;
         _grav_r_off[i] = d + offset;
     }
 }
@@ -74,19 +76,14 @@ vector<float> Planet::getVerticeData(int vertex_count, float r_offset) {
 
         float x = c_x;
         float y = c_y;
-        //
+
         // Rotate
-        float objAngle = getRotAngle();
-
-        float rad_angle = objAngle*PI/180.0;
-        float rot_x =  x*cos(rad_angle) + y*sin(rad_angle);
-        float rot_y = -x*sin(rad_angle) + y*cos(rad_angle);
-
-        x = rot_x;
-        y = rot_y;
+        Point2D pt = Math::rotatePt(Point2D(x, y), getRotAngle());
+        x = pt.getX();
+        y = pt.getY();
 
         float percent = (i / (float) (vertex_count));
-        float rad = percent * 2*PI;
+        float rad = percent * 2 * PI;
 
         //vertex position
         x += radius * cos(rad);

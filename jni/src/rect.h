@@ -11,7 +11,6 @@ class Rect {
     private:
         float _x, _y;
         float _width, _height;
-        float _rot_angle;
 
     public:
         /* Getters / Setters */

@@ -2,6 +2,7 @@
 #include <math.h>
 #include "shape.h"
 #include "game.h"
+#include "math.h"
 
 #define PI 3.14159265358979323846264
 
@@ -85,31 +86,13 @@ vector<float> Shape::getVerticeData() {
          |       |
         [p2]---[p4]  */
 
+    // This is the new pos (x,y) after being transformed
+    Point2D pt = Math::rotateObj(this);
 
-    /* This is the original (x,y) that will now be transformed
-     * before being passed to the vertex shader */
-    float x = getX();
-    float y = getY();
+    float x = pt.getX();
+    float y = pt.getY();
     float w = getWidth();
     float h = getHeight();
-
-    // Translate to center
-    x += (w/2);
-    y += (h/2);
-
-    // Rotate
-    float objAngle = getRotAngle();
-
-    float rad_angle = objAngle*PI/180.0;
-    float rot_x =  x*cos(rad_angle) + y*sin(rad_angle);
-    float rot_y = -x*sin(rad_angle) + y*cos(rad_angle);
-
-    x = rot_x;
-    y = rot_y;
-
-    // Translate back to origin
-    x -= (w/2);
-    y -= (h/2);
     
     // Declare points (x,y)
     float vec[] = { x     , y     ,

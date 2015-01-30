@@ -21,28 +21,13 @@ vector<float> Player::getVerticeData() {
          |        |
         [p2]----[p4]  */
 
-    /* This is the original (x,y) that will now be transformed
-     * before being passed to the vertex shader */
-    float x = getX();
-    float y = getY();
+    // This is the new pos (x,y) after being transformed
+    Point2D pt = Math::rotateObj(this);
+
+    float x = pt.getX();
+    float y = pt.getY();
     float w = getWidth();
     float h = getHeight();
-
-    // Translate to center
-    x += (w/2);
-    y += (h/2);
-
-    // Rotate
-    float rad_angle = getRotAngle()*PI/180;
-    float rot_x =  x*cos(rad_angle) + y*sin(rad_angle);
-    float rot_y = -x*sin(rad_angle) + y*cos(rad_angle);
-
-    x = rot_x;
-    y = rot_y;
-
-    // Translate back to origin
-    x -= (w/2);
-    y -= (h/2);
 
     // Declare points (x,y)
     float vec[] = { x     , y     ,
@@ -54,6 +39,7 @@ vector<float> Player::getVerticeData() {
      * These calculations ensure that the base pos is the same as it would be after it went through the vshader.
      * The vshader rotates the pos, so the same rotation is applyed here */
     Point2D mid_bottom((vec[2] + vec[6])/2, (vec[3] + vec[7])/2);
+    float rad_angle = getRotAngle()*PI/180.0f;
     // Offset trail pos so it comes out from the bottom of the spaceman's jet
     Point2D trail_off(30, 30);
     mid_bottom.setX(mid_bottom.getX() - trail_off.getX());
