@@ -20,6 +20,7 @@ class Player: public Object {
         float _rot_offset_angle;
         int _on_planet;
         float _closest_planet_disp;
+        unsigned _on_planets_count;
 
     public:
         // Render player and trail
@@ -32,10 +33,14 @@ class Player: public Object {
         virtual void applyGravity(vector<Planet*> *g_objs);
         virtual void resetTime(float t);
 
+        Action getAction();
+        void setAction(Action act);
         float getClosestPlanetDisp() const;
         void setClosestPlanetDisp(float d);
         int getOnPlanet() const;
         void setOnPlanet(int index);
+        unsigned getOnPlanetsCount() const;
+        void setOnPlanetsCount(unsigned count);
         float getRotAngle() const;
         float getRotAngleOffset() const;
         float getRealRotAngle() const;

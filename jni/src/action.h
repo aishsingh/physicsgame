@@ -8,7 +8,8 @@
 typedef enum Action {
     STILL, 
     RUNNING, 
-    FLYING
+    FLYING,
+    LANDING
 } Action;
 
 #endif /* ACTION_H */

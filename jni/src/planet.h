@@ -21,8 +21,8 @@ class Planet: public Object {
         static const int _GRAV_SIDES;
         static const float _GRAV_OPACITY;
 
-        float _radius_offset;
-        float _grav_r_off[3];
+        float _radius_offset;  // The extra radius used by the gravity area
+        float _grav_r_off[3];  // The current radius offset for each of the gravity rings
 
         Action _action;
         Colour _colour;
@@ -34,10 +34,14 @@ class Planet: public Object {
         // Render planet
         virtual void draw(ObjRenderer *rend);
         virtual void drawGrav(ObjRenderer *rend);
+
         // Update player based on its current action
         virtual void update(); 
 
-        /* Ctor - */
+        // Accessors
+        float getRadiusOffset() const;
+
+        /* Ctor */
         Planet(float x, float y, float d);
         virtual ~Planet();
 };

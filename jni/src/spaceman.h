@@ -31,8 +31,6 @@ class Spaceman: public Player {
         void resetTime(float t);
 
         /* Getters / Setters */
-        Action getAction();
-        void setAction(Action act);
         Dir getFacing();
         void setFacing(Dir dir);
         int getFrame();

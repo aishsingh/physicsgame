@@ -53,8 +53,10 @@ void Planet::drawGrav(ObjRenderer *rend) {
     }
 }
 
-void Planet::update() {
+void Planet::update() { }
 
+float Planet::getRadiusOffset() const {
+    return _radius_offset;
 }
 
 vector<float> Planet::getVerticeData(int vertex_count, float r_offset) {

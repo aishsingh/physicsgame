@@ -32,6 +32,7 @@ class PhysicsEngine {
         static Motion calcMotion(const Motion &motion);
 
     public:
+        /* Updates all motion and returns true if the object landed on a planet */
         static bool updatePhysics(Object &obj, vector<Planet*> *g_objs);
 
         /* Generated a suitable initial velocity using based on the angle the object is rotated in */
@@ -48,7 +49,7 @@ class PhysicsEngine {
 
         /* Updates object vert/hori acceleration due to the gravity from the given planets */
         static void applyGravityTo(Object &obj, vector<Planet*> *g_objs);
-        static void applyGravityTo(Player &plyr, vector<Planet*> *g_objs);
+        static void applyGravityTo(Player &player, vector<Planet*> *g_objs);
 };
 
 #endif /* PHYSICS_H */

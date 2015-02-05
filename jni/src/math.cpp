@@ -1,5 +1,6 @@
 #include <cmath>
 #include "math.h"
+#include "log.h"
 
 #define PI 3.14159265358979323846264
 
@@ -23,6 +24,22 @@ Point2D Math::rotateObj(Object *obj) {
     return rotated;
 }
 
+float Math::getRectDispFromRect(Rect rect1, Rect rect2) {
+    // Pythagorean Theorem: a^2 + b^2 = c^2
+    float a = fabs(rect1.getCentreX() - rect2.getCentreX());
+    float b = fabs(rect1.getCentreY() - rect2.getCentreY());
+    float c = fabs(Math::getHypotenuse(a, b));
+    
+    return c;
+}
+
+float Math::getValueFromRatioBetweenValues(float a, float b, float ratio) {
+    // Validate ratio param
+    if (ratio < 0 || ratio > 1)
+        LOGE("Math Error -> ratio param is not valid");
+
+    return  a / pow (a/b, ratio);
+}
 
 float Math::getHypotenuse(float a, float b) {
     // Pythagorean Theorem: a^2 + b^2 = c^2

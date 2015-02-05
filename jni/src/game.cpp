@@ -168,7 +168,8 @@ void Game::draw() {
     Renderer::clearScreen();
     applyGravity();
 
-    _back_rend->render();
+    //-- RENDER ---------------------------------------
+    // _back_rend->render();
 
     // Render planets gravity area
     for(int i=0; i<(int)_planets.size(); i++)
@@ -192,8 +193,18 @@ void Game::draw() {
 
     _obj_rend->disableAttributes();
 
+    //-------------------------------------------------
+
+    // Recentre player by slowly decresing offset
+    if (_user.getOnPlanetsCount() && _user.getOnPlanetsCount() < 2 && !input.isNavActive()) {
+        float decr = _user.getRotAngleOffset()/15.f;
+        if (_user.getRotAngleOffset() > decr ||
+                _user.getRotAngleOffset() < -decr)
+            _user.setRotAngleOffset(_user.getRotAngleOffset() -decr);
+    }
+
     // Scale camera
-    if (_user.getAction() == FLYING)
+    if (_user.getAction() == FLYING || _user.getAction() == LANDING)
         _cam.setScaleFromDisp(_user.getClosestPlanetDisp());
 
     // Update all players (eg build player trail)

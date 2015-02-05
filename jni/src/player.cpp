@@ -7,6 +7,7 @@
 Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
     _rot_offset_angle = 0.0f;
     _on_planet = 0;
+    _on_planets_count = 0;
 }
 Player::~Player() { }
 
@@ -52,9 +53,10 @@ vector<float> Player::getVerticeData() {
 
 void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler *tex) {
     // Update physics attributes only if box is moving
-    if (_action == FLYING) {
-        bool collision = PhysicsEngine::updatePhysics(*this, g_objs);
-        _action = (collision) ? STILL : FLYING;
+    if (_action == FLYING || _action == LANDING) {
+        bool is_landed = PhysicsEngine::updatePhysics(*this, g_objs);
+        if (is_landed)
+            _action = STILL;
     }
 }
 
@@ -80,7 +82,7 @@ float Player::getRealRotAngle() const {
 }
 
 void Player::setRotAngleOffset(float angle) {
-    _rot_offset_angle = angle;
+    _rot_offset_angle = Math::normalizeAngle(angle, 0, 180);
 }
 
 int Player::getOnPlanet() const {
@@ -90,6 +92,13 @@ int Player::getOnPlanet() const {
 void Player::setOnPlanet(int index) {
     _on_planet = index;
 }
+unsigned Player::getOnPlanetsCount() const {
+    return _on_planets_count;
+}
+
+void Player::setOnPlanetsCount(unsigned count) {
+    _on_planets_count = count;
+}
 
 float Player::getClosestPlanetDisp() const {
     return _closest_planet_disp;
@@ -98,3 +107,12 @@ float Player::getClosestPlanetDisp() const {
 void Player::setClosestPlanetDisp(float d) {
     _closest_planet_disp = d;
 }
+
+Action Player::getAction() {
+    return _action;
+}
+
+void Player::setAction(Action act) {
+    _action = act;
+}
+

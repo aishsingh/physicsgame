@@ -14,14 +14,6 @@ Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,105,125.3), _trai
     setRotAngle(0.0f);
 }
 
-Action Spaceman::getAction() {
-    return _action;
-}
-
-void Spaceman::setAction(Action act) {
-    _action = act;
-}
-
 Dir Spaceman::getFacing() {
     return _facing;
 }
@@ -98,6 +90,7 @@ void Spaceman::update() {
             break;
         }
 
+        case LANDING:
         case FLYING: {
             // Convert angle to anti-clockwise direction
             float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);

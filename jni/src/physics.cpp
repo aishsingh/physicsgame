@@ -162,37 +162,41 @@ void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
     obj.hori_motion.setAccel(netg_h);
     obj.vert_motion.setAccel(netg_v);
 }
-void PhysicsEngine::applyGravityTo(Player &plyr, vector<Planet*> *g_objs) {
+void PhysicsEngine::applyGravityTo(Player &player, vector<Planet*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
 
-    bool player_on_planet = false;
+    unsigned planet_count = 0;
     float closest_planet_disp = 0.0f;
     for (int i=0; i<(int)g_objs->size(); i++) {
+        Planet *plan = g_objs->at(i);
+
         // Create rect to rep the planets gravity area
-        float g_radius = g_objs->at(i)->getWidth();
-        Rect grav_rect(g_objs->at(i)->getX() - g_radius,
-                       g_objs->at(i)->getY() - g_radius,
-                       g_objs->at(i)->getWidth() + (g_radius*2),
-                       g_objs->at(i)->getWidth() + (g_radius*2));
+        float g_radius = plan->getWidth();
+        Rect grav_rect(plan->getX() - g_radius,
+                       plan->getY() - g_radius,
+                       plan->getWidth() + (g_radius*2),
+                       plan->getWidth() + (g_radius*2));
 
         // Make sure obj is inside of Planet
-        if (Collision::isCircleIntersCircle(plyr, grav_rect)) {
-            player_on_planet = true;
+        if (Collision::isCircleIntersCircle(player, grav_rect)) {
+            planet_count++;
 
             // Rotate obj relative to planet
-            float new_angle = getAngleOfPtFromRectCentre(plyr.getCentre(), grav_rect);
-            if (plyr.getOnPlanet() != i+1) {
-                float angle_before = plyr.getRotAngle();
-                plyr.setRotAngleOffset(-new_angle - angle_before);
-                plyr.setOnPlanet(i+1);
+            float angle_new = getAngleOfPtFromRectCentre(player.getCentre(), grav_rect);
+
+            if (player.getOnPlanet() != i) {
+                player.setRotAngleOffset(-angle_new - player.getRotAngle());
+                player.setOnPlanet(i);
+                player.setAction(LANDING);
             }
-            plyr.setRotAngle(-new_angle);
+
+            player.setRotAngle(-angle_new);
 
             // Determine planet gravity from new rot angle
             float init_v;
             float init_h;
-            splitCompValueFromAngle(&init_h, &init_v, new_angle, 0, 0, 0, 3);
+            splitCompValueFromAngle(&init_h, &init_v, angle_new, 0, 0, 0, 3);
 
             // Add to net grav
             netg_h += init_h;
@@ -200,21 +204,22 @@ void PhysicsEngine::applyGravityTo(Player &plyr, vector<Planet*> *g_objs) {
         }
         
         // Find the distance fro the closest planet
-        float disp = Math::getHypotenuse(fabs(plyr.getCentreX() - grav_rect.getCentreX()),
-                                         fabs(plyr.getCentreY() - grav_rect.getCentreY()));
+        float disp = Math::getHypotenuse(fabs(player.getCentreX() - grav_rect.getCentreX()),
+                                         fabs(player.getCentreY() - grav_rect.getCentreY()));
         if (disp < closest_planet_disp || closest_planet_disp == 0)
             closest_planet_disp = disp;        
     }
 
-    plyr.setClosestPlanetDisp(closest_planet_disp);
+    player.setOnPlanetsCount(planet_count);
+    player.setClosestPlanetDisp(closest_planet_disp);
 
     // If obj was not on any planets
-    if (!player_on_planet && plyr.getOnPlanet())
-        plyr.setOnPlanet(0);
+    if (!planet_count)
+        player.setAction(FLYING);
     else {
         // Or apply gravity to obj
-        plyr.hori_motion.setAccel(netg_h);
-        plyr.vert_motion.setAccel(netg_v);
+        player.hori_motion.setAccel(netg_h);
+        player.vert_motion.setAccel(netg_v);
     }
 }
 
