@@ -185,7 +185,8 @@ void PhysicsEngine::applyGravityTo(Player &player, vector<Planet*> *g_objs) {
             // Rotate obj relative to planet
             float angle_new = getAngleOfPtFromRectCentre(player.getCentre(), grav_rect);
 
-            if (player.getOnPlanet() != i) {
+            // If player not on any planet or on different planet
+            if (player.getOnPlanetsCount() == 0 || player.getOnPlanet() != i) {
                 player.setRotAngleOffset(-angle_new - player.getRotAngle());
                 player.setOnPlanet(i);
                 player.setAction(LANDING);
