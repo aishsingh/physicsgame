@@ -8,28 +8,25 @@
 PlayerRenderer::PlayerRenderer(Camera *cam) : AssetRenderer(cam) {
     _shad_vertex =
         "attribute vec2 vPos;\n"
-        "attribute vec4 vColor;\n"
-        "varying vec4 f_vColor;\n"
         "attribute vec2 vTex_coord;\n"
         "varying vec2 f_vTex_coord;\n"
         "uniform mat4 mMVP;\n"
 
         "void main() {\n"
         "  gl_Position = mMVP * vec4(vPos, 0.0, 1.0);\n"
-        "  f_vColor = vColor;\n"
         "  f_vTex_coord = vTex_coord;\n"
         "}\n";
 
     _shad_fragment = 
         "precision mediump float;\n"
-        "varying vec4 f_vColor;\n"
         "varying vec2 f_vTex_coord;\n"
+        "uniform vec4 vColor;\n"
         "uniform sampler2D sTexture;\n"
 
         "void main() {\n"
         "  vec4 vTexColor = texture2D(sTexture, f_vTex_coord);\n"
         "  if (vTexColor.b >= 0.98 || vTexColor.r >= 0.98) {\n"
-        "    gl_FragColor = f_vColor;\n"
+        "    gl_FragColor = vColor;\n"
         "  } else {\n"
         "    gl_FragColor = vec4(0.9294, 0.898, 0.88627, vTexColor.a);\n"
         "  }\n"
@@ -42,8 +39,8 @@ PlayerRenderer::PlayerRenderer(Camera *cam) : AssetRenderer(cam) {
     _vPos_handle = glGetAttribLocation(_program, "vPos");
     checkGlError("glGetAttribLocation(vPos)");
 
-    _vColor_handle = glGetAttribLocation(_program, "vColor");
-    checkGlError("glGetAttribLocation(vColor)");
+    _vColor_handle = glGetUniformLocation(_program, "vColor");
+    checkGlError("glGetUniformLocation(vColor)");
 
     _vTexCoord_handle = glGetAttribLocation(_program, "vTex_coord");
     checkGlError("glGetAttribLocation(vTex_coord)");
@@ -55,7 +52,7 @@ PlayerRenderer::PlayerRenderer(Camera *cam) : AssetRenderer(cam) {
     checkGlError("glGetUniformLocation(mMVP)");
 }
 
-void PlayerRenderer::render(vector<float> vertices, vector<float> theme_col, vector<float> tex_vertices, GLuint texture_id, float angle, GLenum mode) {
+void PlayerRenderer::render(vector<float> vertices, Colour theme_col, vector<float> tex_vertices, GLuint texture_id, float angle, GLenum mode) {
     // Change renderer
     glUseProgram(_program);
     checkGlError("glUseProgram");
@@ -93,13 +90,20 @@ void PlayerRenderer::render(vector<float> vertices, vector<float> theme_col, vec
     glUniform1i(_sTexture_handle, /*GL_TEXTURE*/0);
     checkGlError("glUniform1i, sTexture");
 
+    float col[4] {
+        theme_col.r,
+        theme_col.g,
+        theme_col.b,
+        theme_col.a,
+    };
+    glUniform4fv(_vColor_handle, 1, col);
+    checkGlError("glUniformMatrix4fv, vColour");
+
     glVertexAttribPointer(_vPos_handle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
-    glVertexAttribPointer(_vColor_handle, 4, GL_FLOAT, GL_FALSE, 0, &theme_col[0]);
     glVertexAttribPointer(_vTexCoord_handle, 2, GL_FLOAT, GL_FALSE, 0, &tex_vertices[0]);
     checkGlError("glVertexAttrib");
 
     glEnableVertexAttribArray(_vPos_handle);
-    glEnableVertexAttribArray(_vColor_handle);
     glEnableVertexAttribArray(_vTexCoord_handle);
     checkGlError("glEnableVertexAttribArray");
 
@@ -110,6 +114,5 @@ void PlayerRenderer::render(vector<float> vertices, vector<float> theme_col, vec
 
 void PlayerRenderer::disableAttributes() {
     glDisableVertexAttribArray(_vPos_handle);
-    glDisableVertexAttribArray(_vColor_handle);
     glDisableVertexAttribArray(_vTexCoord_handle);
 }

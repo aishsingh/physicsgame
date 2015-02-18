@@ -24,7 +24,7 @@ void Planet::draw(ObjRenderer *rend) {
     // Render circle
     float vertex_count = _SIDES * getWidth()/400;
     rend->render(getVerticeData(vertex_count, 0), 
-                 Colour::getColourData(vertex_count, _colour), 
+                 _colour, 
                  getRotAngle(), 
                  GL_TRIANGLE_FAN);
 
@@ -47,7 +47,7 @@ void Planet::drawGrav(ObjRenderer *rend) {
         // Render Gravity ring
         if (_grav_r_off[i] > 0)
             rend->render(getVerticeData(grav_vertex_count, _grav_r_off[i]),
-                    Colour::getColourData(grav_vertex_count, Colour(_colour.r, _colour.g, _colour.b, alpha)), 
+                    Colour(_colour.r, _colour.g, _colour.b, alpha), 
                     getRotAngle(), 
                     GL_LINE_LOOP);
     }

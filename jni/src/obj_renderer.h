@@ -4,6 +4,7 @@
 #include <GLES2/gl2.h>
 #include "renderer.h"
 #include "camera.h"
+#include "colour.h"
 
 class ObjRenderer: public Renderer {
     private:
@@ -11,7 +12,7 @@ class ObjRenderer: public Renderer {
         Camera *_cam;
 
     public:
-        void render(vector<float> vertices, vector<float> colours, float angle, GLenum mode);
+        void render(vector<float> vertices, Colour colour, float angle, GLenum mode);
         void disableAttributes();
 
         /* Ctor - Init Shaders */

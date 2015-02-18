@@ -10,7 +10,7 @@ class PlayerRenderer: public AssetRenderer {
         GLuint _vColor_handle;
 
     public:
-        void render(vector<float> vertices, vector<float> theme_col, vector<float> tex_vertices, GLuint texture_id, float angle, GLenum mode);
+        void render(vector<float> vertices, Colour theme_col, vector<float> tex_vertices, GLuint texture_id, float angle, GLenum mode);
         void disableAttributes();
 
         /* Ctor - Init Shaders */

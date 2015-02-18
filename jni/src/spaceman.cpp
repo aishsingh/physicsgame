@@ -58,9 +58,8 @@ void Spaceman::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandle
     };
 
     // Render
-    vector<float> vert = getVerticeData();
-    rend->render(vert,
-                 Colour::getColourData(vert.size()/2, Colour::getColour(_colour_theme)),
+    rend->render(getVerticeData(),
+                 Colour::getColour(_colour_theme),
                  vector<float> (tex_vert, tex_vert + sizeof(tex_vert) / sizeof(float)),
                  tex->getTex(TEX_SPACEMAN), 
                  getRotAngle(), 
@@ -80,7 +79,7 @@ void Spaceman::update() {
             // Convert angle to anti-clockwise direction
             float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
 
-            PhysicsEngine::genInitVel(*this, angle, 2, 1, 0);
+            PhysicsEngine::genInitVel(*this, angle, 1, 1.5, 0);
             resetTime(Game::getElapsedTime());
             _trail.buildTrail(_base.getX(), 
                     _base.getY(), 
@@ -95,7 +94,7 @@ void Spaceman::update() {
             // Convert angle to anti-clockwise direction
             float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
 
-            PhysicsEngine::genInitVel(*this, angle, 2, 1, 0);
+            PhysicsEngine::genInitVel(*this, angle, 1, 1.5, 0);
             _trail.buildTrail(_base.getX(), 
                     _base.getY(), 
                     360 - getRotAngle(), 

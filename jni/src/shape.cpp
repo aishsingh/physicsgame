@@ -71,10 +71,8 @@ void Shape::setIndex(const int index) {
 
 void Shape::draw(ObjRenderer *rend) {
     // Render
-    vector<float> vert = getVerticeData();
-    rend->render(vert, 
-                 Colour::getColourData(vert.size(), 
-                 _colour), 
+    rend->render(getVerticeData(), 
+                 _colour, 
                  getRotAngle(), 
                  GL_TRIANGLE_STRIP);
 }

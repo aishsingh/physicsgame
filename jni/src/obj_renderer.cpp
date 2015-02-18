@@ -6,21 +6,18 @@
 ObjRenderer::ObjRenderer(Camera *cam) : _cam(cam) {
     _shad_vertex =
         "attribute vec2 vPos;\n"
-        "attribute vec4 vColor;\n"
-        "varying vec4 f_vColor;\n"
         "uniform mat4 mMVP;\n"
 
         "void main() {\n"
         "  gl_Position = mMVP * vec4(vPos, 0.0, 1.0);\n"
-        "  f_vColor = vColor;\n"
         "}\n";
 
     _shad_fragment = 
         "precision mediump float;\n"
-        "varying vec4 f_vColor;\n"
+        "uniform vec4 vColor;\n"
 
         "void main() {\n"
-        "  gl_FragColor = f_vColor;\n"
+        "  gl_FragColor = vColor;\n"
         "}\n";
 
     _program = createProgram(_shad_vertex.c_str(), _shad_fragment.c_str());
@@ -31,14 +28,14 @@ ObjRenderer::ObjRenderer(Camera *cam) : _cam(cam) {
     _vPos_handle = glGetAttribLocation(_program, "vPos");
     checkGlError("glGetAttribLocation(vPos)");
 
-    _vColor_handle = glGetAttribLocation(_program, "vColor");
-    checkGlError("glGetAttribLocation(vColor)");
+    _vColor_handle = glGetUniformLocation(_program, "vColor");
+    checkGlError("glGetUniformLocation(vColor)");
 
     _mMVP_handle = glGetUniformLocation(_program, "mMVP");
     checkGlError("glGetUniformLocation(mMVP)");
 }
 
-void ObjRenderer::render(vector<float> vertices, vector<float> colours, float angle, GLenum mode) {
+void ObjRenderer::render(vector<float> vertices, Colour colour, float angle, GLenum mode) {
     // Change renderer
     glUseProgram(_program);
     checkGlError("glUseProgram");
@@ -71,12 +68,19 @@ void ObjRenderer::render(vector<float> vertices, vector<float> colours, float an
     glUniformMatrix4fv(_mMVP_handle, 1, GL_FALSE, glm::value_ptr(MVP_mat));
     checkGlError("glUniformMatrix4fv, mMVP");
 
+    float col[4] {
+        colour.r,
+        colour.g,
+        colour.b,
+        colour.a,
+    };
+    glUniform4fv(_vColor_handle, 1, col);
+    checkGlError("glUniformMatrix4fv, vColour");
+
     glVertexAttribPointer(_vPos_handle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);
-    glVertexAttribPointer(_vColor_handle, 4, GL_FLOAT, GL_FALSE, 0, &colours[0]);
     checkGlError("glVertexAttrib");
 
     glEnableVertexAttribArray(_vPos_handle);
-    glEnableVertexAttribArray(_vColor_handle);
     checkGlError("glEnableVertexAttribArray");
 
     // Pass attributes to shader
@@ -86,5 +90,4 @@ void ObjRenderer::render(vector<float> vertices, vector<float> colours, float an
 
 void ObjRenderer::disableAttributes() {
     glDisableVertexAttribArray(_vPos_handle);
-    glDisableVertexAttribArray(_vColor_handle);
 }
