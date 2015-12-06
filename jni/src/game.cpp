@@ -138,7 +138,7 @@ void Game::setupGLContext(int screen_w, int screen_h) {
     _obj_rend = new ObjRenderer(&_cam);
     _scr_rend = new ScreenRenderer();
     _player_rend = new PlayerRenderer(&_cam);
-    _back_rend = new BackgroundRenderer();
+    _back_rend = new BackgroundRenderer(&_cam);
 
     // Disable depth rendering
     glDisable(GL_DEPTH_TEST);
@@ -169,7 +169,8 @@ void Game::draw() {
     applyGravity();
 
     //-- RENDER ---------------------------------------
-    // _back_rend->render();
+    _back_rend->render();
+    _back_rend->disableAttributes();
 
     // Render planets gravity area
     for(int i=0; i<(int)_planets.size(); i++)
