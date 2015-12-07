@@ -58,7 +58,7 @@ BackgroundRenderer::BackgroundRenderer(Camera *cam) : _cam(cam) {
     //     "}\n";
 
     "void main() {\n"
-        "vec4 col = vec4(1.0);\n"
+        "vec4 col = vec4(1.0, 1.0, 1.0, 0.2);\n"
         "if(mod(pos.x, 40.0) > 1.0) {\n"
             "if(mod(pos.y, 40.0) > 1.0) {\n"
                 "col = vec4(0.0);\n"

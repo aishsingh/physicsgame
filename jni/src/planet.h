@@ -9,7 +9,9 @@
 #include "obj_renderer.h"
 
 class Planet: public Object {
-    protected:
+    private:
+        vector<float> _vertex_offsets;
+
         enum Action {
             STILL, 
             ROTATING, 
@@ -20,6 +22,7 @@ class Planet: public Object {
         static const int _SIDES;
         static const int _GRAV_SIDES;
         static const float _GRAV_OPACITY;
+        static const bool _RAND_SIDES;  // The sides will not be symetrical if true
 
         float _radius_offset;  // The extra radius used by the gravity area
         float _grav_r_off[3];  // The current radius offset for each of the gravity rings

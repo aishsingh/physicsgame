@@ -52,3 +52,34 @@ float Math::normalizeAngle(float angle, float min, float max) {
     while (newAngle >= max) newAngle -= 360;
     return newAngle;
 }
+
+float Math::genRand(float min, float max) {
+    return min + (float)(rand()) / (float)(RAND_MAX/(max-min));
+}
+
+vector<float> Math::genRandData(int count, float min, float max) {
+    vector<float> data;
+    for (int i=0; i<count; i++) {
+        data.push_back(genRand(min, max));
+    }
+
+    return data;
+}
+
+vector<float> Math::offsetDataByRand(vector<float> data, float min, float max) {
+    for (int i=0; i < data.size(); i++) {
+        float offset = min + (float)(rand()) / (float)(RAND_MAX/(max-min));
+        data.at(i) += offset;
+    }
+    
+    return data;
+}
+
+vector<float> Math::offsetDataByData(vector<float> data, vector<float> offset) {
+    for (int i=0; i < data.size(); i++) {
+        data.at(i) += offset.at(i);
+    }
+    
+    return data;
+}
+

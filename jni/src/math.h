@@ -5,8 +5,11 @@
 #ifndef MATH_H
 #define MATH_H
 
+#include <vector>
 #include "object.h"
 #include "point2d.h"
+
+using std::vector;
 
 class Math {
     public:
@@ -27,6 +30,14 @@ class Math {
 
         /* Ensures angle is between the min - max degrees */
         static float normalizeAngle(float angle, float min, float max);
+
+        static float genRand(float min, float max);
+
+        static vector<float> genRandData(int count, float min, float max);
+
+        static vector<float> offsetDataByRand(vector<float> data, float min, float max);
+
+        static vector<float> offsetDataByData(vector<float> data, vector<float> offset);
 };
 
 #endif /* MATH_H */

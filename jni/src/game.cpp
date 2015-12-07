@@ -160,7 +160,7 @@ void Game::setupGLContext(int screen_w, int screen_h) {
     checkGlError("glBlendFunc");
 
     // Lines used by planet gravity rings
-    glLineWidth(2.0f);
+    glLineWidth(3.0f);
 }
 
 void Game::draw() {
