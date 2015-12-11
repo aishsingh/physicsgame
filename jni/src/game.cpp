@@ -18,7 +18,7 @@ int Game::_screen_width(0);
 float Game::_elapsed_time(0.0f);
 float Game::_time_speed(0.4f);
 
-Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/3) + 750, PURPLE),
+Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/3) + 750, GRAY),
                                                                _cam(&_user),
                                                                input(true, VERT, &_user, &_cam) {
     // Init values
@@ -169,8 +169,8 @@ void Game::draw() {
     applyGravity();
 
     //-- RENDER ---------------------------------------
-    _back_rend->render();
-    _back_rend->disableAttributes();
+    // _back_rend->render();
+    // _back_rend->disableAttributes();
 
     // Render planets gravity area
     for(int i=0; i<(int)_planets.size(); i++)

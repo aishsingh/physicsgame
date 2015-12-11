@@ -29,6 +29,7 @@ PlayerRenderer::PlayerRenderer(Camera *cam) : AssetRenderer(cam) {
         "    gl_FragColor = vColor;\n"
         "  } else {\n"
         "    gl_FragColor = vec4(0.9294, 0.898, 0.88627, vTexColor.a);\n"
+        // "    gl_FragColor += vec4(1.0, 1.0, 1.0, 0.25);\n"
         "  }\n"
         "}\n";
 

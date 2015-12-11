@@ -49,6 +49,7 @@ bool PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
     // Check all planet collisions
     for (int i=0; i<(int)g_objs->size(); i++) {
         if (Collision::isBoundingBox(post_rect, *g_objs->at(i))) {
+            // if (Collision::isCircleIntersPolygon(post_rect, *g_objs->at(i), g_objs->at(i)->getVertices())) {
             if (Collision::isCircleIntersCircle(post_rect, *g_objs->at(i))) {
                 obj.hori_motion.setTime(hori_comp.getTime());
                 obj.vert_motion.setTime(vert_comp.getTime());

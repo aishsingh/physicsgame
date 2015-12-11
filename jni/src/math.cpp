@@ -83,3 +83,27 @@ vector<float> Math::offsetDataByData(vector<float> data, vector<float> offset) {
     return data;
 }
 
+
+Point2D Math::normalize(Point2D pt) {
+    float length = sqrt(pt.getX()*pt.getX() + pt.getY()*pt.getY());
+    return Point2D(pt.getX()/length,
+                   pt.getY()/length);
+}
+
+float Math::dot(Point2D vec1, Point2D vec2) {
+    return (vec1.getX()*vec2.getX()) + (vec1.getY()*vec2.getY());
+}
+
+void Math::project(Point2D axis, vector<float> vertices, float *min, float *max) {
+    // To project a point on an axis use the dot product
+    float dp = dot(axis, Point2D(vertices.at(0), vertices.at(1)));
+    *min = dp;
+    *max = dp;
+
+    for (int i = 0; i < vertices.size()/2; i+=2) {
+        dp = dot(axis, Point2D(vertices.at(i), vertices.at(i+1)));
+        if (dp < *min) *min = dp;
+        else if (dp > *max) *max = dp;
+    }
+
+}

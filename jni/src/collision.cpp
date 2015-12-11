@@ -2,6 +2,7 @@
 #include "collision.h"
 #include "physics.h"
 #include "math.h"
+#include "log.h"
 
 bool Collision::isBoundingBox(Rect box1, Rect box2) {
     return (box1.getX() < box2.getX() + box2.getWidth() &&
@@ -36,4 +37,38 @@ bool Collision::isPtInCircle(Point2D pt, Rect circ) {
     float c = Math::getHypotenuse(a, b);
     
     return (c < radius_total) ? true : false;
+}
+
+bool Collision::isCircleIntersPolygon(Rect circle, Rect poly, std::vector<float> vertices) {
+    for (int i=0; i<vertices.size(); i+=2) {
+        Point2D axis = Point2D(vertices.at(i+1), vertices.at(i));
+        axis = Math::normalize(axis);
+
+        vector<float> circle_vertices; // block
+        circle_vertices.push_back(circle.getX());
+        circle_vertices.push_back(circle.getY());
+        circle_vertices.push_back(circle.getX()+circle.getWidth());
+        circle_vertices.push_back(circle.getY());
+        circle_vertices.push_back(circle.getX()+circle.getWidth());
+        circle_vertices.push_back(circle.getY()+circle.getHeight());
+        circle_vertices.push_back(circle.getX());
+        circle_vertices.push_back(circle.getY()+circle.getHeight());
+
+        // Find the projection of the polygon on the current axis
+        float minA = 0; float minB = 0; float maxA = 0; float maxB = 0;
+        Math::project(axis, vertices, &minA, &maxA);
+        Math::project(axis, circle_vertices, &minB, &maxB);
+
+        // Check if the polygon projections are currentlty intersecting
+        float dist;
+        if (minA < minB) {
+            dist = minB - maxA;
+        } else {
+            dist = minA - maxB;
+        }
+        LOGI("dist = %.2f", dist);
+        if (dist > 0) 
+            return false;
+    }
+    return true;
 }

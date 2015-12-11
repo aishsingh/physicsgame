@@ -38,6 +38,10 @@ class Math {
         static vector<float> offsetDataByRand(vector<float> data, float min, float max);
 
         static vector<float> offsetDataByData(vector<float> data, vector<float> offset);
+
+        static Point2D normalize(Point2D pt);
+        static float dot(Point2D vec1, Point2D vec2);
+        static void project(Point2D axis, vector<float> vertices, float *min, float *max);
 };
 
 #endif /* MATH_H */

@@ -10,6 +10,7 @@
 
 class Planet: public Object {
     private:
+        vector<float> _vertices;
         vector<float> _vertex_offsets;
 
         enum Action {
@@ -22,10 +23,12 @@ class Planet: public Object {
         static const int _SIDES;
         static const int _GRAV_SIDES;
         static const float _GRAV_OPACITY;
-        static const bool _RAND_SIDES;  // The sides will not be symetrical if true
+        static const bool _RAND_SIDES;    // The sides will not be symetrical if true
+        static const bool _DRAW_NORMALS;  // The sides will not be symetrical if true
 
-        float _radius_offset;  // The extra radius used by the gravity area
-        float _grav_r_off[3];  // The current radius offset for each of the gravity rings
+        float _grav_radius_offset; // The extra radius used by the gravity area
+        float _grav_speed;         // The speed the rings shrink inwards
+        float _grav_rings_off[3];  // The current radius offset for each of the gravity rings
 
         Action _action;
         Colour _colour;
@@ -43,6 +46,7 @@ class Planet: public Object {
 
         // Accessors
         float getRadiusOffset() const;
+        vector<float> getVertices() const;
 
         /* Ctor */
         Planet(float x, float y, float d);
