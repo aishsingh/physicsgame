@@ -50,6 +50,7 @@ class Game {
         void applyGravity();
         void resetTime();
         void setupObjs();
+        void drawStats();
 
     public:
         /* Respond to input events 

@@ -21,7 +21,7 @@ class Object: public Rect {
         Point2D getPos() const;
 
         /* Ctor / Dtor */
-        Object(float x, float y, float width, float height);
+        Object(float x, float y, float width, float height, float rot_angle=0.0f);
         virtual ~Object();
 };
 

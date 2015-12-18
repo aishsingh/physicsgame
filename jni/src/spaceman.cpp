@@ -74,39 +74,17 @@ void Spaceman::drawTrail(ObjRenderer* rend, vector<Planet*> *g_objs) {
 }
 
 void Spaceman::update() {
-    switch (_action) {
-        case STILL: {
-            // Convert angle to anti-clockwise direction
-            float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
+    // Convert angle to anti-clockwise direction
+    float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
 
-            PhysicsEngine::genInitVel(*this, angle, 1, 1.5, 0);
-            resetTime(Game::getElapsedTime());
-            _trail.buildTrail(_base.getX(), 
-                    _base.getY(), 
-                    360 - getRotAngle(), 
-                    _colour_theme);
-            _action = FLYING;
-            break;
-        }
+    PhysicsEngine::genInitVel(*this, angle, 1, 1.5, 0);
+    resetTime(Game::getElapsedTime());
+    _trail.buildTrail(_base.getX(), 
+            _base.getY(), 
+            360 - getRotAngle(), 
+            _colour_theme);
 
-        case LANDING:
-        case FLYING: {
-            // Convert angle to anti-clockwise direction
-            float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
-
-            PhysicsEngine::genInitVel(*this, angle, 1, 1.5, 0);
-            _trail.buildTrail(_base.getX(), 
-                    _base.getY(), 
-                    360 - getRotAngle(), 
-                    _colour_theme);
-            break;
-        }
-
-        case RUNNING: {
-            // TODO
-            break;
-        }
-    }
+    if (_action != FLYING) _action = FLYING;
 }
 
 void Spaceman::applyGravity(vector<Planet*> *g_objs) {

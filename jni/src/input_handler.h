@@ -30,7 +30,7 @@ class InputHandler {
         unsigned _nav_touch_index;
         float _nav_starting_angle;
         float _nav_starting_real_angle;
-        int _nav_started_on_planet;
+        vector<int> _nav_started_on_planets;
 
         void restartValues(Point2D pos, int index);
 

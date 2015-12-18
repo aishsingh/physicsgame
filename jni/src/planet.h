@@ -40,9 +40,12 @@ class Planet: public Object {
         // Render planet
         virtual void draw(ObjRenderer *rend);
         virtual void drawGrav(ObjRenderer *rend);
+        void drawStats(ObjRenderer *rend, Rect circle);
 
         // Update player based on its current action
         virtual void update(); 
+
+        void anchorObject(Object *obj, Point2D base);
 
         // Accessors
         float getRadiusOffset() const;

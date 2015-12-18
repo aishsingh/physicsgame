@@ -9,9 +9,10 @@
 #include "log.h"
 #include "math.h"
 
+#define SHOW_STATS true
+#define OUT_OpenGL_Ver false
 #define TRAIL_UPDATE_INTERVAL 0.6f
 #define TRAIL_PART_PER_UPDATE 1
-#define OUT_OpenGL_Ver false
 
 int Game::_screen_height(0);
 int Game::_screen_width(0);
@@ -172,6 +173,8 @@ void Game::draw() {
     // _back_rend->render();
     // _back_rend->disableAttributes();
 
+    if (SHOW_STATS) drawStats();
+
     // Render planets gravity area
     for(int i=0; i<(int)_planets.size(); i++)
         _planets.at(i)->drawGrav(_obj_rend);
@@ -197,7 +200,7 @@ void Game::draw() {
     //-------------------------------------------------
 
     // Recentre player by slowly decresing offset
-    if (_user.getOnPlanetsCount() && _user.getOnPlanetsCount() < 2 && !input.isNavActive()) {
+    if (_user.getOrbitingPlanetsCount() == 1 && !input.isNavActive()) {
         float decr = _user.getRotAngleOffset()/15.f;
         if (_user.getRotAngleOffset() > decr ||
                 _user.getRotAngleOffset() < -decr)
@@ -239,6 +242,16 @@ void Game::respondToInput() {
 void Game::applyGravity() {
     for (int i=0; i<(int)_players.size(); i++)
         _players.at(i)->applyGravity(&_planets);
+}
+
+void Game::drawStats() {
+    // player stats
+    for(int i=0; i<(int)_players.size(); i++)
+        _players.at(i)->drawStats(_obj_rend, &_planets);
+
+    // planet stats
+    for(int i=0; i<(int)_planets.size(); i++)
+        _planets.at(i)->drawStats(_obj_rend, _user);
 }
 
 /* Static Members */

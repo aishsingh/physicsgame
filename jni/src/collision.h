@@ -8,6 +8,7 @@
 #include <vector>
 #include "rect.h"
 #include "point2d.h"
+#include "object.h"
 
 class Collision {
     public:
@@ -16,7 +17,7 @@ class Collision {
         static bool isPtInRect(int x, int y, Rect rect);
         static bool isCircleIntersCircle(Rect circ1, Rect circ2);
         static bool isPtInCircle(Point2D pt, Rect circ);
-        static bool isCircleIntersPolygon(Rect circle, Rect poly, std::vector<float> vertices);
+        static bool isCircleIntersPolygon(Rect circle, std::vector<float> vertices);
 };
 
 #endif /* COLLISION_H */

@@ -18,14 +18,16 @@ class Player: public Object {
         Action _action;
         Point2D _base; // Current pos of the bottom of the player after rotations
         float _rot_offset_angle;
-        int _on_planet;
+        int _on_planet_index;
         float _closest_planet_disp;
-        unsigned _on_planets_count;
+        // unsigned _on_planets_count;
+        vector<int> _orbiting_planet_index;
 
     public:
         // Render player and trail
         virtual void draw(PlayerRenderer *rend, vector<Planet*> *g_objs, TextureHandler *tex);
         virtual void drawTrail(ObjRenderer *rend, vector<Planet*> *g_objs) = 0;
+        void drawStats(ObjRenderer *rend, vector<Planet*> *g_objs);
         vector<float> getVerticeData();
 
         // Update player based on its current action
@@ -37,10 +39,11 @@ class Player: public Object {
         void setAction(Action act);
         float getClosestPlanetDisp() const;
         void setClosestPlanetDisp(float d);
-        int getOnPlanet() const;
-        void setOnPlanet(int index);
-        unsigned getOnPlanetsCount() const;
-        void setOnPlanetsCount(unsigned count);
+        int getOnPlanetIndex() const;
+        void setOnPlanetIndex(int index);
+        int getOrbitingPlanetsCount() const;
+        vector<int> getOrbitingPlanetsIndex() const;
+        void setOrbitingPlanetsIndex(vector<int> index);
         float getRotAngle() const;
         float getRotAngleOffset() const;
         float getRealRotAngle() const;

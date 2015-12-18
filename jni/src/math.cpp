@@ -38,7 +38,7 @@ float Math::getValueFromRatioBetweenValues(float a, float b, float ratio) {
     if (ratio < 0 || ratio > 1)
         LOGE("Math Error -> ratio param is not valid");
 
-    return  a / pow (a/b, ratio);
+    return a / pow (a/b, ratio);
 }
 
 float Math::getHypotenuse(float a, float b) {

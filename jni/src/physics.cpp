@@ -42,15 +42,15 @@ bool PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
     bool collision = false;
     // Rect containing updated dimensions
     Rect post_rect(obj.getX() + hori_comp.getDisp(),
-                   obj.getY() + vert_comp.getDisp(),
-                   obj.getWidth(),
-                   obj.getHeight());
+                     obj.getY() + vert_comp.getDisp(),
+                     obj.getWidth(),
+                     obj.getHeight());
 
     // Check all planet collisions
     for (int i=0; i<(int)g_objs->size(); i++) {
         if (Collision::isBoundingBox(post_rect, *g_objs->at(i))) {
-            // if (Collision::isCircleIntersPolygon(post_rect, *g_objs->at(i), g_objs->at(i)->getVertices())) {
-            if (Collision::isCircleIntersCircle(post_rect, *g_objs->at(i))) {
+            if (Collision::isCircleIntersPolygon(post_rect, g_objs->at(i)->getVertices())) {
+            // if (Collision::isCircleIntersCircle(post_rect, *g_objs->at(i))) {
                 obj.hori_motion.setTime(hori_comp.getTime());
                 obj.vert_motion.setTime(vert_comp.getTime());
                 obj.hori_motion.setVel(0.0f);
@@ -167,7 +167,7 @@ void PhysicsEngine::applyGravityTo(Player &player, vector<Planet*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
 
-    unsigned planet_count = 0;
+    vector<int> orbiting_planets;
     float closest_planet_disp = 0.0f;
     for (int i=0; i<(int)g_objs->size(); i++) {
         Planet *plan = g_objs->at(i);
@@ -181,15 +181,15 @@ void PhysicsEngine::applyGravityTo(Player &player, vector<Planet*> *g_objs) {
 
         // Make sure obj is inside of Planet
         if (Collision::isCircleIntersCircle(player, grav_rect)) {
-            planet_count++;
+            orbiting_planets.push_back(i);
 
             // Rotate obj relative to planet
             float angle_new = getAngleOfPtFromRectCentre(player.getCentre(), grav_rect);
 
             // If player not on any planet or on different planet
-            if (player.getOnPlanetsCount() == 0 || player.getOnPlanet() != i) {
+            if (player.getOrbitingPlanetsCount() == 0 || player.getOnPlanetIndex() != i) {
                 player.setRotAngleOffset(-angle_new - player.getRotAngle());
-                player.setOnPlanet(i);
+                player.setOnPlanetIndex(i);
                 player.setAction(LANDING);
             }
 
@@ -212,11 +212,11 @@ void PhysicsEngine::applyGravityTo(Player &player, vector<Planet*> *g_objs) {
             closest_planet_disp = disp;        
     }
 
-    player.setOnPlanetsCount(planet_count);
+    player.setOrbitingPlanetsIndex(orbiting_planets);
     player.setClosestPlanetDisp(closest_planet_disp);
 
     // If obj was not on any planets
-    if (!planet_count)
+    if (!orbiting_planets.size())
         player.setAction(FLYING);
     else {
         // Or apply gravity to obj

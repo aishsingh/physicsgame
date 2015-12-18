@@ -6,8 +6,8 @@
 
 Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
     _rot_offset_angle = 0.0f;
-    _on_planet = 0;
-    _on_planets_count = 0;
+    _on_planet_index = -1;
+    // _on_planets_count = 0;
 }
 Player::~Player() { }
 
@@ -45,8 +45,8 @@ vector<float> Player::getVerticeData() {
     Point2D trail_off(30, 30);
     mid_bottom.setX(mid_bottom.getX() - trail_off.getX());
     mid_bottom.setY(mid_bottom.getY() - trail_off.getY());
-    _base = (Point2D(mid_bottom.getX()*cos(rad_angle) - mid_bottom.getY()*sin(rad_angle), 
-                     mid_bottom.getY()*cos(rad_angle) + mid_bottom.getX()*sin(rad_angle)));
+    _base = Point2D(mid_bottom.getX()*cos(rad_angle) - mid_bottom.getY()*sin(rad_angle), 
+                     mid_bottom.getY()*cos(rad_angle) + mid_bottom.getX()*sin(rad_angle));
 
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }
@@ -58,7 +58,28 @@ void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler 
         if (is_landed)
             _action = STILL;
     }
+    else if (_action == STILL) {
+        // g_objs->at(_on_planet_index)->anchorObject(this, _base);
+    }
 }
+
+void Player::drawStats(ObjRenderer* rend, vector<Planet*> *g_objs) {
+    // closest planet tracking
+    vector<float> closest_planet;
+    for (int i=0; i<_orbiting_planet_index.size(); i++) {
+        Planet *p = g_objs->at(_orbiting_planet_index.at(i));
+        closest_planet.push_back(getCentreX());
+        closest_planet.push_back(getCentreY());
+        closest_planet.push_back(p->getCentreX());
+        closest_planet.push_back(p->getCentreY());
+    }
+
+    rend->render(closest_planet,
+                 Colour::getColour(RED),
+                 0.0f,
+                 GL_LINES);
+}
+
 
 void Player::applyGravity(vector<Planet*> *g_objs) {
     PhysicsEngine::applyGravityTo(*this, g_objs);
@@ -85,19 +106,24 @@ void Player::setRotAngleOffset(float angle) {
     _rot_offset_angle = Math::normalizeAngle(angle, 0, 180);
 }
 
-int Player::getOnPlanet() const {
-    return _on_planet;
+int Player::getOnPlanetIndex() const {
+    return _on_planet_index;
 }
 
-void Player::setOnPlanet(int index) {
-    _on_planet = index;
-}
-unsigned Player::getOnPlanetsCount() const {
-    return _on_planets_count;
+void Player::setOnPlanetIndex(int index) {
+    _on_planet_index = index;
 }
 
-void Player::setOnPlanetsCount(unsigned count) {
-    _on_planets_count = count;
+int Player::getOrbitingPlanetsCount() const {
+    return _orbiting_planet_index.size();
+}
+
+vector<int> Player::getOrbitingPlanetsIndex() const {
+    return _orbiting_planet_index;
+}
+
+void Player::setOrbitingPlanetsIndex(vector<int> index) {
+    _orbiting_planet_index = index;   
 }
 
 float Player::getClosestPlanetDisp() const {
@@ -115,4 +141,3 @@ Action Player::getAction() {
 void Player::setAction(Action act) {
     _action = act;
 }
-

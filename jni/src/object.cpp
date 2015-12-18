@@ -1,9 +1,7 @@
 #include "object.h"
 #include "math.h"
 
-Object::Object(float x, float y, float width, float height) :  Rect(x,y,width,height) {
-    _rot_angle = 0.0f;
-}
+Object::Object(float x, float y, float width, float height, float rot_angle) : Rect(x,y,width,height), _rot_angle(rot_angle) { }
 Object::~Object() { }
 
 float Object::getRotAngle() const {
