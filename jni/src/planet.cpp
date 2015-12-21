@@ -38,7 +38,8 @@ Planet::~Planet() { }
 void Planet::draw(ObjRenderer *rend) {
     // Render circle
     int vertex_count = _SIDES * getWidth()/400;
-    _vertices = (_RAND_SIDES) ? 
+    // _vertices = (_RAND_SIDES) ? 
+    _vertices = (false) ? 
         Math::offsetDataByData(getVerticeData(vertex_count, 0), _vertex_offsets) : getVerticeData(vertex_count, 0);
 
     rend->render(_vertices,
@@ -47,7 +48,7 @@ void Planet::draw(ObjRenderer *rend) {
                  GL_TRIANGLE_FAN);
 
     // Rotate
-    // setRotAngle(getRotAngle() + _rot_speed);
+    setRotAngle(getRotAngle() + _rot_speed);
 }
 
 void Planet::drawGrav(ObjRenderer *rend) {
@@ -130,7 +131,13 @@ void Planet::drawStats(ObjRenderer *rend, Rect circle) {
                                   _vertices.at(opposite_norm+1) - mid.getY());
             float dist = getWidth();
 
-            // if (i<2) {
+            if (i<2) {
+                normal_vertices.push_back(mid.getX());
+                normal_vertices.push_back(mid.getY());
+                normal_vertices.push_back(mid.getX() + 100*unit_vec.getX());
+                normal_vertices.push_back(mid.getY() + 100*unit_vec.getY());
+            }
+            else {
                 normal_vertices.push_back(mid.getX());
                 normal_vertices.push_back(mid.getY());
                 normal_vertices.push_back(mid.getX() + 50*unit_vec.getX());
@@ -151,7 +158,7 @@ void Planet::drawStats(ObjRenderer *rend, Rect circle) {
                     b_vertices.push_back(mid.getY() - of*unit_vec.getY());
 
                     // LOGI("dx %.2f, dy %.2f", of*unit_vec.getX(), of*unit_vec.getY());
-                // }
+                }
 
 
 
@@ -177,7 +184,6 @@ void Planet::drawStats(ObjRenderer *rend, Rect circle) {
             // min.setX();
             // min.setY();
 
-
             // normal_vertices.push_back(proj.getX());
             // normal_vertices.push_back(proj.getY());
             // normal.push_back(N.getX());
@@ -189,6 +195,18 @@ void Planet::drawStats(ObjRenderer *rend, Rect circle) {
                 Colour::getColour(RED),
                 getRotAngle(), 
                 GL_LINES);
+
+        vector<float> fn_vertices;
+        fn_vertices.push_back(normal_vertices.at(0));
+        fn_vertices.push_back(normal_vertices.at(1));
+        fn_vertices.push_back(normal_vertices.at(2));
+        fn_vertices.push_back(normal_vertices.at(3));
+
+        // first norm
+        rend->render(fn_vertices,
+                Colour::getColour(BLUE),
+                getRotAngle(), 
+                GL_LINES);
     }
 
     // rend->render(end_vertices,
@@ -196,150 +214,8 @@ void Planet::drawStats(ObjRenderer *rend, Rect circle) {
     //         getRotAngle(), 
     //         GL_LINES);
 
-
-    // rend->render(b_vertices,
-    //         Colour::getColour(BLUE),
-    //         getRotAngle(), 
-    //         GL_LINES);
-
     // draw projs
     // rend->render(proj_vertices,
-    //         Colour::getColour(RED),
-    //         getRotAngle(), 
-    //         GL_LINES);
-
-    /*
-       for (int i=0; i<2; i+=2) {
-    // Point2D A = Point2D(_vertices.at(i), _vertices.at(i+1));
-    // Point2D B = (i+2 < _vertices.size()) ? 
-    //         Point2D(_vertices.at(i+2), _vertices.at(i+3)) :
-    //         Point2D(_vertices.at(0), _vertices.at(1));
-    //
-    // Point2D half = Point2D((B.getX() - A.getX())/2, (B.getY() - A.getY())/2);
-    // Point2D mid = Point2D(A.getX() + half.getX(), A.getY() + half.getY());
-    //
-
-    float face_i = i + normal.size()/2;
-
-    // Point2D A = Point2D(_vertices.at(i), _vertices.at(i+1));
-    // Point2D B = (i+2 < _vertices.size()) ? 
-    //         Point2D(_vertices.at(i+2), _vertices.at(i+3)) :
-    //         Point2D(_vertices.at(0), _vertices.at(1));
-    // // Point2D C = Point2D(B.getY(), A.getX());
-    //
-    // Point2D AB = Point2D(B.getX() - A.getX(), B.getY() - A.getY()); 
-    // // Point2D AC = Point2D(C.getX() - A.getX(), C.getY() - A.getY()); 
-    //
-    // // Normal vector (perpendicular to AB)
-    // Point2D N = Point2D(-AB.getY(), AB.getX());
-
-
-
-
-
-
-    Point2D pt = Point2D(_vertices.at(face_i), _vertices.at(face_i+1));
-    Point2D v = Point2D(pt.getX() - proj_vertices.at(i), pt.getY() - proj_vertices.at(i+1));
-
-    Point2D norm = Point2D(normal.at(i), normal.at(i+1));
-
-    // // normalize
-    // float length = sqrt(norm.getX()*norm.getX() + norm.getY()*norm.getY());
-    // norm.setX(norm.getX()/length);
-    // norm.setY(norm.getY()/length);
-
-    float D = (v.getX()*norm.getX() + (v.getY()*norm.getY()));
-    Point2D proj = Point2D(pt.getX() - (D*norm.getX()),
-    pt.getY() - (D*norm.getY()));
-
-
-
-    // min_vertices.push_back(_vertices.at(i));
-    // min_vertices.push_back(_vertices.at(i+1));
-    // min_vertices.push_back(_vertices.at(face_i));
-    // min_vertices.push_back(_vertices.at(face_i+1));
-
-    Point2D dis = Point2D(proj_vertices.at(i) - _vertices.at(face_i),
-    proj_vertices.at(i+1) - _vertices.at(face_i+1));
-
-    // min_vertices.push_back(proj_vertices.at(i+2));
-    // min_vertices.push_back(proj_vertices.at(i+3));
-    // min_vertices.push_back(proj_vertices.at(i+2) - dis.getX());
-    // min_vertices.push_back(proj_vertices.at(i+3) - dis.getY());
-    // min_vertices.push_back(_vertices.at(face_i));
-    // min_vertices.push_back(_vertices.at(face_i+1));
-    //
-    //
-    // Point2D dis2 = Point2D(proj.getX() - _vertices.at(face_i),
-    //                        proj.getY() - _vertices.at(face_i+1));
-
-
-    //
-
-    Point2D p1 = Point2D(proj_vertices.at(i+2), proj_vertices.at(i+3));
-    Point2D p2 = Point2D(-proj.getX(), -proj.getY());
-    Point2D p3 = Point2D(proj_vertices.at(i+2) - dis.getX(), proj_vertices.at(i+3) - dis.getY());
-    Point2D p4 = Point2D(_vertices.at(face_i), _vertices.at(face_i+1));
-
-    float m1 = (p2.getY() - p1.getY()) / (p2.getX() - p1.getX());
-    float m2 = (p4.getY() - p3.getY()) / (p4.getX() - p3.getX());
-
-
-    // proj bottom
-    min_vertices.push_back(proj_vertices.at(i+2));
-    min_vertices.push_back(proj_vertices.at(i+3));
-    min_vertices.push_back(-proj.getX());
-    min_vertices.push_back(-proj.getY());
-    // min_vertices.push_back(_vertices.at(face_i) + normal.at(face_i) - dis2.getX());
-    // min_vertices.push_back(_vertices.at(face_i+1) + normal.at(face_i+1)- dis2.getY());
-
-    //
-    // min_vertices.push_back(_vertices.at(i+1));
-    // min_vertices.push_back(_vertices.at(i+2));
-
-
-
-    // left
-    min_vertices.push_back(proj_vertices.at(i+2) - dis.getX());
-    min_vertices.push_back(proj_vertices.at(i+3) - dis.getY());
-    min_vertices.push_back(_vertices.at(face_i));
-    min_vertices.push_back(_vertices.at(face_i+1));
-
-
-
-
-    // proj top
-    // min_vertices.push_back(proj_vertices.at(i));
-    // min_vertices.push_back(proj_vertices.at(i+1));
-    // min_vertices.push_back(-proj.getX());
-    // min_vertices.push_back(-proj.getY());
-}
-*/
-
-
-    // for (int i=0; i<_vertices.size(); i+=2) {
-    //     Point2D axis = Point2D(_vertices.at(i+1), _vertices.at(i));
-    //     axis = Math::normalize(axis);
-    //
-    //     // Find the projection of the polygon on the current axis
-    //     float minA = 0; float minB = 0; float maxA = 0; float maxB = 0;
-    //     Math::project(axis, polygonA, ref minA, ref maxA);
-    //     Math::project(axis, polygonB, ref minB, ref maxB);
-    //
-    //     // Check if the polygon projections are currentlty intersecting
-    //     float dist;
-    //     if (minA < minB) {
-    //         dist = minB - maxA;
-    //     } else {
-    //         dist = minA - maxB;
-    //     }
-    //     if (dist > 0) 
-    //         return false;
-    // }
-
-
-    // draw mins
-    // rend->render(min_vertices,
     //         Colour::getColour(RED),
     //         getRotAngle(), 
     //         GL_LINES);

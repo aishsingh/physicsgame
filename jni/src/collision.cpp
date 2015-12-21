@@ -1,9 +1,7 @@
 #include <cmath>
-#include <limits>       // std::numeric_limits
 #include "collision.h"
 #include "physics.h"
 #include "math.h"
-#include "log.h"
 
 bool Collision::isBoundingBox(Rect box1, Rect box2) {
     return (box1.getX() < box2.getX() + box2.getWidth() &&
@@ -40,64 +38,7 @@ bool Collision::isPtInCircle(Point2D pt, Rect circ) {
     return (c < radius_total) ? true : false;
 }
 
-// bool Collision::isCircleIntersPolygon(Rect circle, Rect poly, std::vector<float> vertices) {
-//     float min_dist = std::numeric_limits<int>::max();
-//     Point2D trans_axis;
-//
-//     for (int i=0; i<2; i+=2) {
-//         Point2D axis = Point2D(-vertices.at(i+1), vertices.at(i));
-//         axis = Math::normalize(axis);
-//
-//         vector<float> circle_vertices; // block
-//         circle_vertices.push_back(circle.getX());
-//         circle_vertices.push_back(circle.getY());
-//         circle_vertices.push_back(circle.getX()+circle.getWidth());
-//         circle_vertices.push_back(circle.getY());
-//         circle_vertices.push_back(circle.getX()+circle.getWidth());
-//         circle_vertices.push_back(circle.getY()+circle.getHeight());
-//         circle_vertices.push_back(circle.getX());
-//         circle_vertices.push_back(circle.getY()+circle.getHeight());
-//
-//         // Find the projection of the polygon on the current axis
-//         float minA = 0; float minB = 0; float maxA = 0; float maxB = 0;
-//         Math::project(axis, vertices, &minA, &maxA);
-//         Math::project(axis, circle_vertices, &minB, &maxB);
-//         // minB = circle.getWidth()/2;
-//         // maxB = circle.getWidth()/2;
-//
-//         // Check if the polygon projections are currentlty intersecting
-//         float dist;
-//         if (minA < minB) {
-//             dist = minB - maxA;
-//         } else {
-//             dist = minA - maxB;
-//         }
-//         LOGI("dist = %.2f, minA %.2f, maxA %.2f, minB %.2f, maxB %.2f", dist, minA, maxA, minB, maxB);
-//         if (dist > 0) 
-//             return false;
-//
-//         if (dist < min_dist) {
-//             min_dist = dist;
-//             trans_axis = axis;
-//
-//             Point2D circle_centre = Point2D(circle.getX() + (circle.getWidth()/2),
-//                                             circle.getY() + (circle.getHeight()/2));
-//             Point2D poly_centre = Point2D(poly.getX() + (poly.getWidth()/2),
-//                                             poly.getY() + (poly.getHeight()/2));
-//
-//             Point2D d = Point2D(poly_centre.getX() - circle_centre.getX(),
-//                                 poly_centre.getY() - circle_centre.getY());
-//             if (Math::dot(d, trans_axis) < 0)
-//                 trans_axis = Point2D(-trans_axis.getX(), -trans_axis.getY());
-//         }
-//
-//         // sat_pts.push_back(1);
-//     }
-//
-//     return true;
-// }
-
-bool Collision::isCircleIntersPolygon(Rect circle, std::vector<float> vertices) {
+bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vertices) {
     for (int i=0; i<vertices.size(); i+=2) {
         // Vertices A,B represent both vertex ends of the current edge
         Point2D A = Point2D(vertices.at(i), vertices.at(i+1));
@@ -117,15 +58,19 @@ bool Collision::isCircleIntersPolygon(Rect circle, std::vector<float> vertices) 
         Point2D half = Point2D((B.getX() - A.getX())/2, (B.getY() - A.getY())/2);
         Point2D mid = Point2D(A.getX() + half.getX(), A.getY() + half.getY());
 
-        Point2D base = Point2D(circle.getCentreX() - ((circle.getHeight()/2)*unit_vec.getX()), circle.getCentreY() - ((circle.getHeight()/2)*unit_vec.getY()));
+        // Calc base of the circle
+        Point2D circle_centre = Math::rotatePt(circle.getCentre(), rot_angle);  // needs to be rotated to work with rotated polygons
+        float offset = circle.getHeight()/2;  // offset needed to go from the centre to the base
+        Point2D base = Point2D(circle_centre.getX() - (offset*unit_vec.getX()),
+                               circle_centre.getY() - (offset*unit_vec.getY()));
 
-        // Calc difference between current poly edge and the circle centre
+        // Calc difference between current poly edge and the circle base
         Point2D diff = Point2D(mid.getX() - base.getX(), mid.getY() - base.getY());
         float d = Math::dot(diff, unit_vec);
 
         // See if the circle is not colliding with the edge
         // allowing for a faster fail outcome from the collision algorithm
-        if (d*unit_vec.getX() > d && d*unit_vec.getY() > d)
+        if (d*unit_vec.getX() > d || d*unit_vec.getY() > d)
             return false;
     }
 

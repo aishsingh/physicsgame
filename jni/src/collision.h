@@ -17,7 +17,10 @@ class Collision {
         static bool isPtInRect(int x, int y, Rect rect);
         static bool isCircleIntersCircle(Rect circ1, Rect circ2);
         static bool isPtInCircle(Point2D pt, Rect circ);
-        static bool isCircleIntersPolygon(Rect circle, std::vector<float> vertices);
+
+        /* Circle and Polygon collision detection which also works while both shapes are rotating
+         * rot_angle is needed to get the polygons current rotation angle */
+        static bool isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vertices);
 };
 
 #endif /* COLLISION_H */
