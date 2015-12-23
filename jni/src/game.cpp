@@ -9,7 +9,7 @@
 #include "log.h"
 #include "math.h"
 
-#define SHOW_STATS false
+#define SHOW_STATS true
 #define OUT_OpenGL_Ver false
 #define TRAIL_UPDATE_INTERVAL 0.6f
 #define TRAIL_PART_PER_UPDATE 1
@@ -74,6 +74,8 @@ void Game::setupObjs() {
     try {
         _planets.push_back(new Planet((w/2) + 100, (h/2) - 150, 400));
         _planets.push_back(new Planet((w/2) - 800, (h/2) - 150, 300));
+        _planets.push_back(new Planet((w/2) - 550, (h/2) - 1200, 550));
+        _planets.push_back(new Planet((w/2) - 50, (h/2) + 850, 150));
     }
     catch (std::exception &e) {
         LOGE("Error creating planets: %s", e.what());
@@ -170,10 +172,12 @@ void Game::draw() {
     applyGravity();
 
     //-- RENDER ---------------------------------------
-    // _back_rend->render();
-    // _back_rend->disableAttributes();
+    if (SHOW_STATS) {
+        _back_rend->render();
+        _back_rend->disableAttributes();
 
-    if (SHOW_STATS) drawStats();
+        drawStats();
+    }
 
     // Render planets gravity area
     for(int i=0; i<(int)_planets.size(); i++)

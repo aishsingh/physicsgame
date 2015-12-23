@@ -22,7 +22,7 @@ Colour Shape::getColour() const {
 void Shape::useTheme(Theme &theme) {
     switch(theme) {
         case GRAY:
-        _colour.r = (256 - (rand() % 100)) / 256.0f;
+        _colour.r = (125 - (rand() % 100)) / 256.0f;
         _colour.g = _colour.r;
         _colour.b = _colour.r;
         break;

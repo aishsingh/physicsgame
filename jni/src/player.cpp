@@ -46,7 +46,7 @@ vector<float> Player::getVerticeData() {
     mid_bottom.setX(mid_bottom.getX() - trail_off.getX());
     mid_bottom.setY(mid_bottom.getY() - trail_off.getY());
     _base = Point2D(mid_bottom.getX()*cos(rad_angle) - mid_bottom.getY()*sin(rad_angle), 
-                     mid_bottom.getY()*cos(rad_angle) + mid_bottom.getX()*sin(rad_angle));
+                    mid_bottom.getY()*cos(rad_angle) + mid_bottom.getX()*sin(rad_angle));
 
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }

@@ -198,14 +198,14 @@ void PhysicsEngine::applyGravityTo(Player &player, vector<Planet*> *g_objs) {
             // Determine planet gravity from new rot angle
             float init_v;
             float init_h;
-            splitCompValueFromAngle(&init_h, &init_v, angle_new, 0, 0, 0, 3);
+            splitCompValueFromAngle(&init_h, &init_v, angle_new, 0, 0, 0, 2.0f);
 
             // Add to net grav
             netg_h += init_h;
             netg_v += init_v;
         }
         
-        // Find the distance fro the closest planet
+        // Find the distance from the closest planet
         float disp = Math::getHypotenuse(fabs(player.getCentreX() - grav_rect.getCentreX()),
                                          fabs(player.getCentreY() - grav_rect.getCentreY()));
         if (disp < closest_planet_disp || closest_planet_disp == 0)

@@ -3,7 +3,7 @@
 #include "colour.h"
 #include "math.h"
 
-const int Planet::_SIDES(10);
+const int Planet::_SIDES(15);
 const int Planet::_GRAV_SIDES(45);
 const float Planet::_GRAV_OPACITY(0.5f);
 const bool Planet::_RAND_SIDES(true);
@@ -11,7 +11,7 @@ const bool Planet::_DRAW_NORMALS(true);
 
 Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
     _colour = Colour(0.9294f, 0.898f, 0.88627f, 1.0f);
-    _rot_speed = 0.3f;
+    _rot_speed = powf(0.4f, (getWidth()/200));
     _grav_radius_offset = 120.0f;
     _grav_speed = 5.5f;
 
