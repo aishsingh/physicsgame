@@ -67,7 +67,7 @@ vector<float> Math::genRandData(int count, float min, float max) {
 }
 
 vector<float> Math::offsetDataByRand(vector<float> data, float min, float max) {
-    for (int i=0; i < data.size(); i++) {
+    for (int i=0; i < (int)data.size(); i++) {
         float offset = min + (float)(rand()) / (float)(RAND_MAX/(max-min));
         data.at(i) += offset;
     }
@@ -76,7 +76,7 @@ vector<float> Math::offsetDataByRand(vector<float> data, float min, float max) {
 }
 
 vector<float> Math::offsetDataByData(vector<float> data, vector<float> offset) {
-    for (int i=0; i < data.size(); i++) {
+    for (int i=0; i < (int)data.size(); i++) {
         data.at(i) += offset.at(i);
     }
     
@@ -86,6 +86,7 @@ vector<float> Math::offsetDataByData(vector<float> data, vector<float> offset) {
 
 Point2D Math::normalize(Point2D pt) {
     float length = sqrt(pt.getX()*pt.getX() + pt.getY()*pt.getY());
+
     return Point2D(pt.getX()/length,
                    pt.getY()/length);
 }
@@ -100,10 +101,19 @@ void Math::project(Point2D axis, vector<float> vertices, float *min, float *max)
     *min = dp;
     *max = dp;
 
-    for (int i = 0; i < vertices.size()/2; i+=2) {
+    for (int i = 0; i < (int)vertices.size()/2; i+=2) {
         dp = dot(axis, Point2D(vertices.at(i), vertices.at(i+1)));
         if (dp < *min) *min = dp;
         else if (dp > *max) *max = dp;
     }
+
+}
+
+Point2D Math::rotatePtAroundPt(Point2D pt1, Point2D pt2, float angle) {
+    float rad = angle*(PI/180);
+
+    /* http://stackoverflow.com/a/12161405/3270542 */
+    return Point2D(pt1.getX() + (pt2.getX()-pt1.getX())*cos(rad) - (pt2.getY()-pt1.getY())*sin(rad),
+                   pt1.getY() + (pt2.getX()-pt1.getX())*sin(rad) + (pt2.getY()-pt1.getY())*cos(rad));
 
 }

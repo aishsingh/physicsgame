@@ -42,6 +42,8 @@ class Math {
         static Point2D normalize(Point2D pt);
         static float dot(Point2D vec1, Point2D vec2);
         static void project(Point2D axis, vector<float> vertices, float *min, float *max);
+
+        static Point2D rotatePtAroundPt(Point2D pt1, Point2D pt2, float angle);
 };
 
 #endif /* MATH_H */

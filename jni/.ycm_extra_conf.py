@@ -11,8 +11,10 @@ flags = [
 '-Wno-unused-parameter',
 '-Wno-unused-variable',
 '-Wno-unused-function',
+# '-Wno-sign-compare',
 
-'-std=c++11', '-x', 'c++',
+'-fexceptions',
+'-std=c++98', '-x', 'c++',
 
 '-isystem',
 '/opt/android-ndk/platforms/android-19/arch-arm/usr/include',

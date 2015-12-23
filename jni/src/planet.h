@@ -45,7 +45,7 @@ class Planet: public Object {
         // Update player based on its current action
         virtual void update(); 
 
-        void anchorObject(Object *obj, Point2D base);
+        void anchorObject(Object *obj);
 
         // Accessors
         float getRadiusOffset() const;

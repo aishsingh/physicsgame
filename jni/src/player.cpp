@@ -59,14 +59,14 @@ void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler 
             _action = STILL;
     }
     else if (_action == STILL) {
-        // g_objs->at(_on_planet_index)->anchorObject(this, _base);
+        g_objs->at(_on_planet_index)->anchorObject(this);
     }
 }
 
 void Player::drawStats(ObjRenderer* rend, vector<Planet*> *g_objs) {
     // closest planet tracking
     vector<float> closest_planet;
-    for (int i=0; i<_orbiting_planet_index.size(); i++) {
+    for (int i=0; i<(int)_orbiting_planet_index.size(); i++) {
         Planet *p = g_objs->at(_orbiting_planet_index.at(i));
         closest_planet.push_back(getCentreX());
         closest_planet.push_back(getCentreY());

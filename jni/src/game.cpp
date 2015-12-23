@@ -9,7 +9,7 @@
 #include "log.h"
 #include "math.h"
 
-#define SHOW_STATS true
+#define SHOW_STATS false
 #define OUT_OpenGL_Ver false
 #define TRAIL_UPDATE_INTERVAL 0.6f
 #define TRAIL_PART_PER_UPDATE 1
