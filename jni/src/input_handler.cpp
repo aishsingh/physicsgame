@@ -17,7 +17,7 @@ void InputHandler::restartValues(Point2D pos, int index) {
     _nav_touch_index = index;
     _nav_starting_angle = _user->getRotAngle();
     _nav_starting_real_angle = _user->getRealRotAngle();
-    _nav_started_on_planets = _user->getOrbitingPlanetsIndex();
+    _nav_started_on_planets = _user->getOrbitingPlanets();
 }
 
 void InputHandler::touchDown(float x, float y, unsigned int index) {
@@ -49,11 +49,11 @@ void InputHandler::touchMove(float x, float y, unsigned int index) {
     _touches.at(index).pos = Point2D(x, y);
 
     if (_nav_active && _nav_touch_index == index) {
-        vector<int> now_orbiting = _user->getOrbitingPlanetsIndex();
+        vector<Planet*> now_orbiting = _user->getOrbitingPlanets();
         // Reset automatically when player goes in/out of a planet
         bool planets_changed = false;
         if (now_orbiting.size() == _nav_started_on_planets.size()) {
-            for (int i=0; i<now_orbiting.size(); i++) {
+            for (int i=0; i<(int)now_orbiting.size(); i++) {
                 // if (!(std::find(now_orbiting.begin(), now_orbiting.end(), _nav_started_on_planets.at(i)) != now_orbiting.end())) {
                 if (now_orbiting.at(i) != _nav_started_on_planets.at(i)) {
                     planets_changed = true;

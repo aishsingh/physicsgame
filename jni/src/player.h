@@ -15,13 +15,13 @@
 
 class Player: public Object {
     protected:
-        Action _action;
+        Action::Action _action;
         Point2D _base; // Current pos of the bottom of the player after rotations
         float _rot_offset_angle;
-        int _on_planet_index;
+        Planet* _on_planet;
         float _closest_planet_disp;
         // unsigned _on_planets_count;
-        vector<int> _orbiting_planet_index;
+        vector<Planet*> _orbiting_planets;
 
     public:
         // Render player and trail
@@ -35,15 +35,15 @@ class Player: public Object {
         virtual void applyGravity(vector<Planet*> *g_objs);
         virtual void resetTime(float t);
 
-        Action getAction();
-        void setAction(Action act);
+        Action::Action getAction();
+        void setAction(Action::Action act);
         float getClosestPlanetDisp() const;
         void setClosestPlanetDisp(float d);
-        int getOnPlanetIndex() const;
-        void setOnPlanetIndex(int index);
+        Planet* getOnPlanet() const;
+        void setOnPlanet(Planet* p);
         int getOrbitingPlanetsCount() const;
-        vector<int> getOrbitingPlanetsIndex() const;
-        void setOrbitingPlanetsIndex(vector<int> index);
+        vector<Planet*> getOrbitingPlanets() const;
+        void setOrbitingPlanets(vector<Planet*> p);
         float getRotAngle() const;
         float getRotAngleOffset() const;
         float getRealRotAngle() const;

@@ -5,11 +5,28 @@
 #ifndef ACTION_H
 #define ACTION_H
 
-typedef enum Action {
-    STILL, 
-    RUNNING, 
-    FLYING,
-    LANDING
-} Action;
+#include <string>
+
+namespace Action {
+    typedef enum Action {
+        STILL, 
+        RUNNING, 
+        FLYING,
+        LANDING
+    } Action;
+
+    static std::string toString(Action a) {
+        switch (a) {
+            case STILL:
+                return "STILL";
+            case RUNNING:
+                return "RUNNING";
+            case FLYING:
+                return "FLYING";
+            case LANDING:
+                return "LANDING";
+        }
+    }
+}
 
 #endif /* ACTION_H */

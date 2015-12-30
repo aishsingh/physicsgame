@@ -7,7 +7,7 @@
 #include "math.h"
 
 Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,105,125.3), _trail(22) {
-    _action = FLYING;
+    _action = Action::FLYING;
     _facing = RIGHT;
     _frame = 0;           // TODO not implemented yet
     _colour_theme = theme;
@@ -84,7 +84,7 @@ void Spaceman::update() {
             360 - getRotAngle(), 
             _colour_theme);
 
-    if (_action != FLYING) _action = FLYING;
+    if (_action != Action::FLYING) _action = Action::FLYING;
 }
 
 void Spaceman::applyGravity(vector<Planet*> *g_objs) {

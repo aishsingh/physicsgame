@@ -3,10 +3,11 @@
 #include "physics.h"
 #include "math.h"
 #include "texture_handler.h"
+#include "log.h"
 
 Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
     _rot_offset_angle = 0.0f;
-    _on_planet_index = -1;
+    _on_planet = NULL;
     // _on_planets_count = 0;
 }
 Player::~Player() { }
@@ -53,21 +54,31 @@ vector<float> Player::getVerticeData() {
 
 void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler *tex) {
     // Update physics attributes only if box is moving
-    if (_action == FLYING || _action == LANDING) {
-        bool is_landed = PhysicsEngine::updatePhysics(*this, g_objs);
-        if (is_landed)
-            _action = STILL;
+    if (_action == Action::FLYING || _action == Action::LANDING) {
+        PhysicsEngine::updatePlayerOrbittingPlanets(*this, g_objs);
+
+        Planet* on_g_obj = PhysicsEngine::updatePhysics(*this, g_objs);
+        // if there actually was a collision
+        _on_planet = on_g_obj;
+        if (on_g_obj != NULL) {
+            _action = Action::STILL;
+            _orbiting_planets.clear(); // only keep track of the planet the player is on
+            _orbiting_planets.push_back(_on_planet); // only keep track of the planet the player is on
+        }
     }
-    else if (_action == STILL) {
-        g_objs->at(_on_planet_index)->anchorObject(this);
+    else if (_action == Action::STILL) {
+        _on_planet->anchorObject(this);
     }
 }
 
 void Player::drawStats(ObjRenderer* rend, vector<Planet*> *g_objs) {
+    // display actions
+    LOGI("%s", Action::toString(_action).c_str());
+
     // closest planet tracking
     vector<float> closest_planet;
-    for (int i=0; i<(int)_orbiting_planet_index.size(); i++) {
-        Planet *p = g_objs->at(_orbiting_planet_index.at(i));
+    for (int i=0; i<(int)_orbiting_planets.size(); i++) {
+        Planet *p = _orbiting_planets.at(i);
         closest_planet.push_back(getCentreX());
         closest_planet.push_back(getCentreY());
         closest_planet.push_back(p->getCentreX());
@@ -82,7 +93,7 @@ void Player::drawStats(ObjRenderer* rend, vector<Planet*> *g_objs) {
 
 
 void Player::applyGravity(vector<Planet*> *g_objs) {
-    PhysicsEngine::applyGravityTo(*this, g_objs);
+    PhysicsEngine::applyGravityTo(*this, &_orbiting_planets);
 }
 
 void Player::resetTime(float t) {
@@ -106,24 +117,24 @@ void Player::setRotAngleOffset(float angle) {
     _rot_offset_angle = Math::normalizeAngle(angle, 0, 180);
 }
 
-int Player::getOnPlanetIndex() const {
-    return _on_planet_index;
+Planet* Player::getOnPlanet() const {
+    return _on_planet;
 }
 
-void Player::setOnPlanetIndex(int index) {
-    _on_planet_index = index;
+void Player::setOnPlanet(Planet* p) {
+    _on_planet = p;
 }
 
 int Player::getOrbitingPlanetsCount() const {
-    return _orbiting_planet_index.size();
+    return _orbiting_planets.size();
 }
 
-vector<int> Player::getOrbitingPlanetsIndex() const {
-    return _orbiting_planet_index;
+vector<Planet*> Player::getOrbitingPlanets() const {
+    return _orbiting_planets;
 }
 
-void Player::setOrbitingPlanetsIndex(vector<int> index) {
-    _orbiting_planet_index = index;   
+void Player::setOrbitingPlanets(vector<Planet*> p) {
+    _orbiting_planets = p;   
 }
 
 float Player::getClosestPlanetDisp() const {
@@ -134,10 +145,10 @@ void Player::setClosestPlanetDisp(float d) {
     _closest_planet_disp = d;
 }
 
-Action Player::getAction() {
+Action::Action Player::getAction() {
     return _action;
 }
 
-void Player::setAction(Action act) {
+void Player::setAction(Action::Action act) {
     _action = act;
 }

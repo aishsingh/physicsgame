@@ -33,6 +33,8 @@ class Math {
 
         static float genRand(float min, float max);
 
+        static vector<float> getUnitVectors(vector<float> vertices);
+
         static vector<float> genRandData(int count, float min, float max);
 
         static vector<float> offsetDataByRand(vector<float> data, float min, float max);
@@ -43,7 +45,14 @@ class Math {
         static float dot(Point2D vec1, Point2D vec2);
         static void project(Point2D axis, vector<float> vertices, float *min, float *max);
 
+        static Point2D getLeftNormal(Point2D A, Point2D B);
+        static Point2D getRightNormal(Point2D A, Point2D B);
+        static Point2D getUnitVector(Point2D normal);
+
         static Point2D rotatePtAroundPt(Point2D pt1, Point2D pt2, float angle);
+
+        static float calcZComponent(float vertices[6]);
+        static vector<float> removeConcaveVertices(vector<float> vertices, vector<float> *offset);
 };
 
 #endif /* MATH_H */

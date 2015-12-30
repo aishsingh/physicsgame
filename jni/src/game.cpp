@@ -212,7 +212,7 @@ void Game::draw() {
     }
 
     // Scale camera
-    if (_user.getAction() == FLYING || _user.getAction() == LANDING)
+    if (_user.getAction() == Action::FLYING || _user.getAction() == Action::LANDING)
         _cam.setScaleFromDisp(_user.getClosestPlanetDisp());
 
     // Update all players (eg build player trail)

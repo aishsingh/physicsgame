@@ -33,7 +33,7 @@ class PhysicsEngine {
 
     public:
         /* Updates all motion and returns true if the object landed on a planet */
-        static bool updatePhysics(Object &obj, vector<Planet*> *g_objs);
+        static Planet* updatePhysics(Object &obj, vector<Planet*> *g_objs);
 
         /* Generated a suitable initial velocity using based on the angle the object is rotated in */
         static void genInitVel(Object &obj, float rot_angle, float min, float max, float offset);
@@ -46,6 +46,8 @@ class PhysicsEngine {
            The split needs to know the min & max values that should occur for both components */
         static void splitValueFromAngle(float value, float angle, float *hori, float *vert);
         static void splitCompValueFromAngle(float *hori_comp, float *vert_comp, float angle, float min_hori, float max_hori, float min_vert, float max_vert);
+
+        static void updatePlayerOrbittingPlanets(Player &player, vector<Planet*> *g_objs);
 
         /* Updates object vert/hori acceleration due to the gravity from the given planets */
         static void applyGravityTo(Object &obj, vector<Planet*> *g_objs);

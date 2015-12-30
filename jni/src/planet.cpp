@@ -25,8 +25,9 @@ Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
     // Gen initial vert data
     int vertex_count = _SIDES * getWidth()/400;
     if (_RAND_SIDES) {
-        _vertex_offsets = Math::genRandData(vertex_count*2, -30.0f, 30.0f);
-        _vertices = Math::offsetDataByData(getVerticeData(vertex_count, 0), _vertex_offsets);
+        float offset = 15; //getWidth()/vertex_count;
+        _vertex_offsets = Math::genRandData(vertex_count*2, 0, offset);
+        _vertices = Math::removeConcaveVertices(Math::offsetDataByData(getVerticeData(vertex_count, 0), _vertex_offsets), &_vertex_offsets);
     }
     else {
         _vertices = getVerticeData(vertex_count, 0);
@@ -86,11 +87,8 @@ void Planet::drawStats(ObjRenderer *rend, Rect circle) {
                     Point2D(_vertices.at(0), _vertices.at(1));
             // Point2D C = Point2D(B.getY(), A.getX());
 
-            Point2D AB = Point2D(B.getX() - A.getX(), B.getY() - A.getY()); 
-            // Point2D AC = Point2D(C.getX() - A.getX(), C.getY() - A.getY()); 
-
             // Normal vector (perpendicular to AB)
-            Point2D N = Point2D(AB.getY(), -AB.getX());
+            Point2D N = Math::getRightNormal(A, B);
 
             normal.push_back(N.getX());
             normal.push_back(N.getY());
@@ -102,8 +100,7 @@ void Planet::drawStats(ObjRenderer *rend, Rect circle) {
             mid_vertices.push_back(mid.getY());
 
             // Calc unit vector with axis parallel to the normal vector
-            float mag = sqrt(pow(N.getX(), 2) + pow(N.getY(), 2));
-            Point2D unit_vec = Point2D(N.getX()/mag, N.getY()/mag);
+            Point2D unit_vec = Math::getUnitVector(N);
 
             // if (i<2) {
             //     normal_vertices.push_back(mid.getX());
@@ -125,30 +122,27 @@ void Planet::drawStats(ObjRenderer *rend, Rect circle) {
                 getRotAngle(), 
                 GL_LINES);
 
-        // vector<float> fn_vertices;
-        // fn_vertices.push_back(normal_vertices.at(0));
-        // fn_vertices.push_back(normal_vertices.at(1));
-        // fn_vertices.push_back(normal_vertices.at(2));
-        // fn_vertices.push_back(normal_vertices.at(3));
-        //
-        // // first norm
-        // rend->render(fn_vertices,
-        //         Colour::getColour(BLUE),
-        //         getRotAngle(), 
-        //         GL_LINES);
+        vector<float> fn_vertices;
+        fn_vertices.push_back(normal_vertices.at(0));
+        fn_vertices.push_back(normal_vertices.at(1));
+        fn_vertices.push_back(normal_vertices.at(2));
+        fn_vertices.push_back(normal_vertices.at(3));
+
+        // first norm
+        rend->render(fn_vertices,
+                Colour::getColour(BLUE),
+                getRotAngle(), 
+                GL_LINES);
     }
 }
 
 void Planet::update() { }
 
 void Planet::anchorObject(Object *obj) {
-    Point2D pt = Math::rotatePtAroundPt(getCentre(), obj->getCentre(), _rot_speed*2);
+    Point2D pt = Math::rotatePtAroundPt(getCentre(), obj->getCentre(), _rot_speed);
 
     obj->setX(pt.getX() - (obj->getWidth()/2));
     obj->setY(pt.getY() - (obj->getHeight()/2));
-
-    // ---
-    setRotAngle(getRotAngle() + _rot_speed);
 }
 
 float Planet::getRadiusOffset() const {

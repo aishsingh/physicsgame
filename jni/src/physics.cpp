@@ -28,18 +28,13 @@ Motion PhysicsEngine::calcMotion(const Motion &motion) {
     return calc;
 }
 
-bool PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
+Planet* PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
     int origin_x = 0;
     int origin_y = 0;
     Motion vert_comp = calcMotion(obj.vert_motion);
     Motion hori_comp = calcMotion(obj.hori_motion);
 
-    // Circular motion - keep rotating object relative to the horizontal vel
-    // TODO make it relative to both hori/vert depending on grav dir
-    // float offset = 0.4f;
-    // obj.setRotAngle(obj.getRotAngle() + (obj.hori_motion.getVel() * offset));
-
-    bool collision = false;
+    Planet* collided_planet = NULL; // NULL means no collision
     // Rect containing updated dimensions
     Rect post_rect(obj.getX() + hori_comp.getDisp(),
                      obj.getY() + vert_comp.getDisp(),
@@ -50,22 +45,19 @@ bool PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
     for (int i=0; i<(int)g_objs->size(); i++) {
         if (Collision::isBoundingBox(post_rect, *g_objs->at(i))) {
             if (Collision::isCircleIntersPolygon(post_rect, g_objs->at(i)->getRotAngle(), g_objs->at(i)->getVertices())) {
-            // if (Collision::isCircleIntersCircle(post_rect, *g_objs->at(i))) {
                 obj.hori_motion.setTime(hori_comp.getTime());
                 obj.vert_motion.setTime(vert_comp.getTime());
                 obj.hori_motion.setVel(0.0f);
                 obj.vert_motion.setVel(0.0f);
 
-                // Rotate obj so it sits flat on the planet
-                obj.setRotAngle(360-getAngleOfPtFromRectCentre(obj.getCentre(), *g_objs->at(i)));
-                collision = true;
+                collided_planet = g_objs->at(i);
                 break;
             }
         }
     }
 
     // No Collision
-    if (!collision) {
+    if (collided_planet == NULL) {
         obj.setX(post_rect.getX());
         obj.hori_motion.setTime(hori_comp.getTime());
         obj.hori_motion.setVel(hori_comp.getVel());
@@ -74,7 +66,7 @@ bool PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
         obj.vert_motion.setVel(vert_comp.getVel());
     }
 
-    return collision;
+    return collided_planet;
 }
 
 void PhysicsEngine::genInitVel(Object &obj, float rot_angle, float min, float max, float offset) {
@@ -135,6 +127,41 @@ float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pt, Rect rect) {
     return angle;
 }
 
+void PhysicsEngine::updatePlayerOrbittingPlanets(Player &player, vector<Planet*> *g_objs) {
+    vector<Planet*> orbiting_planets;
+    float closest_planet_disp = 0.0f;
+
+    for (int i=0; i<(int)g_objs->size(); i++) {
+        Planet *plan = g_objs->at(i);
+
+        // Create rect to rep the planets gravity area
+        float g_radius = plan->getWidth();
+        Rect grav_rect(plan->getX() - g_radius,
+                       plan->getY() - g_radius,
+                       plan->getWidth() + (g_radius*2),
+                       plan->getWidth() + (g_radius*2));
+
+        // Make sure obj is inside of Planet
+        if (Collision::isCircleIntersCircle(player, grav_rect))
+            orbiting_planets.push_back(plan);
+
+        // Find the distance from the closest planet
+        float disp = Math::getHypotenuse(fabs(player.getCentreX() - grav_rect.getCentreX()),
+                                         fabs(player.getCentreY() - grav_rect.getCentreY()));
+        if (disp < closest_planet_disp || closest_planet_disp == 0)
+            closest_planet_disp = disp;        
+    }
+
+    player.setOrbitingPlanets(orbiting_planets);
+    player.setClosestPlanetDisp(closest_planet_disp);
+
+    // If obj was not on any planets
+    if (player.getOrbitingPlanetsCount() == 0) {
+        player.setAction(Action::FLYING);
+        // player.setOnPlanetIndex(-1);
+    }
+}
+
 void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
@@ -163,14 +190,13 @@ void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
     obj.hori_motion.setAccel(netg_h);
     obj.vert_motion.setAccel(netg_v);
 }
+
 void PhysicsEngine::applyGravityTo(Player &player, vector<Planet*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
 
-    vector<int> orbiting_planets;
-    float closest_planet_disp = 0.0f;
-    for (int i=0; i<(int)g_objs->size(); i++) {
-        Planet *plan = g_objs->at(i);
+    if (player.getAction() == Action::STILL) {
+        Planet *plan = player.getOnPlanet();
 
         // Create rect to rep the planets gravity area
         float g_radius = plan->getWidth();
@@ -178,50 +204,48 @@ void PhysicsEngine::applyGravityTo(Player &player, vector<Planet*> *g_objs) {
                        plan->getY() - g_radius,
                        plan->getWidth() + (g_radius*2),
                        plan->getWidth() + (g_radius*2));
+        float angle_new = getAngleOfPtFromRectCentre(player.getCentre(), grav_rect);
+        player.setRotAngle(-angle_new);
+    }
+    else {
+        for (int i=0; i<(int)g_objs->size(); i++) {
+            Planet *plan = g_objs->at(i);
 
-        // Make sure obj is inside of Planet
-        if (Collision::isCircleIntersCircle(player, grav_rect)) {
-            orbiting_planets.push_back(i);
+            // Create rect to rep the planets gravity area
+            float g_radius = plan->getWidth();
+            Rect grav_rect(plan->getX() - g_radius,
+                           plan->getY() - g_radius,
+                           plan->getWidth() + (g_radius*2),
+                           plan->getWidth() + (g_radius*2));
 
             // Rotate obj relative to planet
             float angle_new = getAngleOfPtFromRectCentre(player.getCentre(), grav_rect);
 
             // If player not on any planet or on different planet
-            if (player.getOrbitingPlanetsCount() == 0 || player.getOnPlanetIndex() != i) {
+            if (player.getOnPlanet() != plan) {
                 player.setRotAngleOffset(-angle_new - player.getRotAngle());
-                player.setOnPlanetIndex(i);
-                player.setAction(LANDING);
+                // player.setOnPlanetIndex(i);
+                player.setAction(Action::LANDING);
             }
+
 
             player.setRotAngle(-angle_new);
 
             // Determine planet gravity from new rot angle
             float init_v;
             float init_h;
-            splitCompValueFromAngle(&init_h, &init_v, angle_new, 0, 0, 0, 2.0f);
+            splitCompValueFromAngle(&init_h, &init_v, angle_new, 0, 0, 0, 2.5f);
 
             // Add to net grav
             netg_h += init_h;
             netg_v += init_v;
         }
-        
-        // Find the distance from the closest planet
-        float disp = Math::getHypotenuse(fabs(player.getCentreX() - grav_rect.getCentreX()),
-                                         fabs(player.getCentreY() - grav_rect.getCentreY()));
-        if (disp < closest_planet_disp || closest_planet_disp == 0)
-            closest_planet_disp = disp;        
-    }
 
-    player.setOrbitingPlanetsIndex(orbiting_planets);
-    player.setClosestPlanetDisp(closest_planet_disp);
-
-    // If obj was not on any planets
-    if (!orbiting_planets.size())
-        player.setAction(FLYING);
-    else {
-        // Or apply gravity to obj
-        player.hori_motion.setAccel(netg_h);
-        player.vert_motion.setAccel(netg_v);
+        if (player.getAction() != Action::STILL){
+            // Or apply gravity to obj
+            player.hori_motion.setAccel(netg_h);
+            player.vert_motion.setAccel(netg_v);
+        }
     }
 }
 
