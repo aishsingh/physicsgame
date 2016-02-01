@@ -31,6 +31,8 @@ class Camera {
 
         /* Ctor */
         Camera(const Object *anchor);
+
+        bool isObjectNearCam(Object *obj);
 };
 
 #endif /* CAMERA_H */

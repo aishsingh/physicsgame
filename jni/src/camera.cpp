@@ -1,4 +1,7 @@
 #include "camera.h"
+#include "collision.h"
+#include "log.h"
+#include "game.h"
 
 Camera::Camera(const Object *anchor) : _anchor(anchor) { 
     _rot_offset_angle = 0.0f;
@@ -40,4 +43,13 @@ float Camera::getRotAngle() const {
 
 float Camera::getScale() const {
     return _scale;
+}
+
+bool Camera::isObjectNearCam(Object *obj) {
+    Point2D pos = _anchor->getCentre();
+    float borderX = Game::getScreenWidth()/getScale();
+    float borderY = Game::getScreenHeight()/getScale();
+
+    // LOGI("border %.3f, scale %.2f", border, getScale());
+    return Collision::isBoundingBox(Rect(pos.getX() - borderX/2, pos.getY() -borderY/2, borderX, borderY), *obj);
 }

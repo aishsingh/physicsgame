@@ -9,7 +9,7 @@
 #include "log.h"
 #include "math.h"
 
-#define SHOW_STATS true
+#define SHOW_STATS false
 #define OUT_OpenGL_Ver false
 #define TRAIL_UPDATE_INTERVAL 0.6f
 #define TRAIL_PART_PER_UPDATE 1
@@ -178,6 +178,9 @@ void Game::draw() {
 
         drawStats();
     }
+
+    // draw galaxy full of stars
+    _galaxy.draw(_obj_rend);
 
     // Render planets gravity area
     for(int i=0; i<(int)_planets.size(); i++)

@@ -2,6 +2,7 @@
 #include "planet.h"
 #include "colour.h"
 #include "math.h"
+#include "shape.h"
 
 const int Planet::_SIDES(15);
 const int Planet::_GRAV_SIDES(45);
@@ -25,7 +26,7 @@ Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
     // Gen initial vert data
     int vertex_count = _SIDES * getWidth()/400;
     if (_RAND_SIDES) {
-        float offset = 15; //getWidth()/vertex_count;
+        float offset = 15;
         _vertex_offsets = Math::genRandData(vertex_count*2, 0, offset);
         _vertices = Math::removeConcaveVertices(Math::offsetDataByData(getVerticeData(vertex_count, 0), _vertex_offsets), &_vertex_offsets);
     }
@@ -154,41 +155,8 @@ vector<float> Planet::getVertices() const {
 }
 
 vector<float> Planet::getVerticeData(int vertex_count, float r_offset) {
-     /*    ____
-          /    \
-         (Circle) 
-          \____/
-                    */
-
     float radius = (getWidth()/2) + r_offset;
-    float c_x = getCentreX();
-    float c_y = getCentreY();
 
-    // Create a buffer for vertex data
-    vector<float> vec; // (x,y) for each vertex
-    int idx = 0;
-
-    for (int i=0; i<vertex_count; i++) {
-
-        float x = c_x;
-        float y = c_y;
-
-        // Rotate
-        Point2D pt = Math::rotatePt(Point2D(x, y), getRotAngle());
-        x = pt.getX();
-        y = pt.getY();
-
-        float percent = (i / (float) (vertex_count));
-        float rad = percent * 2 * PI;
-
-        // Vertex position
-        x += radius * cos(rad);
-        y += radius * sin(rad);
-
-        // Add pos
-        vec.push_back(x);
-        vec.push_back(y);
-    }
-
-    return vec;
+    // Create a buffer for vertex data. (x,y) for each vertex
+    return Shape::genCircleVertices(getCentre(), radius, getRotAngle(), vertex_count);
 }

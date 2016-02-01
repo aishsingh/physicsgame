@@ -33,6 +33,8 @@ LOCAL_SRC_FILES := app_glue.cpp \
 				   spaceman.cpp \
 					  trail.cpp \
 					 planet.cpp \
+					   star.cpp \
+				   	 galaxy.cpp \
 					 motion.cpp \
 					 camera.cpp \
 					 colour.cpp \

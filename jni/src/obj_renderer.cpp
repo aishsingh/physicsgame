@@ -91,3 +91,7 @@ void ObjRenderer::render(vector<float> vertices, Colour colour, float angle, GLe
 void ObjRenderer::disableAttributes() {
     glDisableVertexAttribArray(_vPos_handle);
 }
+
+Camera* ObjRenderer::getCam() const {
+    return _cam;
+}

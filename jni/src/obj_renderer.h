@@ -14,6 +14,7 @@ class ObjRenderer: public Renderer {
     public:
         void render(vector<float> vertices, Colour colour, float angle, GLenum mode);
         void disableAttributes();
+        Camera* getCam() const;
 
         /* Ctor - Init Shaders */
         ObjRenderer(Camera *cam);

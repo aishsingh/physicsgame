@@ -6,7 +6,7 @@
 
 #define PI 3.14159265358979323846264
 
-Shape::Shape(float x, float y, int index, float angle, float width, float height, Theme &theme) : Object(x,y,width,height) {
+Shape::Shape(float x, float y, int index, float angle, float width, float height, Theme theme) : Object(x,y,width,height) {
     float time = Game::getElapsedTime();
     vert_motion.setTime(time);
     hori_motion.setTime(time);
@@ -99,4 +99,39 @@ vector<float> Shape::getVerticeData() {
                     x + w , y + h };
 
     return vector<float> (vec, vec + sizeof(vec) / sizeof(float));
+}
+
+vector<float> Shape::genCircleVertices(Point2D centre, float radius, float rot_angle, float vertex_count) {
+     /*    ____
+          /    \
+         (Circle)
+          \____/
+                    */
+
+    // Create a vector for vertex data
+    vector<float> vec;
+
+    for (int i=0; i<vertex_count; i++) {
+
+        float x = centre.getX();
+        float y = centre.getY();
+
+        // Rotate
+        Point2D pt = Math::rotatePt(Point2D(x, y), rot_angle);
+        x = pt.getX();
+        y = pt.getY();
+
+        float percent = (i / (float) (vertex_count));
+        float rad = percent * 2 * PI;
+
+        // Vertex position
+        x += radius * cos(rad);
+        y += radius * sin(rad);
+
+        // Add pos
+        vec.push_back(x);
+        vec.push_back(y);
+    }
+
+    return vec;
 }

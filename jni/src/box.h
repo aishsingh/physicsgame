@@ -4,9 +4,6 @@
 #include "shape.h"
 
 class Box: public Shape {
-    private:
-        Colour _colour;
-
     public:
         Box(float x, float y, int index, float angle, float diameter, Theme &theme);
 };

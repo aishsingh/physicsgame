@@ -16,6 +16,7 @@
 #include "camera.h"
 #include "input_handler.h"
 #include "texture_handler.h"
+#include "galaxy.h"
 
 class Game {
     private:
@@ -36,6 +37,7 @@ class Game {
         vector<Planet*> _planets;
 
         Spaceman _user;
+        Galaxy _galaxy;
         Camera _cam;
         TextureHandler _tex;
 
