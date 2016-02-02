@@ -25,18 +25,13 @@ char package_name;
 
 /* NOTE: This is also run when screen sleeps then awakes */
 JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_init(JNIEnv * env, jobject obj, jint width, jint height) {
-    // Make sure device is not accidently rendered in portrait
-    if (width > height) {
-        if (game == NULL) {
-            // Create game instance if none have been created
-            game = new Game(std::string(&package_name), width, height);
-            game->setupGLContext(width, height);
-        }
-        else {
-            // resetup OpenGL going out of context (eg. Phone sleep)
-            game->setupGLContext(width, height);
-        }
+    if (game == NULL) {
+        // Create game instance if none have been created
+        game = new Game(std::string(&package_name), width, height);
     }
+
+    // resetup OpenGL going out of context (eg. Phone sleep)
+    game->setupGLContext(width, height);
 }
 
 JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_draw(JNIEnv * env, jobject obj) {

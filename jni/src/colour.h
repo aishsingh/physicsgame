@@ -17,6 +17,7 @@ class Colour {
         static vector<float> getColourData(int vertex_count, Colour colour);
 
         static Colour getColour(Theme theme);
+        static Colour transformHue(Colour &in, float hue);
 
         /* Ctor
            - Convert RGBA values into a Colour type */

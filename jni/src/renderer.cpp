@@ -86,10 +86,11 @@ GLuint Renderer::createProgram(const char *pVertexSource, const char *pFragmentS
 }
 
 void Renderer::clearScreen() {
-    float bg = 0.75f;
+    Colour bg = Colour(0.918f, 0.629f, 0.512f, 1.0f);
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
-    // glClearColor(bg, bg, bg, 1.0f);
-    glClearColor(0.918f, 0.629f, 0.512f, 1.0f);
+    // bg = Colour::transformHue(bg, 0.1f);
+    glClearColor(bg.r, bg.g, bg.b, bg.a);
+
     checkGlError("glClearColor");
     glClear(GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
