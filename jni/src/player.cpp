@@ -67,7 +67,6 @@ void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler 
         }
     }
     else if (_action == Action::STILL) {
-        PhysicsEngine::updatePhysics(*this, g_objs);
         _on_planet->anchorObject(this);
     }
 }
