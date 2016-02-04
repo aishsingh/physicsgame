@@ -8,7 +8,7 @@
 Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
     _rot_offset_angle = 0.0f;
     _on_planet = NULL;
-    // _on_planets_count = 0;
+    _facing = LEFT;
 }
 Player::~Player() { }
 
@@ -42,8 +42,14 @@ vector<float> Player::getVerticeData() {
      * The vshader rotates the pos, so the same rotation is applyed here */
     Point2D mid_bottom((vec[2] + vec[6])/2, (vec[3] + vec[7])/2);
     float rad_angle = getRotAngle()*PI/180.0f;
+
     // Offset trail pos so it comes out from the bottom of the spaceman's jet
-    Point2D trail_off(30, 30);
+    Point2D trail_off;
+    if (_facing == LEFT)
+        trail_off = Point2D(-30, 30);
+    else
+        trail_off = Point2D(30, 30);
+
     mid_bottom.setX(mid_bottom.getX() - trail_off.getX());
     mid_bottom.setY(mid_bottom.getY() - trail_off.getY());
     _base = Point2D(mid_bottom.getX()*cos(rad_angle) - mid_bottom.getY()*sin(rad_angle), 

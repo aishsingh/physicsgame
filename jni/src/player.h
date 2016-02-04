@@ -15,6 +15,7 @@
 
 class Player: public Object {
     protected:
+        Dir _facing;
         Action::Action _action;
         Point2D _base; // Current pos of the bottom of the player after rotations
         float _rot_offset_angle;

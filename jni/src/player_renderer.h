@@ -4,13 +4,14 @@
 #include <GLES2/gl2.h>
 #include "asset_renderer.h"
 #include "camera.h"
+#include "direction.h"
 
 class PlayerRenderer: public AssetRenderer {
     private:
         GLuint _vColor_handle;
 
     public:
-        void render(vector<float> vertices, Colour theme_col, vector<float> tex_vertices, GLuint texture_id, float angle, GLenum mode);
+        void render(vector<float> vertices, Colour theme_col, vector<float> tex_vertices, GLuint texture_id, float angle, Dir face, GLenum mode);
         void disableAttributes();
 
         /* Ctor - Init Shaders */

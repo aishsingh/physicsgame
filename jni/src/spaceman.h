@@ -14,7 +14,6 @@
 
 class Spaceman: public Player {
     private:
-        Dir _facing;
         int _frame;
         Theme _colour_theme; // Changes the colour scheme of the boxes and other UI
         Trail _trail;
