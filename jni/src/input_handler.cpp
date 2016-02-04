@@ -50,9 +50,12 @@ void InputHandler::touchMove(float x, float y, unsigned int index) {
 
     if (_nav_active && _nav_touch_index == index) {
         vector<Planet*> now_orbiting = _user->getOrbitingPlanets();
+
         // Reset automatically when player goes in/out of a planet
         bool planets_changed = false;
-        if (now_orbiting.size() == _nav_started_on_planets.size()) {
+        if (now_orbiting.size() != _nav_started_on_planets.size())
+            planets_changed = true;
+        else {
             for (int i=0; i<(int)now_orbiting.size(); i++) {
                 // if (!(std::find(now_orbiting.begin(), now_orbiting.end(), _nav_started_on_planets.at(i)) != now_orbiting.end())) {
                 if (now_orbiting.at(i) != _nav_started_on_planets.at(i)) {
@@ -67,7 +70,7 @@ void InputHandler::touchMove(float x, float y, unsigned int index) {
 
         float length = (_nav_axis == HORI) ? x - _nav_starting_pt.getX() : 
                                              y - _nav_starting_pt.getY();
-        float nav_angle = _nav_starting_angle + length;
+        float nav_angle = _nav_starting_angle + (length/1.5);
         float change_in_angle = _nav_starting_real_angle - _user->getRealRotAngle();
         float net_angle = _user->getRealRotAngle() - nav_angle + change_in_angle;
 
