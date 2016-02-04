@@ -8,6 +8,7 @@
 Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
     _rot_offset_angle = 0.0f;
     _on_planet = NULL;
+    _last_visited_planet = NULL;
     _facing = LEFT;
 }
 Player::~Player() { }
@@ -70,6 +71,7 @@ void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler 
             _action = Action::STILL;
             _orbiting_planets.clear(); // only keep track of the planet the player is on
             _orbiting_planets.push_back(_on_planet); // only keep track of the planet the player is on
+            _last_visited_planet = _on_planet;
         }
     }
     else if (_action == Action::STILL) {
@@ -96,7 +98,6 @@ void Player::drawStats(ObjRenderer* rend, vector<Planet*> *g_objs) {
                  0.0f,
                  GL_LINES);
 }
-
 
 void Player::applyGravity(vector<Planet*> *g_objs) {
     PhysicsEngine::applyGravityTo(*this, &_orbiting_planets);
@@ -157,4 +158,14 @@ Action::Action Player::getAction() {
 
 void Player::setAction(Action::Action act) {
     _action = act;
+}
+
+void Player::updateDir() {
+    if (_orbiting_planets.size() == 1) {
+        float nav_angle = getRotAngleOffset();
+        if (nav_angle > 45.0f && nav_angle < 90.0f)
+            _facing = LEFT;
+        else if (nav_angle < -45.0f && nav_angle > -90.0f)
+            _facing = RIGHT;
+    }
 }

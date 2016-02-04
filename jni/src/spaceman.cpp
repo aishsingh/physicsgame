@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <algorithm>
 #include "spaceman.h"
 #include "game.h"
 #include "point2d.h"
@@ -108,10 +109,7 @@ void Spaceman::update() {
                 _base.getY(), 
                 360 - getRotAngle(), 
                 _colour_theme);
-
     // }
-
-
 }
 
 void Spaceman::applyGravity(vector<Planet*> *g_objs) {

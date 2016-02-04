@@ -20,6 +20,7 @@ class Player: public Object {
         Point2D _base; // Current pos of the bottom of the player after rotations
         float _rot_offset_angle;
         Planet* _on_planet;
+        Planet* _last_visited_planet;
         float _closest_planet_disp;
         // unsigned _on_planets_count;
         vector<Planet*> _orbiting_planets;
@@ -31,11 +32,12 @@ class Player: public Object {
         void drawStats(ObjRenderer *rend, vector<Planet*> *g_objs);
         vector<float> getVerticeData();
 
-        // Update player based on its current action
-        virtual void update() = 0; 
+        virtual void update() = 0; // Update player based on its current action
+        void updateDir();  // Update player facing direction
         virtual void applyGravity(vector<Planet*> *g_objs);
         virtual void resetTime(float t);
 
+        /* Getters / Setters */
         Action::Action getAction();
         void setAction(Action::Action act);
         float getClosestPlanetDisp() const;

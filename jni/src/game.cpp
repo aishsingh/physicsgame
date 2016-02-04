@@ -226,7 +226,7 @@ void Game::draw() {
 }
 
 void Game::respondToInput() {
-    // Check if there is a touch that should cause an action
+    // Check if there is a touch that should cause an player action
     int touch_count = input.getCount();
     bool nav_active = input.isNavActive();
     if ((!nav_active && touch_count > 0) || (nav_active && touch_count > 1)) {
@@ -244,6 +244,10 @@ void Game::respondToInput() {
             _previous_trail_update = cur_update;
         }
     }
+
+    // update user's facing direction
+    if (nav_active)
+        _user.updateDir();
 }
 
 void Game::applyGravity() {
