@@ -4,6 +4,8 @@
 #include "log.h"
 
 #define OUT_touch_events false
+#define OUT_nav_status false
+
 
 InputHandler::InputHandler(bool nav_left_hand, Comp nav_axis, Player *user, Camera *cam) : _user(user), _cam(cam), _nav_axis(nav_axis), _nav_left_hand(nav_left_hand) { 
     _nav_active = false;
@@ -21,10 +23,14 @@ void InputHandler::restartValues(Point2D pos, int index) {
 }
 
 void InputHandler::touchDown(float x, float y, unsigned int index) {
+    touchPointerDown(x, y, index);
+}
+
+void InputHandler::touchPointerDown(float x, float y, unsigned int index) {
     if (OUT_touch_events)
         LOGI("touch down %d", index);
+
     _touches.push_back(Touch(x, y));
-    // _touches.insert(_touches.begin()+index, Touch(x, y));
 
     // Make sure touch pos was inside the navigation area
     Rect nav_rect = 
@@ -35,20 +41,19 @@ void InputHandler::touchDown(float x, float y, unsigned int index) {
         if (!_nav_active) {
             restartValues(Point2D(x, y), index);
             _nav_active = true;
+            if (OUT_nav_status)
+                LOGI("nav active %i", _nav_touch_index);
         }
     }
-}
-
-void InputHandler::touchPointerDown(float x, float y, unsigned int index) {
-    touchDown(x, y, index);
 }
 
 void InputHandler::touchMove(float x, float y, unsigned int index) {
     if (OUT_touch_events)
         LOGI("touch move %d, x: %.2f, y: %.2f", index, x, y);
+
     _touches.at(index).pos = Point2D(x, y);
 
-    if (_nav_active && _nav_touch_index == index) {
+    if (_nav_active && (_nav_touch_index == index || _touches.size() == 1)) {
         vector<Planet*> now_orbiting = _user->getOrbitingPlanets();
 
         // Reset automatically when player goes in/out of a planet
@@ -57,7 +62,6 @@ void InputHandler::touchMove(float x, float y, unsigned int index) {
             planets_changed = true;
         else {
             for (int i=0; i<(int)now_orbiting.size(); i++) {
-                // if (!(std::find(now_orbiting.begin(), now_orbiting.end(), _nav_started_on_planets.at(i)) != now_orbiting.end())) {
                 if (now_orbiting.at(i) != _nav_started_on_planets.at(i)) {
                     planets_changed = true;
                     break;
@@ -79,18 +83,20 @@ void InputHandler::touchMove(float x, float y, unsigned int index) {
 }
 
 void InputHandler::touchUp(unsigned int index) {
-    if (OUT_touch_events)
-        LOGI("touch up %d", index);
-    _touches.erase(_touches.begin() + index);
-
-    if (_nav_touch_index == index)
-        _nav_active = false;
-    else if (_nav_touch_index > index)
-        _nav_touch_index--;
+    touchPointerUp(index);
 }
 
 void InputHandler::touchPointerUp(unsigned int index) {
-    touchUp(index);
+    if (OUT_touch_events)
+        LOGI("touch up %d", index);
+
+    _touches.erase(_touches.begin() + index);
+
+    if (_nav_active && (_nav_touch_index == index || _touches.size() == 0)) {
+        _nav_active = false;
+        if (OUT_nav_status)
+            LOGI("nav not active %i", _nav_touch_index);
+    }
 }
 
 Point2D InputHandler::getTouchPos(unsigned int index) const {
