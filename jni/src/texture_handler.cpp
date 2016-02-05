@@ -3,6 +3,7 @@
 
 #define TEXTURE_LOAD_ERROR 0
 #define OUT_print_apk_contents false
+#define OUT_sprite_animation false
 
 zip_file* TextureHandler::_tmp_file(0);
 
@@ -36,7 +37,7 @@ void TextureHandler::loadAPK(const char *package_name) {
 
 void TextureHandler::loadTextures() {
     GLuint tex;
-    tex = loadTexFromPNG("assets/player.png");
+    tex = loadTexFromPNG("assets/spritesheets/spaceman_run.png");
     if (tex != TEXTURE_LOAD_ERROR)
         _textures.push_back(tex);
 
@@ -192,4 +193,62 @@ GLuint TextureHandler::loadTexFromPNG(const char* filename) {
 
 void TextureHandler::png_zip_read(png_structp png_ptr, png_bytep data, png_size_t length) {
     zip_fread(_tmp_file, data, length);
+}
+
+std::vector<float> TextureHandler::calcTexVerticesFromSpritesheet(float spritesheet_w, float spritesheet_h, int sprite_hori_count, int sprite_vert_count, int index, bool flip) {
+    std::vector<float> vert;
+    float sprite_w = spritesheet_w/sprite_hori_count;
+    float sprite_h = spritesheet_h/sprite_vert_count;
+
+    /* Texture coordinate origin is at the bottom left of the spritesheet
+         ^
+         |
+       --|---->
+         |
+     */
+
+    int cell_x = 0;
+    int cell_y = sprite_vert_count-1;
+
+    if (index < sprite_hori_count)
+        cell_x = index;
+    else {
+        cell_y = sprite_hori_count - (index/sprite_hori_count);
+        cell_x = index - ((sprite_hori_count-cell_y)*sprite_hori_count);
+    }
+
+    if (OUT_sprite_animation)
+        LOGI("Sprite cell (%i, %i), index %i", cell_x, cell_y, index);
+
+    // convert to actual coordinates
+    cell_x *= sprite_w;
+    cell_y *= sprite_h;
+
+    // pts used to know the boundaries of the sprite (pts are on opposite corners)
+    Point2D pt1 = Point2D(cell_x/spritesheet_w, cell_y/spritesheet_h);
+    Point2D pt2 = Point2D((cell_x+sprite_w)/spritesheet_w, (cell_y+sprite_h)/spritesheet_h);
+
+    // flip texture horizontally
+    if (flip) {
+        float tex_left_vert[] = {
+            pt2.getX(), pt2.getY(),
+            pt2.getX(), pt1.getY(),
+            pt1.getX(), pt2.getY(),
+            pt1.getX(), pt1.getY()
+        };
+
+        vert = std::vector<float> (tex_left_vert, tex_left_vert + sizeof(tex_left_vert) / sizeof(float));
+    }
+    else {
+        float tex_default_vert[] = {
+            pt1.getX(), pt2.getY(),
+            pt1.getX(), pt1.getY(),
+            pt2.getX(), pt2.getY(),
+            pt2.getX(), pt1.getY()
+        };
+
+        vert = std::vector<float> (tex_default_vert, tex_default_vert + sizeof(tex_default_vert) / sizeof(float));
+    }
+    
+    return vert;
 }

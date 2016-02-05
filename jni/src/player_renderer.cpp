@@ -53,7 +53,7 @@ PlayerRenderer::PlayerRenderer(Camera *cam) : AssetRenderer(cam) {
     checkGlError("glGetUniformLocation(mMVP)");
 }
 
-void PlayerRenderer::render(vector<float> vertices, Colour theme_col, vector<float> tex_vertices, GLuint texture_id, float angle, Dir face, GLenum mode) {
+void PlayerRenderer::render(vector<float> vertices, Colour theme_col, vector<float> tex_vertices, GLuint texture_id, float angle, GLenum mode) {
     // Change renderer
     glUseProgram(_program);
     checkGlError("glUseProgram");

@@ -72,9 +72,9 @@ void Game::setupObjs() {
 
     // Setup planets
     try {
-        _planets.push_back(new Planet((w/2) + 100, (h/2) - 150, 400));
+        _planets.push_back(new Planet((w/2) + 300, (h/2) - 150, 400));
         _planets.push_back(new Planet((w/2) - 800, (h/2) - 150, 300));
-        _planets.push_back(new Planet((w/2) - 550, (h/2) - 1200, 550));
+        _planets.push_back(new Planet((w/2) - 550, (h/2) - 1500, 550));
         _planets.push_back(new Planet((w/2) - 50, (h/2) + 850, 150));
     }
     catch (std::exception &e) {

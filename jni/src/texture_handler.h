@@ -9,6 +9,7 @@
 #include <zip.h>
 #include <png.h>
 #include <vector>
+#include "rect.h"
 
 typedef enum TextureName {
     TEX_SPACEMAN=0
@@ -28,6 +29,7 @@ class TextureHandler {
         void loadAPK(const char *package_name);
         void loadTextures();
         GLuint getTex(TextureName name);
+        static std::vector<float> calcTexVerticesFromSpritesheet(float spritesheet_w, float spritesheet_h, int sprite_hori_count, int sprite_vert_count, int index, bool flip = false);
 
         /* Ctor / Dtor */
         TextureHandler();

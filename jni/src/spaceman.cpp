@@ -9,7 +9,7 @@
 
 Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,105,125.3), _trail(22) {
     _action = Action::FLYING;
-    _frame = 0;           // TODO not implemented yet
+    _frame = 25;
     _colour_theme = theme;
     setRotAngle(0.0f);
 }
@@ -50,37 +50,12 @@ void Spaceman::changeTheme(Theme &old_theme) {
 }
 
 void Spaceman::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler *tex) {
-    vector<float> tex_vert;
-
-    // flip texture horizontally
-    if (_facing == LEFT) {
-        float tex_left_vert[] = {
-            1.0, 1.0,
-            1.0, 0.0,
-            0.0, 1.0,
-            0.0, 0.0
-        };
-
-        tex_vert = vector<float> (tex_left_vert, tex_left_vert + sizeof(tex_left_vert) / sizeof(float));
-    }
-    else {
-        float tex_default_vert[] = {
-            0.0, 1.0,
-            0.0, 0.0,
-            1.0, 1.0,
-            1.0, 0.0
-        };
-
-        tex_vert = vector<float> (tex_default_vert, tex_default_vert + sizeof(tex_default_vert) / sizeof(float));
-    }
-
     // Render
     rend->render(getVerticeData(),
                  Colour::getColour(_colour_theme),
-                 tex_vert,
+                 TextureHandler::calcTexVerticesFromSpritesheet(1925, 2760, 5, 6, _frame, (_facing != RIGHT)),
                  tex->getTex(TEX_SPACEMAN), 
                  getRotAngle(),
-                 _facing, 
                  GL_TRIANGLE_STRIP);
 
     Player::draw(rend, g_objs, tex);
@@ -110,6 +85,11 @@ void Spaceman::update() {
                 360 - getRotAngle(), 
                 _colour_theme);
     // }
+    
+        if (_frame < 29)
+             _frame++;
+        else
+            _frame = 0;
 }
 
 void Spaceman::applyGravity(vector<Planet*> *g_objs) {
