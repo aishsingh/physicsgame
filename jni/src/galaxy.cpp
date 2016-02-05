@@ -5,7 +5,7 @@
 
 Galaxy::Galaxy() {
     // Populate the screen
-    populate();
+    populate_stars(4000);
 }
 
 void Galaxy::draw(ObjRenderer *rend) {
@@ -22,8 +22,9 @@ void Galaxy::draw(ObjRenderer *rend) {
     }
 }
 
-void Galaxy::populate() {
-    for (int i=0; i<=5000; i++) {
-        _stars.push_back(new Star(Math::genRand(-5000, 5000), Math::genRand(-5000, 5000), Math::genRand(0.0f, 360.0f), Math::genRand(5.0f, 25.0f)));
+void Galaxy::populate_stars(int count) {
+    float pos_range = 5000;  // 10,000x10,000 area
+    for (int i=0; i<=count; i++) {
+        _stars.push_back(new Star(Math::genRand(-pos_range, pos_range), Math::genRand(-pos_range, pos_range), Math::genRand(0.0f, 360.0f), Math::genRand(5.0f, 25.0f)));
     }
 }

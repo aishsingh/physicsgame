@@ -15,6 +15,7 @@ class Star: public Object {
         StarType _type;
         float _scale;
         float _scale_speed;
+        int _layer;
         bool _growing;
 
     public:

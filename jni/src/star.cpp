@@ -5,6 +5,7 @@
 Star::Star(float x, float y, float angle, float diameter) : Object(x,y,diameter,diameter,angle) {
     // randonly gen a type
     _type = static_cast<StarType>(Math::genRand(0, 2));
+    _layer = Math::genRand(0, 3);
 
     _scale = Math::genRand(0.0f, 1.0f);
     _scale_speed = Math::genRand(0.002f, 0.02f);
@@ -20,10 +21,18 @@ float Star::getScale() const {
 }
 
 void Star::draw(ObjRenderer *rend) {
+    float scale_offset = 0;
+    
+    if (_layer == 1)
+        scale_offset = 0.04;
+    else if (_layer == 2)
+        scale_offset = 0.08f;
+
     rend->render(Shape::genCircleVertices(getCentre(), (getWidth()/2)*_scale, getRotAngle(), 5),
                  Colour(1.0, 1.0, 1.0, 1.0),
                  getRotAngle(),
-                 GL_TRIANGLE_FAN);
+                 GL_TRIANGLE_FAN,
+                 scale_offset);
 
     // Scale
     if (_type == SHINING)

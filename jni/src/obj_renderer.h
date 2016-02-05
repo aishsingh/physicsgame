@@ -12,7 +12,7 @@ class ObjRenderer: public Renderer {
         Camera *_cam;
 
     public:
-        void render(vector<float> vertices, Colour colour, float angle, GLenum mode);
+        void render(vector<float> vertices, Colour colour, float angle, GLenum mode, float scale_offset = 0);
         void disableAttributes();
         Camera* getCam() const;
 

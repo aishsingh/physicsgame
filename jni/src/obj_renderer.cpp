@@ -35,7 +35,7 @@ ObjRenderer::ObjRenderer(Camera *cam) : _cam(cam) {
     checkGlError("glGetUniformLocation(mMVP)");
 }
 
-void ObjRenderer::render(vector<float> vertices, Colour colour, float angle, GLenum mode) {
+void ObjRenderer::render(vector<float> vertices, Colour colour, float angle, GLenum mode, float scale_offset) {
     // Change renderer
     glUseProgram(_program);
     checkGlError("glUseProgram");
@@ -56,7 +56,7 @@ void ObjRenderer::render(vector<float> vertices, Colour colour, float angle, GLe
     view_mat = glm::rotate(view_mat, 
                            static_cast<float>(_cam->getRotAngle()*PI/180), 
                            glm::vec3(0.0f, 0.0f, 1.0f));
-    view_mat = glm::scale(view_mat, glm::vec3(_cam->getScale(), _cam->getScale(), _cam->getScale()));
+    view_mat = glm::scale(view_mat, glm::vec3(_cam->getScale() + scale_offset, _cam->getScale() + scale_offset, _cam->getScale() + scale_offset));
     view_mat = glm::translate(view_mat, glm::vec3(-anchor_pt.getX(), -anchor_pt.getY(), 0));
 
     // MVP

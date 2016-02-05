@@ -9,13 +9,14 @@ class Galaxy {
     private:
         std::vector<Star*> _stars;
 
+        void populate_stars(int count);
+
     public:
         /* Ctor */
         Galaxy();
         
         /* Draw all stars */
         void draw(ObjRenderer *rend);
-        void populate();
 };
 
 #endif /* GALAXY_H */
