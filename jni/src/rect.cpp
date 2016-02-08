@@ -7,6 +7,13 @@ Rect::Rect(float x, float y, float width, float height) {
     _width  = width;
     _height = height;
 }
+Rect::Rect(Point2D pt1, Point2D pt2) {
+    _x = pt1.getX();
+    _y = pt1.getY();
+    _width = pt2.getX() - pt1.getX();
+    _height = pt2.getY() - pt1.getY();
+}
+
 Rect::~Rect() { }
 
 float Rect::getX() const {

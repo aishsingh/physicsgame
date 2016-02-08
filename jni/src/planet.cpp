@@ -3,6 +3,8 @@
 #include "colour.h"
 #include "math.h"
 #include "shape.h"
+#include "collision.h"
+#include "log.h"
 
 const int Planet::_SIDES(15);
 const int Planet::_GRAV_SIDES(45);
@@ -12,7 +14,7 @@ const bool Planet::_DRAW_NORMALS(true);
 
 Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
     _colour = Colour(0.9294f, 0.898f, 0.88627f, 1.0f);
-    _rot_speed = powf(0.4f, (getWidth()/200));
+    _rot_speed = 0;//powf(0.4f, (getWidth()/200));
     _grav_radius_offset = 120.0f;
     _grav_speed = 5.5f;
 
@@ -72,7 +74,7 @@ void Planet::drawGrav(ObjRenderer *rend) {
     }
 }
 
-void Planet::drawStats(ObjRenderer *rend, Rect circle) {
+void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
     vector<float> end_vertices;
     vector<float> proj_vertices;
     vector<float> min_vertices;
@@ -81,6 +83,7 @@ void Planet::drawStats(ObjRenderer *rend, Rect circle) {
         vector<float> mid_vertices;
         vector<float> normal;
         vector<float> normal_vertices;
+        vector<float> v_regions_vertices;
         for (int i=0; i<(int)_vertices.size(); i+=2) {
             Point2D A = Point2D(_vertices.at(i), _vertices.at(i+1));
             Point2D B = (i+2 < (int)_vertices.size()) ? 
@@ -110,11 +113,21 @@ void Planet::drawStats(ObjRenderer *rend, Rect circle) {
             //     normal_vertices.push_back(mid.getY() + 100*unit_vec.getY());
             // }
             // else {
-                normal_vertices.push_back(mid.getX());
-                normal_vertices.push_back(mid.getY());
-                normal_vertices.push_back(mid.getX() + 50*unit_vec.getX());
-                normal_vertices.push_back(mid.getY() + 50*unit_vec.getY());
+            normal_vertices.push_back(mid.getX());
+            normal_vertices.push_back(mid.getY());
+            normal_vertices.push_back(mid.getX() + 50*unit_vec.getX());
+            normal_vertices.push_back(mid.getY() + 50*unit_vec.getY());
 
+            if (on_planet) {
+                v_regions_vertices.push_back(A.getX());
+                v_regions_vertices.push_back(A.getY());
+                v_regions_vertices.push_back(A.getX() + 110*unit_vec.getX());
+                v_regions_vertices.push_back(A.getY() + 110*unit_vec.getY());
+                v_regions_vertices.push_back(B.getX());
+                v_regions_vertices.push_back(B.getY());
+                v_regions_vertices.push_back(B.getX() + 110*unit_vec.getX());
+                v_regions_vertices.push_back(B.getY() + 110*unit_vec.getY());
+            }
         }
 
         // draw normals
@@ -134,6 +147,38 @@ void Planet::drawStats(ObjRenderer *rend, Rect circle) {
                 Colour::getColour(BLUE),
                 getRotAngle(), 
                 GL_LINES);
+
+        // Point2D ctr = Point2D(738.0f,1356.0f);
+
+        if (on_planet) {
+            LOGI("Region %i", collided_region);
+
+            // voronoi regions
+            rend->render(v_regions_vertices,
+                    Colour(0.2, 0.2, 0.2, 0.5),
+                    getRotAngle(), 
+                    GL_LINES);
+
+            // Highlight colliding region
+            if (collided_region > -1) {
+
+                vector<float> fvr_vertices;
+                fvr_vertices.push_back(v_regions_vertices.at(0+(8*collided_region)));
+                fvr_vertices.push_back(v_regions_vertices.at(1+(8*collided_region)));
+                fvr_vertices.push_back(v_regions_vertices.at(2+(8*collided_region)));
+                fvr_vertices.push_back(v_regions_vertices.at(3+(8*collided_region)));
+                fvr_vertices.push_back(v_regions_vertices.at(4+(8*collided_region)));
+                fvr_vertices.push_back(v_regions_vertices.at(5+(8*collided_region)));
+                fvr_vertices.push_back(v_regions_vertices.at(6+(8*collided_region)));
+                fvr_vertices.push_back(v_regions_vertices.at(7+(8*collided_region)));
+
+                // first vr
+                rend->render(fvr_vertices,
+                        Colour(0.2, 0.2, 0.2, 0.3),
+                        getRotAngle(), 
+                        GL_TRIANGLE_STRIP);
+            }
+        }
     }
 }
 

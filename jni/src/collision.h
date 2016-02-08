@@ -9,6 +9,12 @@
 #include "rect.h"
 #include "point2d.h"
 #include "object.h"
+#include "planet.h"
+
+// struct CollisionData {
+//     Planet* planet;
+//     int collision_side;
+// };
 
 class Collision {
     public:
@@ -20,7 +26,7 @@ class Collision {
 
         /* Circle and Polygon collision detection which also works while both shapes are rotating
          * rot_angle is needed to get the polygons current rotation angle */
-        static bool isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vertices);
+        static bool isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vertices, int *collided_region = NULL, Point2D *collided_unit_vector = NULL);
 };
 
 #endif /* COLLISION_H */

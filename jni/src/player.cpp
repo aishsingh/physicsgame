@@ -7,9 +7,13 @@
 
 Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
     _rot_offset_angle = 0.0f;
+    _running_speed = 6.0f;
     _on_planet = NULL;
     _last_visited_planet = NULL;
+    _width_offset = 0.0f;
+    _height_offset = 0.0f;
     _facing = LEFT;
+    _on_planet_region = -1;
 }
 Player::~Player() { }
 
@@ -27,8 +31,8 @@ vector<float> Player::getVerticeData() {
     // This is the new pos (x,y) after being transformed
     Point2D pt = Math::rotateObj(this);
 
-    float x = pt.getX();
-    float y = pt.getY();
+    float x = pt.getX() + _width_offset;
+    float y = pt.getY() + _height_offset;
     float w = getWidth();
     float h = getHeight();
 
@@ -64,7 +68,9 @@ void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler 
     if (_action == Action::FLYING || _action == Action::LANDING) {
         PhysicsEngine::updatePlayerOrbittingPlanets(*this, g_objs);
 
-        Planet* on_g_obj = PhysicsEngine::updatePhysics(*this, g_objs);
+        int collided_region = -1;
+        Point2D collided_unit_vector;
+        Planet* on_g_obj = PhysicsEngine::updatePhysics(*this, g_objs, &collided_region, &collided_unit_vector);
         // if there actually was a collision
         _on_planet = on_g_obj;
         if (on_g_obj != NULL) {
@@ -72,10 +78,19 @@ void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler 
             _orbiting_planets.clear(); // only keep track of the planet the player is on
             _orbiting_planets.push_back(_on_planet); // only keep track of the planet the player is on
             _last_visited_planet = _on_planet;
+            // if (collided_region > -1)
+                _on_planet_region = collided_region;
         }
     }
-    else if (_action == Action::STILL) {
+    else if (_action == Action::STILL || _action == Action::RUNNING) {
         _on_planet->anchorObject(this);
+
+        int collided_side = -1;
+        Point2D collided_unit_vector;
+        PhysicsEngine::updatePhysics(*this, g_objs, &collided_side, &collided_unit_vector);
+        // if (collided_side > -1)
+            _on_planet_region = collided_side;
+            _running_unit_vector = collided_unit_vector;
     }
 }
 
@@ -130,6 +145,10 @@ Planet* Player::getOnPlanet() const {
 
 void Player::setOnPlanet(Planet* p) {
     _on_planet = p;
+}
+
+int Player::getOnPlanetRegion() const {
+    return _on_planet_region;
 }
 
 int Player::getOrbitingPlanetsCount() const {

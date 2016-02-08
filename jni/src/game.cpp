@@ -9,7 +9,7 @@
 #include "log.h"
 #include "math.h"
 
-#define SHOW_STATS false
+#define SHOW_STATS true
 #define OUT_OpenGL_Ver false
 #define TRAIL_UPDATE_INTERVAL 0.6f
 #define TRAIL_PART_PER_UPDATE 1
@@ -262,7 +262,7 @@ void Game::drawStats() {
 
     // planet stats
     for(int i=0; i<(int)_planets.size(); i++)
-        _planets.at(i)->drawStats(_obj_rend, _user);
+        _planets.at(i)->drawStats(_obj_rend, (_planets.at(i) == _user.getOnPlanet()), _user.getOnPlanetRegion());
 }
 
 /* Static Members */

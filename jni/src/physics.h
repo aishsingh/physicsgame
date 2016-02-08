@@ -33,7 +33,7 @@ class PhysicsEngine {
 
     public:
         /* Updates all motion and returns true if the object landed on a planet */
-        static Planet* updatePhysics(Object &obj, vector<Planet*> *g_objs);
+        static Planet* updatePhysics(Object &obj, vector<Planet*> *g_objs, int *collided_region = NULL, Point2D *collided_unit_vector = NULL);
 
         /* Generated a suitable initial velocity using based on the angle the object is rotated in */
         static void genInitVel(Object &obj, float rot_angle, float min, float max, float offset);

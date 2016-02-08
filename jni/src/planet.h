@@ -40,7 +40,7 @@ class Planet: public Object {
         // Render planet
         virtual void draw(ObjRenderer *rend);
         virtual void drawGrav(ObjRenderer *rend);
-        void drawStats(ObjRenderer *rend, Rect circle);
+        void drawStats(ObjRenderer *rend, bool on_planet, int collided_region);
 
         // Update player based on its current action
         virtual void update(); 

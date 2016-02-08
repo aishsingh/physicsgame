@@ -19,10 +19,14 @@ class Player: public Object {
         Action::Action _action;
         Point2D _base; // Current pos of the bottom of the player after rotations
         float _rot_offset_angle;
+        float _running_speed;
         Planet* _on_planet;
         Planet* _last_visited_planet;
         float _closest_planet_disp;
-        // unsigned _on_planets_count;
+        float _width_offset;
+        float _height_offset;
+        int _on_planet_region;  // Region of the planet that the player is on
+        Point2D _running_unit_vector;
         vector<Planet*> _orbiting_planets;
 
     public:
@@ -44,6 +48,7 @@ class Player: public Object {
         void setClosestPlanetDisp(float d);
         Planet* getOnPlanet() const;
         void setOnPlanet(Planet* p);
+        int getOnPlanetRegion() const;
         int getOrbitingPlanetsCount() const;
         vector<Planet*> getOrbitingPlanets() const;
         void setOrbitingPlanets(vector<Planet*> p);

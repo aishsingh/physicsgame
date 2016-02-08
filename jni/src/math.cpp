@@ -4,6 +4,10 @@
 
 #define PI 3.14159265358979323846264
 
+float Math::distance(Point2D pt1, Point2D pt2) {
+    return sqrtf(powf(pt2.getX() - pt1.getX(), 2) + powf(pt2.getY() - pt1.getY(), 2));
+}
+
 Point2D Math::rotatePt(Point2D pt, float angle) {
     // Rotate
     float rad_angle = angle*PI/180.0f;

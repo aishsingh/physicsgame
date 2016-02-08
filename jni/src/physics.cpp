@@ -28,7 +28,11 @@ Motion PhysicsEngine::calcMotion(const Motion &motion) {
     return calc;
 }
 
-Planet* PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
+Planet* PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs, int *collided_region, Point2D *collided_unit_vector) {
+    /* If we dont care about the collided region or uv simplify the algorithm to speed things up.
+       This is used for non-complex objects such as the boxes in a players trail */
+    bool simple_mode = (collided_region == NULL || collided_unit_vector == NULL);
+
     int origin_x = 0;
     int origin_y = 0;
     Motion vert_comp = calcMotion(obj.vert_motion);
@@ -44,7 +48,22 @@ Planet* PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs) {
     // Check all planet collisions
     for (int i=0; i<(int)g_objs->size(); i++) {
         if (Collision::isBoundingBox(post_rect, *g_objs->at(i))) {
-            if (Collision::isCircleIntersPolygon(post_rect, g_objs->at(i)->getRotAngle(), g_objs->at(i)->getVertices())) {
+            bool collided = false;
+            if (simple_mode) {
+                if (Collision::isCircleIntersPolygon(post_rect, g_objs->at(i)->getRotAngle(), g_objs->at(i)->getVertices()))
+                    collided = true;
+            }
+            else {
+                int region = -1;
+                Point2D unit_vec;
+                if (Collision::isCircleIntersPolygon(post_rect, g_objs->at(i)->getRotAngle(), g_objs->at(i)->getVertices(), &region, &unit_vec)) {
+                    *collided_region = region;
+                    *collided_unit_vector = unit_vec;
+                    collided = true;
+                }
+            }
+
+            if (collided) {
                 obj.hori_motion.setTime(hori_comp.getTime());
                 obj.vert_motion.setTime(vert_comp.getTime());
                 obj.hori_motion.setVel(0.0f);

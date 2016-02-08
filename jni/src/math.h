@@ -13,6 +13,8 @@ using std::vector;
 
 class Math {
     public:
+        static float distance(Point2D pt1, Point2D pt2);
+
         /* Rotations */
         static Point2D rotatePt(Point2D pt, float angle);
         static Point2D rotateObj(Object *obj);

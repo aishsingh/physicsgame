@@ -27,6 +27,7 @@ class Rect {
 
         /* Ctor / Dtor */
         Rect(float x, float y, float width, float height);
+        Rect(Point2D pt1, Point2D pt2);
         virtual ~Rect();
 };
 
