@@ -17,6 +17,7 @@ extern "C" {
     JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_touchMove(JNIEnv * env, jobject obj, jfloat x, jfloat y, jint index);
     JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_touchPointerUp(JNIEnv * env, jobject obj, jint index);
     JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_touchUp(JNIEnv * env, jobject obj, jint index);
+    JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_doubleTap(JNIEnv * env, jobject obj, jfloat x, jfloat y);
     JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_setAppName(JNIEnv * env, jobject obj, jstring pkgname);
 };
 
@@ -62,6 +63,11 @@ JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_touchPointerUp(JNIEn
 JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_touchUp(JNIEnv * env, jobject obj, jint index) {
     if (game)
         game->input.touchUp(index);
+}
+
+JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_doubleTap(JNIEnv * env, jobject obj, jfloat x, jfloat y) {
+    if (game)
+        game->input.doubleTap(x, y);
 }
 
 JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_setAppName( JNIEnv * env, jobject obj, jstring pkgname ) {

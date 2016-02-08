@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.view.MotionEvent;
+import android.view.GestureDetector;
+import android.support.v4.view.GestureDetectorCompat;
 
 import java.io.File;
 
@@ -12,12 +14,14 @@ import java.io.File;
 public class OpenGLActivity extends Activity {
 
     OpenGLView mView;
+    private GestureDetectorCompat mDetector;
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         mView = new OpenGLView(getApplication());
 
         setContentView(mView);
+        mDetector = new GestureDetectorCompat(this, new MyGestureListener());
     }
 
     @Override protected void onPause() {
@@ -32,6 +36,7 @@ public class OpenGLActivity extends Activity {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
+        this.mDetector.onTouchEvent(e);
         int i = e.getActionIndex();
         float x = e.getX(i);
         float y = e.getY(i);
@@ -62,5 +67,19 @@ public class OpenGLActivity extends Activity {
 
         // Event was handled
         return true; 
+    }
+
+    class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onDown(MotionEvent e) { 
+            return true;
+        }
+        
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            /* Log.i("JNIPhysicsGame", "onDoubleTap: " + event.toString()); */
+            OpenGLLib.doubleTap(e.getX(), e.getY());
+            return true;
+        }
     }
 }

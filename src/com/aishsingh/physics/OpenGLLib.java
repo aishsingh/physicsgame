@@ -18,6 +18,7 @@ public class OpenGLLib {
      public static native void touchPointerDown(float x, float y, int index);
      public static native void touchPointerUp(int index);
      public static native void touchUp(int index);
+     public static native void doubleTap(float x, float y);
      public static native void setAppName(String pkgname);
 
 }

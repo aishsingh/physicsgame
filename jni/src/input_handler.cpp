@@ -1,6 +1,7 @@
 #include "input_handler.h"
 #include "collision.h"
 #include "game.h"
+#include "math.h"
 #include "log.h"
 
 #define OUT_touch_events false
@@ -96,6 +97,20 @@ void InputHandler::touchPointerUp(unsigned int index) {
         _nav_active = false;
         if (OUT_nav_status)
             LOGI("nav not active %i", _nav_touch_index);
+    }
+}
+
+void InputHandler::doubleTap(float x, float y) {
+    LOGI("Double Tap");
+
+    if (_user->getAction() == Action::STILL || _user->getAction() == Action::RUNNING) {
+        _user->setAction(Action::FLYING);
+
+        // Convert angle to anti-clockwise direction
+        float angle = Math::normalizeAngle(180 - _user->getRotAngle(), 0, 360);
+
+        // thrust up
+        PhysicsEngine::genInitVel(*_user, angle, 30, 35, 0);
     }
 }
 

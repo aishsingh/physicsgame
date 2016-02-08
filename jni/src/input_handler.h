@@ -47,6 +47,7 @@ class InputHandler {
         void touchMove(float x, float y, unsigned int index);
         void touchPointerUp(unsigned int index);
         void touchUp(unsigned int index);
+        void doubleTap(float x, float y);
 
         /* Ctor */
         InputHandler(bool nav_left_hand, Comp nav_axis, Player *user, Camera *cam);
