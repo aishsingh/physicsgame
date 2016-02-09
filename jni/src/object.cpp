@@ -15,3 +15,8 @@ void Object::setRotAngle(float angle) {
 Point2D Object::getPos() const {
     return Point2D(getX(), getY());
 }
+
+void Object::setPos(Point2D p) {
+    setX(p.getX());
+    setY(p.getY());
+}

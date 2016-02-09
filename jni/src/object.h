@@ -19,6 +19,7 @@ class Object: public Rect {
         virtual float getRotAngle() const;
         void setRotAngle(float angle);
         Point2D getPos() const;
+        void setPos(Point2D p);
 
         /* Ctor / Dtor */
         Object(float x, float y, float width, float height, float rot_angle=0.0f);

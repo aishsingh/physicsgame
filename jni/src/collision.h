@@ -23,6 +23,7 @@ class Collision {
         static bool isPtInRect(int x, int y, Rect rect);
         static bool isCircleIntersCircle(Rect circ1, Rect circ2);
         static bool isPtInCircle(Point2D pt, Rect circ);
+        static bool isPtInRhombus(Point2D pt, Point2D A, Point2D B, Point2D C, Point2D D);
 
         /* Circle and Polygon collision detection which also works while both shapes are rotating
          * rot_angle is needed to get the polygons current rotation angle */

@@ -11,10 +11,20 @@ class Point2D {
         float _y;
 
      public:
-        float getX() {return _x;};
-        float getY() {return _y;};
+        float getX() const {return _x;};
+        float getY() const {return _y;};
         void setX(float x) {_x=x;};
         void setY(float y) {_y=y;};
+
+        /* Operators */
+        Point2D operator-(const Point2D &in) { return Point2D(_x - in.getX(), _y - in.getY()); }
+        Point2D operator-(const float &in)   { return Point2D(_x - in, _y - in); }
+        Point2D operator+(const Point2D &in) { return Point2D(_x + in.getX(), _y + in.getY()); }
+        Point2D operator+(const float &in)   { return Point2D(_x + in, _y + in); }
+        Point2D operator*(const Point2D &in) { return Point2D(_x * in.getX(), _y * in.getY()); }
+        Point2D operator*(const float &in)   { return Point2D(_x * in, _y * in); }
+        Point2D operator/(const Point2D &in) { return Point2D(_x / in.getX(), _y / in.getY()); }
+        Point2D operator/(const float &in)   { return Point2D(_x / in, _y / in); }
 
         /* Ctor */
         Point2D() {_x=0.0f, _y=0.0f;};
