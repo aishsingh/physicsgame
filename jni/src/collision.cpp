@@ -2,7 +2,6 @@
 #include "collision.h"
 #include "physics.h"
 #include "math.h"
-#include "log.h"
 
 bool Collision::isBoundingBox(Rect box1, Rect box2) {
     return (box1.getX() < box2.getX() + box2.getWidth() &&
@@ -55,8 +54,8 @@ bool Collision::isPtInRhombus(Point2D pt, Point2D A, Point2D B, Point2D C, Point
     Point2D Q = (A + C)/2;                 // centre point
     float a = Math::distance(A, C);        // half-width (in the x-direction)
     float b = Math::distance(B, D);        // half-width (in the x-direction)
-    Point2D U = Math::getUnitVector(Math::getRightNormal(C, A));
-    Point2D V = Math::getUnitVector(Math::getRightNormal(D, B));
+    Point2D U = Math::getUnitVector(Math::getNormal(C, A));
+    Point2D V = Math::getUnitVector(Math::getNormal(D, B));
     Point2D W = pt - Q;
     float xabs = fabs(Math::dot(W, U));    // here W*U is the dot product of W and U
     float yabs = fabs(Math::dot(W, V));    // here W*V is the dot product of W and V
@@ -64,20 +63,24 @@ bool Collision::isPtInRhombus(Point2D pt, Point2D A, Point2D B, Point2D C, Point
     return (xabs/a + yabs/b <= 1);
 }
 
-bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vertices, int *collided_region, Point2D *collided_unit_vector) {
-    /* If we dont care about the collided region or uv simplify the algorithm to speed things up.
+bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vertices, CollisionData *data) {
+    /* If we dont care about the collided region or uv, simplify the algorithm to speed things up.
        This is used for non-complex objects such as the boxes in a players trail */
-    bool simple_mode = (collided_region == NULL || collided_unit_vector == NULL);
+    bool simple_mode = (data == NULL);
+    bool collided_region_found = false;
+
+    // Keep searching for furthest region or the closest depending on which way the user is facing at the time of collision
+    bool keep_searching = (simple_mode) ? false : (data->facing == LEFT);
 
     for (int i=0; i<(int)vertices.size(); i+=2) {
         // Vertices A,B represent both vertex ends of the current edge
         Point2D A = Point2D(vertices.at(i), vertices.at(i+1));
         Point2D B = (i+2 < (int)vertices.size()) ? 
-                Point2D(vertices.at(i+2), vertices.at(i+3)) :
-                Point2D(vertices.at(0), vertices.at(1));
+                    Point2D(vertices.at(i+2), vertices.at(i+3)) :
+                    Point2D(vertices.at(0), vertices.at(1));
 
         // Calc normal vector (perpendicular to AB)
-        Point2D N = Math::getRightNormal(A, B);
+        Point2D N = Math::getNormal(A, B);
 
         // Calc unit vector with axis parallel to the normal vector
         Point2D unit_vec = Math::getUnitVector(N);
@@ -88,8 +91,7 @@ bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<
 
         // Calc base of the circle
         Point2D circle_centre = Math::rotatePt(circle.getCentre(), rot_angle);  // needs to be rotated to work with rotated polygons
-        float offset = circle.getHeight()/2;  // offset needed to go from the centre to the base
-        Point2D base = circle_centre - (unit_vec*offset);
+        Point2D base = circle_centre - (unit_vec*(circle.getHeight()/2));  // height is only needed for the offset here as the player always automatically rotates towards the planet so it is parrallel to the normal
 
         // Calc difference between current poly edge and the circle base
         Point2D diff = mid - base;
@@ -100,12 +102,14 @@ bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<
         if (d*unit_vec.getX() > d || d*unit_vec.getY() > d)
             return false;
 
-        if (!simple_mode) {
+        if (!simple_mode && !collided_region_found) {
             // Calc if this edge is the collided region of the polygon
-            if (isPtInRhombus(circle.getCentre(), A, B, B + (unit_vec*110), A + (unit_vec*110))) {
-                *collided_region = i/2;
-                *collided_unit_vector = unit_vec;
-                // *collided_unit_vector = (i+2 < (int)vertices.size()) ? unit_vec : Point2D(unit_vec.getX(), -unit_vec.getY());
+            if (isPtInRhombus(base, A, B, B + (unit_vec*110), A + (unit_vec*110))) {
+                data->region = i/2;
+                data->unit_vec = unit_vec;
+
+                if (!keep_searching)
+                    collided_region_found = true;
             }
         }
     }

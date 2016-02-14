@@ -12,6 +12,7 @@
 #include "player.h"
 #include "rect.h"
 #include "point2d.h"
+#include "collision.h"
 
 using std::vector;
 
@@ -32,8 +33,10 @@ class PhysicsEngine {
         static Motion calcMotion(const Motion &motion);
 
     public:
-        /* Updates all motion and returns true if the object landed on a planet */
-        static Planet* updatePhysics(Object &obj, vector<Planet*> *g_objs, int *collided_region = NULL, Point2D *collided_unit_vector = NULL);
+        /* Updates all motion and returns true if the object landed on a planet.
+             data: Non-complex objects such as the boxes in a players trail only need to know if a collision occured, so this param is optional */
+        static void updatePhysics(Object *obj, vector<Planet*> *g_objs, CollisionData *data = NULL);
+        // static Planet* updatePhysics(Object &obj, vector<Planet*> *g_objs, int *collided_region = NULL, Point2D *collided_unit_vector = NULL);
 
         /* Generated a suitable initial velocity using based on the angle the object is rotated in */
         static void genInitVel(Object &obj, float rot_angle, float min, float max, float offset);

@@ -1,9 +1,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include "physics.h"
-#include "log.h"
 #include "game.h"
-#include "collision.h"
 #include "math.h"
 
 const float PhysicsEngine::_MAX_INIT_V(14.0f);
@@ -28,46 +26,39 @@ Motion PhysicsEngine::calcMotion(const Motion &motion) {
     return calc;
 }
 
-Planet* PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs, int *collided_region, Point2D *collided_unit_vector) {
-    /* If we dont care about the collided region or uv simplify the algorithm to speed things up.
-       This is used for non-complex objects such as the boxes in a players trail */
-    bool simple_mode = (collided_region == NULL || collided_unit_vector == NULL);
-
-    int origin_x = 0;
-    int origin_y = 0;
-    Motion vert_comp = calcMotion(obj.vert_motion);
-    Motion hori_comp = calcMotion(obj.hori_motion);
-
+void PhysicsEngine::updatePhysics(Object *obj, vector<Planet*> *g_objs, CollisionData *data) {
+    Motion vert_comp = calcMotion(obj->vert_motion);
+    Motion hori_comp = calcMotion(obj->hori_motion);
     Planet* collided_planet = NULL; // NULL means no collision
-    // Rect containing updated dimensions
-    Rect post_rect(obj.getX() + hori_comp.getDisp(),
-                     obj.getY() + vert_comp.getDisp(),
-                     obj.getWidth(),
-                     obj.getHeight());
+
+    // Genereate rect containing updated dimensions
+    Rect post_rect(obj->getX() + hori_comp.getDisp(),
+                   obj->getY() + vert_comp.getDisp(),
+                   obj->getWidth(),
+                   obj->getHeight());
 
     // Check all planet collisions
     for (int i=0; i<(int)g_objs->size(); i++) {
         if (Collision::isBoundingBox(post_rect, *g_objs->at(i))) {
             bool collided = false;
-            if (simple_mode) {
+            if (!data) {
                 if (Collision::isCircleIntersPolygon(post_rect, g_objs->at(i)->getRotAngle(), g_objs->at(i)->getVertices()))
                     collided = true;
             }
             else {
-                int region = -1;
-                Point2D unit_vec;
-                if (Collision::isCircleIntersPolygon(post_rect, g_objs->at(i)->getRotAngle(), g_objs->at(i)->getVertices(), &region, &unit_vec)) {
-                    *collided_region = region;
-                    *collided_unit_vector = unit_vec;
+                CollisionData tmp;
+                tmp.facing = data->facing;
+                if (Collision::isCircleIntersPolygon(post_rect, g_objs->at(i)->getRotAngle(), g_objs->at(i)->getVertices(), &tmp)) {
                     collided = true;
+                    *data = tmp;
                 }
             }
 
             if (collided) {
-                obj.hori_motion.setTime(hori_comp.getTime());
-                obj.vert_motion.setTime(vert_comp.getTime());
-                obj.hori_motion.setVel(0.0f);
-                obj.vert_motion.setVel(0.0f);
+                obj->hori_motion.setTime(hori_comp.getTime());
+                obj->vert_motion.setTime(vert_comp.getTime());
+                obj->hori_motion.setVel(0.0f);
+                obj->vert_motion.setVel(0.0f);
 
                 collided_planet = g_objs->at(i);
                 break;
@@ -75,17 +66,18 @@ Planet* PhysicsEngine::updatePhysics(Object &obj, vector<Planet*> *g_objs, int *
         }
     }
 
-    // No Collision
-    if (collided_planet == NULL) {
-        obj.setX(post_rect.getX());
-        obj.hori_motion.setTime(hori_comp.getTime());
-        obj.hori_motion.setVel(hori_comp.getVel());
-        obj.setY(post_rect.getY());
-        obj.vert_motion.setTime(vert_comp.getTime());
-        obj.vert_motion.setVel(vert_comp.getVel());
+    // No Collisions
+    // So actually update physics attributes
+    if (!collided_planet) {
+        obj->setX(post_rect.getX());
+        obj->hori_motion.setTime(hori_comp.getTime());
+        obj->hori_motion.setVel(hori_comp.getVel());
+        obj->setY(post_rect.getY());
+        obj->vert_motion.setTime(vert_comp.getTime());
+        obj->vert_motion.setVel(vert_comp.getVel());
     }
-
-    return collided_planet;
+    else if (data)  // if data was generated
+        data->planet = collided_planet;
 }
 
 void PhysicsEngine::genInitVel(Object &obj, float rot_angle, float min, float max, float offset) {

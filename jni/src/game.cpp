@@ -198,6 +198,33 @@ void Game::draw() {
 
     _player_rend->disableAttributes();
 
+    if (_user.getOnPlanet() != NULL) {
+        // Base Stat
+        vector<float> vertices;
+
+        Point2D circle_centre = Math::rotatePt(_user.getCentre(), _user.getOnPlanet()->getRotAngle());  // needs to be rotated to work with rotated polygons
+        float offset = _user.getHeight()/2;  // offset needed to go from the centre to the base
+        // Point2D base = circle_centre - (_user.getRunningUnitVector()*offset);
+        Point2D unit_vec = _user.getRunningUnitVector();
+        Point2D base = circle_centre - (unit_vec*(_user.getHeight()/2));  // height is only needed for the offset here as the player always automatically rotates towards the planet so it is parrallel to the normal
+        Point2D unit_vec2 = Point2D(-unit_vec.getY(), unit_vec.getX());
+
+        vertices.push_back(circle_centre.getX() + (unit_vec.getX()*(10)));
+        vertices.push_back(circle_centre.getY() + (unit_vec.getY()*(10)));
+        vertices.push_back(circle_centre.getX() - (unit_vec.getX()*(10)));
+        vertices.push_back(circle_centre.getY() - (unit_vec.getY()*(10)));
+
+        vertices.push_back(circle_centre.getX() + (unit_vec2.getX()*(10)));
+        vertices.push_back(circle_centre.getY() + (unit_vec2.getY()*(10)));
+        vertices.push_back(circle_centre.getX() - (unit_vec2.getX()*(10)));
+        vertices.push_back(circle_centre.getY() - (unit_vec2.getY()*(10)));
+
+        _obj_rend->render(vertices,
+                          Colour::getColour(PURPLE),
+                          0.0f,
+                          GL_LINES);
+    }
+
     // Render planets
     for(int i=0; i<(int)_planets.size(); i++)
         _planets.at(i)->draw(_obj_rend);

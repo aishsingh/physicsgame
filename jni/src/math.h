@@ -47,8 +47,7 @@ class Math {
         static float dot(Point2D vec1, Point2D vec2);
         static void project(Point2D axis, vector<float> vertices, float *min, float *max);
 
-        static Point2D getLeftNormal(Point2D A, Point2D B);
-        static Point2D getRightNormal(Point2D A, Point2D B);
+        static Point2D getNormal(Point2D A, Point2D B);
         static Point2D getUnitVector(Point2D normal);
 
         static Point2D rotatePtAroundPt(Point2D pt1, Point2D pt2, float angle);

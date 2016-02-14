@@ -23,8 +23,6 @@ class Player: public Object {
         Planet* _on_planet;
         Planet* _last_visited_planet;
         float _closest_planet_disp;
-        float _width_offset;
-        float _height_offset;
         int _on_planet_region;  // Region of the planet that the player is on
         Point2D _running_unit_vector;
         vector<Planet*> _orbiting_planets;
@@ -49,6 +47,7 @@ class Player: public Object {
         Planet* getOnPlanet() const;
         void setOnPlanet(Planet* p);
         int getOnPlanetRegion() const;
+        Point2D getRunningUnitVector() const;
         int getOrbitingPlanetsCount() const;
         vector<Planet*> getOrbitingPlanets() const;
         void setOrbitingPlanets(vector<Planet*> p);

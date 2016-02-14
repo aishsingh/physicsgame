@@ -4,7 +4,7 @@
 #include "math.h"
 #include "shape.h"
 #include "collision.h"
-#include "log.h"
+// #include "log.h"
 
 const int Planet::_SIDES(15);
 const int Planet::_GRAV_SIDES(45);
@@ -92,7 +92,7 @@ void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
             // Point2D C = Point2D(B.getY(), A.getX());
 
             // Normal vector (perpendicular to AB)
-            Point2D N = Math::getRightNormal(A, B);
+            Point2D N = Math::getNormal(A, B);
 
             normal.push_back(N.getX());
             normal.push_back(N.getY());
@@ -148,10 +148,8 @@ void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
                 getRotAngle(), 
                 GL_LINES);
 
-        // Point2D ctr = Point2D(738.0f,1356.0f);
-
         if (on_planet) {
-            LOGI("Region %i", collided_region);
+            // LOGI("Region %i", collided_region);
 
             // voronoi regions
             rend->render(v_regions_vertices,

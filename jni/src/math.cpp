@@ -70,11 +70,11 @@ vector<float> Math::getUnitVectors(vector<float> vertices) {
 
         if (i+2 < (int)vertices.size()) {
             B = Point2D(vertices.at(i+2), vertices.at(i+3));
-            uv = getUnitVector(getRightNormal(A, B));
+            uv = getUnitVector(getNormal(A, B));
         }
         else {
             B = Point2D(vertices.at(0), vertices.at(1));
-            uv = getUnitVector(getRightNormal(A, B));
+            uv = getUnitVector(getNormal(A, B));
         }
 
 
@@ -137,14 +137,7 @@ void Math::project(Point2D axis, vector<float> vertices, float *min, float *max)
 
 }
 
-Point2D Math::getLeftNormal(Point2D A, Point2D B) {
-    Point2D AB = Point2D(B.getX() - A.getX(), B.getY() - A.getY()); 
-
-    // Normal vector (perpendicular to the left side of AB)
-    return Point2D(-AB.getY(), AB.getX());
-}
-
-Point2D Math::getRightNormal(Point2D A, Point2D B) {
+Point2D Math::getNormal(Point2D A, Point2D B) {
     Point2D AB = Point2D(B.getX() - A.getX(), B.getY() - A.getY()); 
 
     // Normal vector (perpendicular to the right side of AB)
@@ -235,7 +228,7 @@ vector<float> Math::removeConcaveVertices(vector<float> vertices, vector<float> 
 
             Point2D A = Point2D(vertices.at(indexes[0]), vertices.at(indexes[1]));
             Point2D B = Point2D(vertices.at(indexes[4]), vertices.at(indexes[5]));
-            Point2D unit_vec = getUnitVector((backwards) ? getLeftNormal(A, B) : getRightNormal(A, B));
+            Point2D unit_vec = getUnitVector((backwards) ? getNormal(B, A) : getNormal(A, B));
 
             // Point2D new_mid = Point2D(vertices.at(indexes[2]) + (offset->at(indexes[2])*unit_vec.getX()), 
             //                           vertices.at(indexes[3]) + (offset->at(indexes[3])*unit_vec.getY()));

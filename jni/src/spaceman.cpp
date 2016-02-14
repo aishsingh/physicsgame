@@ -3,7 +3,6 @@
 #include "spaceman.h"
 #include "game.h"
 #include "point2d.h"
-#include "log.h"
 #include "physics.h"
 #include "math.h"
 
@@ -67,130 +66,55 @@ void Spaceman::drawTrail(ObjRenderer* rend, vector<Planet*> *g_objs) {
 }
 
 void Spaceman::update() {
-    if (_action == Action::STILL) {
-        // TODO add running code here
-        // PhysicsEngine::genInitVel(*this, getRotAngle()+90, 1, 1.5, 0);
-        // hori_motion.setVel(hori_motion.getVel() + 1.0f);
-        // if (_action != Action::FLYING) 
-        // _action = Action::FLYING;
-
-        _action = Action::RUNNING;
-    }
-    else if (_action == Action::RUNNING) {
-        if (_on_planet_region == -1) {
-            float speed = (_on_planet->getWidth()/400) * ((_facing == RIGHT) ? _running_speed : -_running_speed);
-            Point2D pt = Math::rotatePtAroundPt(_on_planet->getCentre(), getCentre(), speed);
-
-            // Point2D offset_ctr = Point2D(fabs(getCentreX() - _on_planet->getCentreX()) - _on_planet->getWidth(),
-            //                              fabs(getCentreY() - _on_planet->getCentreY()) - _on_planet->getHeight());
-            //
-            // setX(pt.getX() - ((getWidth() + offset_ctr.getX())/2));
-            // setY(pt.getY() - ((getHeight() + offset_ctr.getY())/2));
-            setX(pt.getX() - (getWidth()/2));
-            setY(pt.getY() - (getHeight()/2));
+    switch (_action) {
+        case Action::STILL: {
+            _action = Action::RUNNING;
+            break;
         }
-        else {
-            if (_facing == RIGHT) {
-                setX(getX() + (_running_speed*-_running_unit_vector.getY()));
-                setY(getY() + (_running_speed*_running_unit_vector.getX()));
+
+        case Action::RUNNING: {
+            if (_on_planet_region == -1) {
+                float speed = ((_facing == RIGHT) ? _running_speed : -_running_speed)/((_on_planet->getWidth()/150)*2);
+                Point2D pt = Math::rotatePtAroundPt(_on_planet->getCentre(), getCentre(), speed);
+
+                setX(pt.getX() - (getWidth()/2));
+                setY(pt.getY() - (getHeight()/2));
             }
             else {
-                setX(getX() + (_running_speed*_running_unit_vector.getY()));
-                setY(getY() + (_running_speed*-_running_unit_vector.getX()));
+                if (_facing == RIGHT) {
+                    setX(getX() + (_running_speed*-_running_unit_vector.getY()));
+                    setY(getY() + (_running_speed*_running_unit_vector.getX()));
+                }
+                else {
+                    setX(getX() + (_running_speed*_running_unit_vector.getY()));
+                    setY(getY() + (_running_speed*-_running_unit_vector.getX()));
+                }
             }
+            break;
         }
 
+        case Action::FLYING:
+        case Action::LANDING: {
+            // Convert angle to anti-clockwise direction
+            float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
 
-        // TODO will need to add an offset to rep the disp from the centre
-        // aswell as a func that realigns the player to the normal
+            // thrust up
+            PhysicsEngine::genInitVel(*this, angle, 1, 1.5, 0);
+            resetTime(Game::getElapsedTime());
+            _trail.buildTrail(_base.getX(), 
+                              _base.getY(), 
+                              360 - getRotAngle(), 
+                              _colour_theme);
+            break;
 
-        // Point2D offset_ctr = Point2D((getCentreX() - _on_planet->getCentreX()),
-        //                              (getCentreY() - _on_planet->getCentreY()));
-
-        // Convert angle to anti-clockwise direction
-        // float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
-        //
-        // // thrust up
-        // PhysicsEngine::genInitVel(*this, angle, 1, 1.5, 0);
-        // resetTime(Game::getElapsedTime());
-        // _trail.buildTrail(_base.getX(), 
-        //                   _base.getY(), 
-        //                   360 - getRotAngle(), 
-        //                   _colour_theme);
-        //
-        //
-        // float disp = Math::getHypotenuse(fabs(getCentreX() - _on_planet->getCentreX()),
-        //                                  fabs(getCentreY() - _on_planet->getCentreY()));
-        //
-        // // _width_offset = (_on_planet->getWidth()/2) - offset_ctr.getX();
-        // // _height_offset = (_on_planet->getHeight()/2) - offset_ctr.getY();
-        // LOGI("disp %.3f", disp);
-
-        // float x = getWidth() - offset_ctr.getX();
-        // float y = getHeight() - offset_ctr.getY();
-        // if (x > )
-
-        // setX(getX() + x);
-        // setY(getY() + y);
-
-        // LOGI("(%.2f, %.2f), %.2f", offset_ctr.getX(), offset_ctr.getY(), _closest_planet_disp);
-        //
-        // setX(pt.getX() - offset_ctr.getX());
-        // setY(pt.getY() - offset_ctr.getY());
-
-        // Convert angle to anti-clockwise direction
-        // float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
-        // vector<Planet*> g_objs = getOrbitingPlanets();
-
-        // thrust up
-        // PhysicsEngine::genInitVel(*this, angle, 1.2, 1.2, 0);
-        // PhysicsEngine::genInitVel(*this, angle + ((_facing == RIGHT) ? -90 : 90), 1.5, 1.5, 0);
-        // PhysicsEngine::updatePhysics(*this, &g_objs);
-        // resetTime(Game::getElapsedTime());
-
-        // float x = 0;
-        // float y = 0;
-        // PhysicsEngine::splitValueFromAngle(_running_speed, getRotAngle()+90, &x, &y);
-        //
-        // setX(getX() - x);
-        // setY(getY() + y);
-        
-
-        // vector<float> vertices = getVerticeData();
-
-        
-
+        }
     }
-    
-    if (_action == Action::FLYING || _action == Action::LANDING){
-        // Convert angle to anti-clockwise direction
-        float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
-
-        // thrust up
-        PhysicsEngine::genInitVel(*this, angle, 1, 1.5, 0);
-        resetTime(Game::getElapsedTime());
-        _trail.buildTrail(_base.getX(), 
-                          _base.getY(), 
-                          360 - getRotAngle(), 
-                          _colour_theme);
-    }
-
 
     // animate
     if (_frame < 29)
         _frame++;
     else
         _frame = 0;
-
-        // float disp = Math::getHypotenuse(fabs(getCentreX() - _on_planet->getCentreX()),
-                                         // fabs(getCentreY() - _on_planet->getCentreY()));
-
-        // _width_offset = (_on_planet->getWidth()/2) - offset_ctr.getX();
-        // _height_offset = (_on_planet->getHeight()/2) - offset_ctr.getY();
-        // LOGI("disp %.3f", disp);
-        // LOGI("(%.2f, %.2f)", getCentreX(), getCentreY());
-
-    // LOGI("action %s", Action::toString(_action).c_str());
 }
 
 void Spaceman::applyGravity(vector<Planet*> *g_objs) {
