@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "zip.h"
+#include "grav_object.h"
 #include "physics.h"
 #include "player.h"
 #include "planet.h"
@@ -34,7 +35,7 @@ class Game {
         // All players that are in the game
         // player[0] is the user
         vector<Player*> _players;
-        vector<Planet*> _planets;
+        vector<GravObject*> _g_objs;
 
         Spaceman _user;
         Galaxy _galaxy;

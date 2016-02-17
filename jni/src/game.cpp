@@ -50,8 +50,8 @@ Game::~Game() {
     // Clear all vectors
     for(int i=0; i<(int)_players.size(); i++)
         vector<Player*>().swap(_players);
-    for(int i=0; i<(int)_planets.size(); i++)
-        vector<Planet*>().swap(_planets);
+    for(int i=0; i<(int)_g_objs.size(); i++)
+        vector<GravObject*>().swap(_g_objs);
 }
 
 void Game::resetTime() {
@@ -72,10 +72,10 @@ void Game::setupObjs() {
 
     // Setup planets
     try {
-        _planets.push_back(new Planet((w/2) + 300, (h/2) - 150, 400));
-        _planets.push_back(new Planet((w/2) - 800, (h/2) - 150, 300));
-        _planets.push_back(new Planet((w/2) - 550, (h/2) - 1500, 550));
-        _planets.push_back(new Planet((w/2) - 50, (h/2) + 850, 150));
+        _g_objs.push_back(new Planet((w/2) + 300, (h/2) - 150, 400));
+        _g_objs.push_back(new Planet((w/2) - 800, (h/2) - 150, 300));
+        _g_objs.push_back(new Planet((w/2) - 550, (h/2) - 1500, 550));
+        _g_objs.push_back(new Planet((w/2) - 50, (h/2) + 850, 150));
     }
     catch (std::exception &e) {
         LOGE("Error creating planets: %s", e.what());
@@ -183,18 +183,18 @@ void Game::draw() {
     _galaxy.draw(_obj_rend);
 
     // Render planets gravity area
-    for(int i=0; i<(int)_planets.size(); i++)
-        _planets.at(i)->drawGrav(_obj_rend);
+    for(int i=0; i<(int)_g_objs.size(); i++)
+        _g_objs.at(i)->drawGrav(_obj_rend);
 
     // Render player trails
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->drawTrail(_obj_rend, &_planets);
+        _players.at(i)->drawTrail(_obj_rend, &_g_objs);
 
     _obj_rend->disableAttributes();
 
     // Render players
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->draw(_player_rend, &_planets, &_tex);
+        _players.at(i)->draw(_player_rend, &_g_objs, &_tex);
 
     _player_rend->disableAttributes();
 
@@ -224,8 +224,8 @@ void Game::draw() {
     }
 
     // Render planets
-    for(int i=0; i<(int)_planets.size(); i++)
-        _planets.at(i)->draw(_obj_rend);
+    for(int i=0; i<(int)_g_objs.size(); i++)
+        _g_objs.at(i)->draw(_obj_rend);
 
     _obj_rend->disableAttributes();
 
@@ -291,8 +291,8 @@ void Game::drawStats() {
         _players.at(i)->drawStats(_obj_rend);
 
     // planet stats
-    for(int i=0; i<(int)_planets.size(); i++)
-        _planets.at(i)->drawStats(_obj_rend, (_planets.at(i) == _user.getOnPlanet()), _user.getOnPlanetRegion());
+    for(int i=0; i<(int)_g_objs.size(); i++)
+        _g_objs.at(i)->drawStats(_obj_rend, (_g_objs.at(i) == _user.getOnPlanet()), _user.getOnPlanetRegion());
 }
 
 /* Static Members */

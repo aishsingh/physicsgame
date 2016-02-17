@@ -62,7 +62,7 @@ vector<float> Player::getVerticeData() {
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }
 
-void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler *tex) {
+void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHandler *tex) {
     // Update physics attributes only if box is moving
     if (_action == Action::FLYING || _action == Action::LANDING) {
         PhysicsEngine::updatePlayerOrbittingPlanets(*this, g_objs);
@@ -86,7 +86,7 @@ void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler 
         _on_planet->anchorObject(this);
 
         // physics funcs only need the current planet info
-        vector<Planet*> p; p.push_back(_on_planet);
+        vector<GravObject*> p; p.push_back(_on_planet);
 
         CollisionData c;
         c.facing = _facing;
@@ -117,7 +117,7 @@ void Player::drawStats(ObjRenderer* rend) {
     // closest planet tracking
     vector<float> closest_planet;
     for (int i=0; i<(int)_orbiting_planets.size(); i++) {
-        Planet *p = _orbiting_planets.at(i);
+        GravObject *p = _orbiting_planets.at(i);
         closest_planet.push_back(getCentreX());
         closest_planet.push_back(getCentreY());
         closest_planet.push_back(p->getCentreX());
@@ -155,11 +155,11 @@ void Player::setRotAngleOffset(float angle) {
     _rot_offset_angle = Math::normalizeAngle(angle, 0, 180);
 }
 
-Planet* Player::getOnPlanet() const {
+GravObject* Player::getOnPlanet() const {
     return _on_planet;
 }
 
-void Player::setOnPlanet(Planet* p) {
+void Player::setOnPlanet(GravObject* p) {
     _on_planet = p;
 }
 
@@ -175,11 +175,11 @@ int Player::getOrbitingPlanetsCount() const {
     return _orbiting_planets.size();
 }
 
-vector<Planet*> Player::getOrbitingPlanets() const {
+vector<GravObject*> Player::getOrbitingPlanets() const {
     return _orbiting_planets;
 }
 
-void Player::setOrbitingPlanets(vector<Planet*> p) {
+void Player::setOrbitingPlanets(vector<GravObject*> p) {
     _orbiting_planets = p;   
 }
 

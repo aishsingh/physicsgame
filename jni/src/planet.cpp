@@ -1,39 +1,27 @@
-#include <cmath>
+// #include <cmath>
 #include "planet.h"
-#include "colour.h"
 #include "math.h"
 #include "shape.h"
 #include "collision.h"
-// #include "log.h"
+#include "log.h"
 
 const int Planet::_SIDES(15);
-const int Planet::_GRAV_SIDES(45);
-const float Planet::_GRAV_OPACITY(0.5f);
 const bool Planet::_RAND_SIDES(true);
 const bool Planet::_DRAW_NORMALS(true);
 
-Planet::Planet(float x, float y, float d) : Object(x,y,d,d), _action(STILL) {
+Planet::Planet(float x, float y, float d) : GravObject(x,y,d,d), _action(STILL) {
     _colour = Colour(0.9294f, 0.898f, 0.88627f, 1.0f);
-    _rot_speed = 0;//powf(0.4f, (getWidth()/200));
-    _grav_radius_offset = 120.0f;
-    _grav_speed = 5.5f;
-
-    // Position grav rings
-    _grav_rings_off[0] = d;
-    for (int i=1; i<=2; i++) {
-        float offset = _grav_radius_offset / i;
-        _grav_rings_off[i] = d + offset;
-    }
 
     // Gen initial vert data
     int vertex_count = _SIDES * getWidth()/400;
+    vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()/2, getRotAngle(), vertex_count);
     if (_RAND_SIDES) {
         float offset = 15;
         _vertex_offsets = Math::genRandData(vertex_count*2, 0, offset);
-        _vertices = Math::removeConcaveVertices(Math::offsetDataByData(getVerticeData(vertex_count, 0), _vertex_offsets), &_vertex_offsets);
+        _vertices = Math::removeConcaveVertices(Math::offsetDataByData(vert, _vertex_offsets), &_vertex_offsets);
     }
     else {
-        _vertices = getVerticeData(vertex_count, 0);
+        _vertices = vert;
     }
 }
 Planet::~Planet() { }
@@ -41,8 +29,8 @@ Planet::~Planet() { }
 void Planet::draw(ObjRenderer *rend) {
     // Render circle
     int vertex_count = _SIDES * getWidth()/400;
-    _vertices = (_RAND_SIDES) ? 
-        Math::offsetDataByData(getVerticeData(vertex_count, 0), _vertex_offsets) : getVerticeData(vertex_count, 0);
+    vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()/2, getRotAngle(), vertex_count);
+    _vertices = (_RAND_SIDES) ?  Math::offsetDataByData(vert, _vertex_offsets) : vert;
 
     rend->render(_vertices,
                  _colour, 
@@ -53,32 +41,7 @@ void Planet::draw(ObjRenderer *rend) {
     setRotAngle(getRotAngle() + _rot_speed);
 }
 
-void Planet::drawGrav(ObjRenderer *rend) {
-    int grav_vertex_count = _GRAV_SIDES * (getWidth()/400);
-    int vertex_count = _SIDES * getWidth()/400;
-    int lines = (vertex_count <= 7) ? 2:3;
-
-    // Render Gravity area with rings
-    for (int i=1; i<=lines; i++) {
-        _grav_rings_off[i] = (_grav_rings_off[i] <=0) ? getWidth() : _grav_rings_off[i]-=_grav_speed;
-
-        float alpha = (_grav_rings_off[i] > getWidth()/2) ? 2 - _grav_rings_off[i]/(getWidth()/2) : _grav_rings_off[i]/(getWidth()/2);
-        alpha *= _GRAV_OPACITY;
-
-        // Render Gravity ring
-        if (_grav_rings_off[i] > 0)
-            rend->render(Math::offsetDataByRand(getVerticeData(grav_vertex_count, _grav_rings_off[i]), -8.0f, 8.0f),
-                    Colour(_colour.r, _colour.g, _colour.b, alpha), 
-                    getRotAngle(), 
-                    GL_LINE_LOOP);
-    }
-}
-
 void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
-    vector<float> end_vertices;
-    vector<float> proj_vertices;
-    vector<float> min_vertices;
-    vector<float> b_vertices;
     if (_DRAW_NORMALS) {
         vector<float> mid_vertices;
         vector<float> normal;
@@ -89,7 +52,6 @@ void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
             Point2D B = (i+2 < (int)_vertices.size()) ? 
                     Point2D(_vertices.at(i+2), _vertices.at(i+3)) :
                     Point2D(_vertices.at(0), _vertices.at(1));
-            // Point2D C = Point2D(B.getY(), A.getX());
 
             // Normal vector (perpendicular to AB)
             Point2D N = Math::getNormal(A, B);
@@ -180,26 +142,6 @@ void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
     }
 }
 
-void Planet::update() { }
-
-void Planet::anchorObject(Object *obj) {
-    Point2D pt = Math::rotatePtAroundPt(getCentre(), obj->getCentre(), _rot_speed);
-
-    obj->setX(pt.getX() - (obj->getWidth()/2));
-    obj->setY(pt.getY() - (obj->getHeight()/2));
-}
-
-float Planet::getRadiusOffset() const {
-    return _grav_radius_offset;
-}
-
 vector<float> Planet::getVertices() const {
     return _vertices;
-}
-
-vector<float> Planet::getVerticeData(int vertex_count, float r_offset) {
-    float radius = (getWidth()/2) + r_offset;
-
-    // Create a buffer for vertex data. (x,y) for each vertex
-    return Shape::genCircleVertices(getCentre(), radius, getRotAngle(), vertex_count);
 }

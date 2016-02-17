@@ -27,6 +27,7 @@ LOCAL_SRC_FILES := app_glue.cpp \
 				   joystick.cpp \
 					   rect.cpp \
 					 object.cpp \
+				grav_object.cpp \
 					  shape.cpp \
 					 	box.cpp \
 					 player.cpp \

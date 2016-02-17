@@ -5,7 +5,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "object.h"
+#include "grav_object.h"
 #include "point2d.h"
 #include "player_renderer.h"
 #include "obj_renderer.h"
@@ -20,17 +20,17 @@ class Player: public Object {
         Point2D _base; // Current pos of the bottom of the player after rotations
         float _rot_offset_angle;
         float _running_speed;
-        Planet* _on_planet;
-        Planet* _last_visited_planet;
+        GravObject* _on_planet;
+        GravObject* _last_visited_planet;
         float _closest_planet_disp;
         int _on_planet_region;  // Region of the planet that the player is on
         Point2D _running_unit_vector;
-        vector<Planet*> _orbiting_planets;
+        vector<GravObject*> _orbiting_planets;
 
     public:
         // Render player and trail
-        virtual void draw(PlayerRenderer *rend, vector<Planet*> *g_objs, TextureHandler *tex);
-        virtual void drawTrail(ObjRenderer *rend, vector<Planet*> *g_objs) = 0;
+        virtual void draw(PlayerRenderer *rend, vector<GravObject*> *g_objs, TextureHandler *tex);
+        virtual void drawTrail(ObjRenderer *rend, vector<GravObject*> *g_objs) = 0;
         void drawStats(ObjRenderer *rend);
         vector<float> getVerticeData();
 
@@ -44,13 +44,13 @@ class Player: public Object {
         void setAction(Action::Action act);
         float getClosestPlanetDisp() const;
         void setClosestPlanetDisp(float d);
-        Planet* getOnPlanet() const;
-        void setOnPlanet(Planet* p);
+        GravObject* getOnPlanet() const;
+        void setOnPlanet(GravObject* p);
         int getOnPlanetRegion() const;
         Point2D getRunningUnitVector() const;
         int getOrbitingPlanetsCount() const;
-        vector<Planet*> getOrbitingPlanets() const;
-        void setOrbitingPlanets(vector<Planet*> p);
+        vector<GravObject*> getOrbitingPlanets() const;
+        void setOrbitingPlanets(vector<GravObject*> p);
         float getRotAngle() const;
         float getRotAngleOffset() const;
         float getRealRotAngle() const;

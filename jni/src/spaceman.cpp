@@ -49,7 +49,7 @@ void Spaceman::changeTheme(Theme &old_theme) {
     old_theme = new_theme;
 }
 
-void Spaceman::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler *tex) {
+void Spaceman::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHandler *tex) {
     // Render
     rend->render(getVerticeData(),
                  Colour::getColour(_colour_theme),
@@ -61,7 +61,7 @@ void Spaceman::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandle
     Player::draw(rend, g_objs, tex);
 }
 
-void Spaceman::drawTrail(ObjRenderer* rend, vector<Planet*> *g_objs) {
+void Spaceman::drawTrail(ObjRenderer* rend, vector<GravObject*> *g_objs) {
     // Render
     _trail.draw(rend, g_objs);
 }

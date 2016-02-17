@@ -8,12 +8,11 @@
 #include <vector>
 #include "rect.h"
 #include "point2d.h"
-#include "object.h"
-#include "planet.h"
+#include "grav_object.h"
 #include "direction.h"
 
 struct CollisionData {
-    Planet* planet;
+    GravObject* planet;
     int region;
     Point2D unit_vec;
     float offset;

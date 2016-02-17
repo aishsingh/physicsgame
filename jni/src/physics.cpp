@@ -26,10 +26,10 @@ Motion PhysicsEngine::calcMotion(const Motion &motion) {
     return calc;
 }
 
-void PhysicsEngine::updatePhysics(Object *obj, const vector<Planet*> *g_objs, CollisionData *data) {
+void PhysicsEngine::updatePhysics(Object *obj, const vector<GravObject*> *g_objs, CollisionData *data) {
     Motion vert_comp = calcMotion(obj->vert_motion);
     Motion hori_comp = calcMotion(obj->hori_motion);
-    Planet* collided_planet = NULL; // NULL means no collision
+    GravObject* collided_planet = NULL; // NULL means no collision
 
     // Genereate rect containing updated dimensions
     Rect post_rect(obj->getX() + hori_comp.getDisp(),
@@ -138,12 +138,12 @@ float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pt, Rect rect) {
     return angle;
 }
 
-void PhysicsEngine::updatePlayerOrbittingPlanets(Player &player, const vector<Planet*> *g_objs) {
-    vector<Planet*> orbiting_planets;
+void PhysicsEngine::updatePlayerOrbittingPlanets(Player &player, const vector<GravObject*> *g_objs) {
+    vector<GravObject*> orbiting_planets;
     float closest_planet_disp = 0.0f;
 
     for (int i=0; i<(int)g_objs->size(); i++) {
-        Planet *plan = g_objs->at(i);
+        GravObject *plan = g_objs->at(i);
 
         // Create rect to rep the planets gravity area
         float g_radius = plan->getWidth();
@@ -172,7 +172,7 @@ void PhysicsEngine::updatePlayerOrbittingPlanets(Player &player, const vector<Pl
     }
 }
 
-void PhysicsEngine::applyGravityTo(Object &obj, const vector<Planet*> *g_objs) {
+void PhysicsEngine::applyGravityTo(Object &obj, const vector<GravObject*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
 
@@ -201,12 +201,12 @@ void PhysicsEngine::applyGravityTo(Object &obj, const vector<Planet*> *g_objs) {
     obj.vert_motion.setAccel(netg_v);
 }
 
-void PhysicsEngine::applyGravityTo(Player &player, const vector<Planet*> *g_objs) {
+void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
 
     if (player.getAction() == Action::STILL) {
-        Planet *plan = player.getOnPlanet();
+        GravObject *plan = player.getOnPlanet();
 
         // Create rect to rep the planets gravity area
         float g_radius = plan->getWidth();

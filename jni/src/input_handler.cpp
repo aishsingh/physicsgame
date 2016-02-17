@@ -55,7 +55,7 @@ void InputHandler::touchMove(float x, float y, unsigned int index) {
     _touches.at(index).pos = Point2D(x, y);
 
     if (_nav_active && (_nav_touch_index == index || _touches.size() == 1)) {
-        vector<Planet*> now_orbiting = _user->getOrbitingPlanets();
+        vector<GravObject*> now_orbiting = _user->getOrbitingPlanets();
 
         // Reset automatically when player goes in/out of a planet
         bool planets_changed = false;
