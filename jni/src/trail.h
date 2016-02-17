@@ -29,7 +29,7 @@ class Trail {
            1. Initializes a bew instanse  */
         void buildTrail(float x, float y, float rot_angle, Theme theme);
 
-        void applyGravity(vector<Planet*> *g_objs);
+        void applyGravity(const vector<Planet*> *g_objs);
         void resetTime(float t);
 
         /* Removes the box at the given index

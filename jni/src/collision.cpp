@@ -38,29 +38,29 @@ bool Collision::isPtInCircle(Point2D pt, Rect circ) {
     return (c < radius_total) ? true : false;
 }
 
-bool Collision::isPtInRhombus(Point2D pt, Point2D A, Point2D B, Point2D C, Point2D D) {
-    // Source: http://math.stackexchange.com/a/312733
-    /*
-           Dx
-          /  \ 
-         /    \ 
-       Ax      xC
-         \    /
-          \  /
-           Bx
+bool Collision::isPtInRotatedRect(Point2D pt, Point2D A, Point2D B, Point2D D) {
+    // Source: http://www.gamedev.net/topic/142526-checking-if-a-point-is-inside-a-rotated-rectangle
+    // Point2D diff_hori = B - A;
+    // Point2D diff_vert = D - A;
+    //
+    // if (((pt.getX()-A.getX())*diff_hori.getX())+((pt.getY()-A.getY())*diff_hori.getY()) < 0.0f) return false;
+    // if (((pt.getX()-B.getX())*diff_hori.getX())+((pt.getY()-B.getY())*diff_hori.getY()) > 0.0f) return false;
+    // if (((pt.getX()-A.getX())*diff_vert.getX())+((pt.getY()-A.getY())*diff_vert.getY()) < 0.0f) return false;
+    // if (((pt.getX()-D.getX())*diff_vert.getX())+((pt.getY()-D.getY())*diff_vert.getY()) > 0.0f) return false;
+    //
+    // return true;
 
-      Rhombus ABCD */
+    float ex,ey,fx,fy;
 
-    Point2D Q = (A + C)/2;                 // centre point
-    float a = Math::distance(A, C);        // half-width (in the x-direction)
-    float b = Math::distance(B, D);        // half-width (in the x-direction)
-    Point2D U = Math::getUnitVector(Math::getNormal(C, A));
-    Point2D V = Math::getUnitVector(Math::getNormal(D, B));
-    Point2D W = pt - Q;
-    float xabs = fabs(Math::dot(W, U));    // here W*U is the dot product of W and U
-    float yabs = fabs(Math::dot(W, V));    // here W*V is the dot product of W and V
+    ex=B.getX()-A.getX(); ey=B.getY()-A.getY();
+    fx=D.getX()-A.getX(); fy=D.getY()-A.getY();
 
-    return (xabs/a + yabs/b <= 1);
+    if ((pt.getX()-A.getX())*ex+(pt.getY()-A.getY())*ey<0.0) return false;
+    if ((pt.getX()-B.getX())*ex+(pt.getY()-B.getY())*ey>0.0) return false;
+    if ((pt.getX()-A.getX())*fx+(pt.getY()-A.getY())*fy<0.0) return false;
+    if ((pt.getX()-D.getX())*fx+(pt.getY()-D.getY())*fy>0.0) return false;
+
+    return true;
 }
 
 bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vertices, CollisionData *data) {
@@ -79,15 +79,11 @@ bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<
                     Point2D(vertices.at(i+2), vertices.at(i+3)) :
                     Point2D(vertices.at(0), vertices.at(1));
 
-        // Calc normal vector (perpendicular to AB)
-        Point2D N = Math::getNormal(A, B);
-
-        // Calc unit vector with axis parallel to the normal vector
-        Point2D unit_vec = Math::getUnitVector(N);
+        // Calc unit vector with axis parallel to the normal vector (normal is perpendicular to AB)
+        Point2D unit_vec = Math::getUnitVector(Math::getNormal(A, B));
 
         // Calc mid point of the current edge
-        Point2D half = (B - A)/2;
-        Point2D mid = A + half;
+        Point2D mid = A + ((B - A)/2);
 
         // Calc base of the circle
         Point2D circle_centre = Math::rotatePt(circle.getCentre(), rot_angle);  // needs to be rotated to work with rotated polygons
@@ -104,12 +100,20 @@ bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<
 
         if (!simple_mode && !collided_region_found) {
             // Calc if this edge is the collided region of the polygon
-            if (isPtInRhombus(base, A, B, B + (unit_vec*110), A + (unit_vec*110))) {
+            Point2D pt = circle_centre - (unit_vec*-(circle.getHeight()/3));
+            if (isPtInRotatedRect(pt, A, B, A + (unit_vec*110))) {
                 data->region = i/2;
                 data->unit_vec = unit_vec;
 
                 if (!keep_searching)
                     collided_region_found = true;
+
+                float off;
+                for (off=0.0f; !isPtInRotatedRect(base, A, B, A + (unit_vec*110)); off+=0.5f) {
+                    base = circle_centre - (unit_vec*((circle.getHeight()/2) - off));
+                }
+
+                data->offset = off;
             }
         }
     }

@@ -5,6 +5,7 @@
 #include "point2d.h"
 #include "physics.h"
 #include "math.h"
+#include "log.h"
 
 Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,105,125.3), _trail(22) {
     _action = Action::FLYING;
@@ -117,24 +118,9 @@ void Spaceman::update() {
         _frame = 0;
 }
 
-void Spaceman::applyGravity(vector<Planet*> *g_objs) {
-    // if (_action != Action::RUNNING) {
-        Player::applyGravity(g_objs);
-        _trail.applyGravity(g_objs);
-    // }
-    // else {
-    //     Planet *plan = getOnPlanet();
-    //
-    //     // Create rect to rep the planets gravity area
-    //     float g_radius = plan->getWidth();
-    //     Rect grav_rect(plan->getX() - g_radius,
-    //                    plan->getY() - g_radius,
-    //                    plan->getWidth() + (g_radius*2),
-    //                    plan->getWidth() + (g_radius*2));
-    //
-    //     float angle_new = PhysicsEngine::getAngleOfPtFromRectCentre(getCentre(), grav_rect);
-    //     setRotAngle(-angle_new);
-    // }
+void Spaceman::applyGravity() {
+    Player::applyGravity();
+    _trail.applyGravity(&_orbiting_planets);
 }
 
 void Spaceman::resetTime(float t) {

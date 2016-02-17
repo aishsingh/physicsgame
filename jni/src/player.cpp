@@ -3,7 +3,8 @@
 #include "physics.h"
 #include "math.h"
 #include "texture_handler.h"
-// #include "log.h"
+#include "game.h"
+#include "log.h"
 
 Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
     _rot_offset_angle = 0.0f;
@@ -80,21 +81,38 @@ void Player::draw(PlayerRenderer* rend, vector<Planet*> *g_objs, TextureHandler 
             _running_unit_vector = c.unit_vec;
         }
     }
-    else if (_action == Action::STILL || _action == Action::RUNNING) {
+    else if (_action == Action::RUNNING) {
+        // rotate player along with the planet's rotation
         _on_planet->anchorObject(this);
+
+        // physics funcs only need the current planet info
+        vector<Planet*> p; p.push_back(_on_planet);
 
         CollisionData c;
         c.facing = _facing;
-        PhysicsEngine::updatePhysics(this, g_objs, &c);
+        PhysicsEngine::updatePhysics(this, &p, &c);
 
-        _on_planet_region = c.region;
+        // entered new region
+        if (_on_planet_region != c.region) {
+            _on_planet_region = c.region;
+
+            LOGI("off(%.2f)", c.offset);
+            Point2D offset = c.unit_vec*(c.offset);
+            setX(getX() + offset.getX());
+            setY(getY() + offset.getY());
+        }
         _running_unit_vector = c.unit_vec;
+    }
+    else {
+        float t = Game::getElapsedTime();
+        hori_motion.setTime(t);
+        vert_motion.setTime(t);
     }
 }
 
-void Player::drawStats(ObjRenderer* rend, vector<Planet*> *g_objs) {
+void Player::drawStats(ObjRenderer* rend) {
     // display actions
-    // LOGI("%s", Action::toString(_action).c_str());
+    LOGI("%s", Action::toString(_action).c_str());
 
     // closest planet tracking
     vector<float> closest_planet;
@@ -112,7 +130,7 @@ void Player::drawStats(ObjRenderer* rend, vector<Planet*> *g_objs) {
                  GL_LINES);
 }
 
-void Player::applyGravity(vector<Planet*> *g_objs) {
+void Player::applyGravity() {
     PhysicsEngine::applyGravityTo(*this, &_orbiting_planets);
 }
 

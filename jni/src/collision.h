@@ -16,9 +16,10 @@ struct CollisionData {
     Planet* planet;
     int region;
     Point2D unit_vec;
+    float offset;
     Dir facing;
 
-    CollisionData() : planet(NULL), region(-1), facing(RIGHT) { }
+    CollisionData() : planet(NULL), region(-1), offset(0.0f), facing(RIGHT) { }
 };
 
 class Collision {
@@ -28,7 +29,7 @@ class Collision {
         static bool isPtInRect(int x, int y, Rect rect);
         static bool isCircleIntersCircle(Rect circ1, Rect circ2);
         static bool isPtInCircle(Point2D pt, Rect circ);
-        static bool isPtInRhombus(Point2D pt, Point2D A, Point2D B, Point2D C, Point2D D);
+        static bool isPtInRotatedRect(Point2D pt, Point2D A, Point2D B, Point2D D);
 
         /* Circle and Polygon collision detection which also works while both shapes are rotating
          * rot_angle is needed to get the polygons current rotation angle */

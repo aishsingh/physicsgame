@@ -25,7 +25,7 @@ class Spaceman: public Player {
 
         // Do according to its current action, and update physics
         void update();
-        void applyGravity(vector<Planet*> *g_objs);
+        void applyGravity();
         void resetTime(float t);
 
         /* Getters / Setters */

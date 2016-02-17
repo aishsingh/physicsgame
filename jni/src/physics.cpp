@@ -26,7 +26,7 @@ Motion PhysicsEngine::calcMotion(const Motion &motion) {
     return calc;
 }
 
-void PhysicsEngine::updatePhysics(Object *obj, vector<Planet*> *g_objs, CollisionData *data) {
+void PhysicsEngine::updatePhysics(Object *obj, const vector<Planet*> *g_objs, CollisionData *data) {
     Motion vert_comp = calcMotion(obj->vert_motion);
     Motion hori_comp = calcMotion(obj->hori_motion);
     Planet* collided_planet = NULL; // NULL means no collision
@@ -138,7 +138,7 @@ float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pt, Rect rect) {
     return angle;
 }
 
-void PhysicsEngine::updatePlayerOrbittingPlanets(Player &player, vector<Planet*> *g_objs) {
+void PhysicsEngine::updatePlayerOrbittingPlanets(Player &player, const vector<Planet*> *g_objs) {
     vector<Planet*> orbiting_planets;
     float closest_planet_disp = 0.0f;
 
@@ -169,11 +169,10 @@ void PhysicsEngine::updatePlayerOrbittingPlanets(Player &player, vector<Planet*>
     // If obj was not on any planets
     if (player.getOrbitingPlanetsCount() == 0) {
         player.setAction(Action::FLYING);
-        // player.setOnPlanetIndex(-1);
     }
 }
 
-void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
+void PhysicsEngine::applyGravityTo(Object &obj, const vector<Planet*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
 
@@ -202,7 +201,7 @@ void PhysicsEngine::applyGravityTo(Object &obj, vector<Planet*> *g_objs) {
     obj.vert_motion.setAccel(netg_v);
 }
 
-void PhysicsEngine::applyGravityTo(Player &player, vector<Planet*> *g_objs) {
+void PhysicsEngine::applyGravityTo(Player &player, const vector<Planet*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
 
@@ -220,7 +219,7 @@ void PhysicsEngine::applyGravityTo(Player &player, vector<Planet*> *g_objs) {
     }
     else {
         for (int i=0; i<(int)g_objs->size(); i++) {
-            Planet *plan = g_objs->at(i);
+            Object *plan = g_objs->at(i);
 
             // Create rect to rep the planets gravity area
             float g_radius = plan->getWidth();
@@ -235,7 +234,6 @@ void PhysicsEngine::applyGravityTo(Player &player, vector<Planet*> *g_objs) {
             // If player not on any planet or on different planet
             if (player.getOnPlanet() != plan) {
                 player.setRotAngleOffset(-angle_new - player.getRotAngle());
-                // player.setOnPlanetIndex(i);
                 player.setAction(Action::LANDING);
             }
 

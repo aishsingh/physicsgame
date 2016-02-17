@@ -104,7 +104,7 @@ void Trail::removeBox(int index) {
         LOGI("%i Shapes (-)", (int)shapes.size());
 }
 
-void Trail::applyGravity(vector<Planet*> *g_objs) {
+void Trail::applyGravity(const vector<Planet*> *g_objs) {
     for (int i=0; i<(int)shapes.size(); i++)
         PhysicsEngine::applyGravityTo(shapes.at(i), g_objs);
 }

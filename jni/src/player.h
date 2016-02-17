@@ -31,12 +31,12 @@ class Player: public Object {
         // Render player and trail
         virtual void draw(PlayerRenderer *rend, vector<Planet*> *g_objs, TextureHandler *tex);
         virtual void drawTrail(ObjRenderer *rend, vector<Planet*> *g_objs) = 0;
-        void drawStats(ObjRenderer *rend, vector<Planet*> *g_objs);
+        void drawStats(ObjRenderer *rend);
         vector<float> getVerticeData();
 
         virtual void update() = 0; // Update player based on its current action
         void updateDir();  // Update player facing direction
-        virtual void applyGravity(vector<Planet*> *g_objs);
+        virtual void applyGravity();
         virtual void resetTime(float t);
 
         /* Getters / Setters */
