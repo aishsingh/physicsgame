@@ -1,14 +1,12 @@
 #include <cmath>
 #include "grav_object.h"
+#include "config.h"
 #include "math.h"
 #include "shape.h"
 #include "log.h"
 
-const int GravObject::_GRAV_SIDES(45);
-const float GravObject::_GRAV_OPACITY(0.5f);
-
 GravObject::GravObject(float x, float y, float width, float height, float rot_angle) : Object(x,y,width,height,rot_angle) {
-    _rot_speed = 0.1f;//powf(0.4f, (getWidth()/200));
+    _rot_speed = powf(0.4f, (getWidth()/200));
     _grav_radius_offset = 120.0f;
     _grav_speed = 5.5f;
 
@@ -22,7 +20,7 @@ GravObject::GravObject(float x, float y, float width, float height, float rot_an
 GravObject::~GravObject() { }
 
 void GravObject::drawGrav(ObjRenderer *rend) {
-    int grav_vertex_count = _GRAV_SIDES * (getWidth()/400);
+    int grav_vertex_count = GOBJ_AVERAGE_SIDES * (getWidth()/400);
     int vertex_count = 15 * (getWidth()/400);
     int lines = (vertex_count <= 7) ? 2:3;
 
@@ -31,17 +29,19 @@ void GravObject::drawGrav(ObjRenderer *rend) {
         _grav_rings_off[i] = (_grav_rings_off[i] <=0) ? getWidth() : _grav_rings_off[i]-=_grav_speed;
 
         float alpha = (_grav_rings_off[i] > getWidth()/2) ? 2 - _grav_rings_off[i]/(getWidth()/2) : _grav_rings_off[i]/(getWidth()/2);
-        alpha *= _GRAV_OPACITY;
+        alpha *= GOBJ_OPACITY;
 
         // Render Gravity ring
         if (_grav_rings_off[i] > 0) {
             float radius = (getWidth()/2) + _grav_rings_off[i];
             vector<float> vert = Shape::genCircleVertices(getCentre(), radius, getRotAngle(), grav_vertex_count);
 
+            Colour c = PLANET_COLOUR;
+            c.a = fabs(alpha);
             rend->render(Math::offsetDataByRand(vert, -8.0f, 8.0f),
-                    Colour(Colour(0.9294f, 0.898f, 0.88627f, fabs(alpha))), 
-                    getRotAngle(), 
-                    GL_LINE_LOOP);
+                         c,
+                         getRotAngle(), 
+                         GL_LINE_LOOP);
         }
     }
 }

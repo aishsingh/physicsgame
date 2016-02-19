@@ -1,13 +1,9 @@
 #include <stdlib.h>
 #include <cmath>
 #include "physics.h"
+#include "config.h"
 #include "game.h"
 #include "math.h"
-
-const float PhysicsEngine::_MAX_INIT_V(14.0f);
-const float PhysicsEngine::_MIN_INIT_V(12.0f);
-const float PhysicsEngine::_INIT_V_OFFSET(4.0f);
-const float PhysicsEngine::_MAX_G_SWITCH_MISCALC(3.0f);
 
 Motion PhysicsEngine::calcMotion(const Motion &motion) {
     // Physics equations of constant acceleration used to find new displacement

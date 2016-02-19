@@ -1,5 +1,6 @@
 #include <math.h>
 #include "player.h"
+#include "config.h"
 #include "physics.h"
 #include "math.h"
 #include "texture_handler.h"
@@ -108,13 +109,16 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
     //     hori_motion.setTime(t);
     //     vert_motion.setTime(t);
     // }
+
+    // display actions
+    if (OUT_PLAYER_ACTION)
+        LOGI("%s", Action::toString(_action).c_str());
 }
 
 void Player::drawStats(ObjRenderer* rend) {
-    // display actions
-    LOGI("%s", Action::toString(_action).c_str());
 
     // closest planet tracking
+    if (STATS_PLAYER_CLOSEST_GOBJ) {
     vector<float> closest_planet;
     for (int i=0; i<(int)_orbiting_planets.size(); i++) {
         GravObject *p = _orbiting_planets.at(i);
@@ -125,12 +129,13 @@ void Player::drawStats(ObjRenderer* rend) {
     }
 
     rend->render(closest_planet,
-                 Colour::getColour(RED),
+                 STATS_COLOUR,
                  0.0f,
                  GL_LINES);
+    }
 
     // arrow representing the running direction of the player
-    if (_action == Action::RUNNING || _action == Action::STILL) {
+    if (STATS_PLAYER_RUNNING_DIR && (_action == Action::RUNNING || _action == Action::STILL)) {
         vector<float> running_dir;
         float arrow_length = 80.0f;
         float arrow_off = 8.0f;
@@ -168,7 +173,7 @@ void Player::drawStats(ObjRenderer* rend) {
         }
 
         rend->render(running_dir,
-                     Colour::getColour(PURPLE),
+                     STATS_COLOUR,
                      0.0f,
                      GL_LINES);
     }

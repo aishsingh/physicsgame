@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "player_renderer.h"
+#include "config.h"
 #include "log.h"
 #include "game.h"
 
@@ -28,8 +29,10 @@ PlayerRenderer::PlayerRenderer(Camera *cam) : AssetRenderer(cam) {
         "  if (vTexColor.b >= 0.98 || vTexColor.r >= 0.98) {\n"
         "    gl_FragColor = vColor;\n"
         "  } else {\n"
-        "    gl_FragColor = vec4(0.9294, 0.898, 0.88627, vTexColor.a);\n"
-        "    gl_FragColor += vec4(1.0, 1.0, 1.0, 0.25);\n"
+        "    gl_FragColor = vec4(0.9294, 0.898, 0.88627, vTexColor.a);\n";
+        if (PLAYER_SHADE_BG && !STATS_DISABLE) _shad_fragment += 
+        "    gl_FragColor += vec4(1.0, 1.0, 1.0, 0.25);\n";
+        _shad_fragment += 
         "  }\n"
         "}\n";
 

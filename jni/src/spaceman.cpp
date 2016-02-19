@@ -1,13 +1,14 @@
 #include <stdlib.h>
 #include <algorithm>
 #include "spaceman.h"
+#include "config.h"
 #include "game.h"
 #include "point2d.h"
 #include "physics.h"
 #include "math.h"
 #include "log.h"
 
-Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,105,125.3), _trail(22) {
+Spaceman::Spaceman(float x, float y, Theme theme) : Player(x,y,105,125.3), _trail(SPACEMAN_TRAIL_LENGTH) {
     _action = Action::FLYING;
     _frame = 25;
     _colour_theme = theme;
@@ -99,15 +100,14 @@ void Spaceman::update() {
             // Convert angle to anti-clockwise direction
             float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
 
-            // thrust up
-            PhysicsEngine::genInitVel(*this, angle, 1, 1.5, 0);
+            // Thrust up
+            PhysicsEngine::genInitVel(*this, angle, PLAYER_THRUST_MIN_INIT_V, PLAYER_THRUST_MAX_INIT_V, PLAYER_THRUST_OFFSET);
             resetTime(Game::getElapsedTime());
             _trail.buildTrail(_base.getX(), 
                               _base.getY(), 
                               360 - getRotAngle(), 
                               _colour_theme);
             break;
-
         }
     }
 

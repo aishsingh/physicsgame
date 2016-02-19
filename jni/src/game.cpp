@@ -4,15 +4,11 @@
 #include <cstring>
 
 #include "game.h"
+#include "config.h"
 #include "spaceman.h"
 #include "collision.h"
 #include "log.h"
 #include "math.h"
-
-#define SHOW_STATS true
-#define OUT_OpenGL_Ver false
-#define TRAIL_UPDATE_INTERVAL 0.6f
-#define TRAIL_PART_PER_UPDATE 1
 
 int Game::_screen_height(0);
 int Game::_screen_width(0);
@@ -98,7 +94,7 @@ void Game::setupGLContext(int screen_w, int screen_h) {
     LOGI("-> Screen Res [%d x %d]", screen_w, screen_h);
 
     // Show OpenGL details of device
-    if (OUT_OpenGL_Ver) {
+    if (OUT_OPENGL_VER) {
         printGLString("Version", GL_VERSION);
         printGLString("Vendor", GL_VENDOR);
         printGLString("Renderer", GL_RENDERER);
@@ -172,7 +168,7 @@ void Game::draw() {
     applyGravity();
 
     //-- RENDER ---------------------------------------
-    if (SHOW_STATS) {
+    if (!STATS_DISABLE) {
         _back_rend->render();
         _back_rend->disableAttributes();
 
@@ -233,12 +229,10 @@ void Game::respondToInput() {
         // Only build player trail after time interval
         float cur_update = getElapsedTime();
         float elapsedSinceUpdate = cur_update - _previous_trail_update;
-        if (elapsedSinceUpdate >= TRAIL_UPDATE_INTERVAL) {
-            // build all trails 
-            for (int i=1; i<=TRAIL_PART_PER_UPDATE; i++) {
-                for(int p=0; p<(int)_players.size(); p++)
-                    _players.at(p)->update();
-            }
+        if (elapsedSinceUpdate >= USER_UPDATE_INTERVAL) {
+            // build the trail 
+            for (int i=1; i<=USER_UPDATE_PER_INTERVAL; i++)
+                _user.update();
 
             // update values for next input
             _previous_trail_update = cur_update;

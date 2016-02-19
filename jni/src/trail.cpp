@@ -1,12 +1,9 @@
 #include "trail.h"
+#include "config.h"
 #include "log.h"
 #include "box.h"
 #include "game.h"
 #include "math.h"
-
-#define FADE_DEC 0.1f
-#define SHRINK_DEC 0.6f
-#define OUT_ShapesCount false
 
 Trail::Trail(int obj_length) {
     _boxes_length = obj_length;
@@ -21,15 +18,15 @@ Trail::~Trail() {
 
 void Trail::fade(Shape &shape) {
     // fade the box when it has stopped moving vertically
-    if (shape.getAlpha() >= FADE_DEC)
-        shape.setAlpha(shape.getAlpha() - FADE_DEC);
+    if (shape.getAlpha() >= TRAIL_FADE_DEC)
+        shape.setAlpha(shape.getAlpha() - TRAIL_FADE_DEC);
     else if (shape.getAlpha() > 0.0f)
         shape.setAlpha(0.0f);
 }
 
 void Trail::shrink(Shape &shape) {
     if (shape.getWidth() > 0)
-        shape.setLength(shape.getWidth() - (SHRINK_DEC*Game::getTimeSpeed())); 
+        shape.setLength(shape.getWidth() - (TRAIL_SHRINK_DEC*Game::getTimeSpeed())); 
 }
 
 
@@ -53,7 +50,7 @@ void Trail::draw(ObjRenderer *rend, vector<GravObject*> *g_objs) {
         // Remove shape if no longer needed
         if ((shapes.at(i).getAlpha() <= 0 && (int)shapes.size() > 0 && shapes.at(i).vert_motion.getVel() == 0)
                 || shapes.at(i).getWidth() == 0
-                || shapes.at(i).getWidth() < SHRINK_DEC*Game::getTimeSpeed()) {
+                || shapes.at(i).getWidth() < TRAIL_SHRINK_DEC*Game::getTimeSpeed()) {
             removeBox(shapes.at(i).getIndex());
         }
     }
@@ -79,7 +76,7 @@ void Trail::buildTrail(float x, float y, float rot_angle, Theme theme) {
         LOGE("Error occured while creating box: %s", e.what());
     }
 
-    if (OUT_ShapesCount)
+    if (OUT_TRAIL_SHAPE_COUNT)
         LOGI("%i Shapes (+)", (int)shapes.size());
 }
 
@@ -100,7 +97,7 @@ void Trail::removeBox(int index) {
         LOGE("Error occured while removing box: %s", e.what());
     }
 
-    if (OUT_ShapesCount)
+    if (OUT_TRAIL_SHAPE_COUNT)
         LOGI("%i Shapes (-)", (int)shapes.size());
 }
 

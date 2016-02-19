@@ -20,10 +20,6 @@ class Planet: public GravObject {
             BREAKING
         };
 
-        static const int _SIDES;       // The more sides (or vertices) the more round the object looks
-        static const bool _RAND_SIDES; // The sides will not be symetrical if true
-        static const bool _DRAW_NORMALS;
-
         Action _action;
         Colour _colour;
 

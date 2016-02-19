@@ -10,9 +10,6 @@
 
 class GravObject: public Object {
     protected:
-        static const int _GRAV_SIDES;
-        static const float _GRAV_OPACITY;
-
         float _rot_speed;
         float _grav_radius_offset; // The extra radius used by the gravity area
         float _grav_speed;         // The speed the rings shrink inwards

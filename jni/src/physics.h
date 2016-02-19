@@ -19,16 +19,6 @@ using std::vector;
 
 class PhysicsEngine {
     private:
-        /* Pushes new boxes out with some initial velocity 
-           - up is neg, down is pos 
-           - up is left, right is pos */
-        static const float _MAX_INIT_V;
-        static const float _MIN_INIT_V;
-        static const float _INIT_V_OFFSET;
-
-        // Creates a more natural look of gravity when gravity is switched up/down
-        static const float _MAX_G_SWITCH_MISCALC;
-
         /* Recalculate the motion and return the new motion values.
            NOTE: Fn doesn't modify the motion passed through params as it needs to be validated */
         static Motion calcMotion(const Motion &motion);
