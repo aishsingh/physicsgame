@@ -81,7 +81,7 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
             _running_unit_vector = c.unit_vec;
         }
     }
-    else if (_action == Action::RUNNING) {
+    else if (_action == Action::RUNNING || _action == Action::STILL) {
         // rotate player along with the planet's rotation
         _on_planet->anchorObject(this);
 
@@ -96,18 +96,18 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
         if (_on_planet_region != c.region) {
             _on_planet_region = c.region;
 
-            LOGI("off(%.2f)", c.offset);
-            Point2D offset = c.unit_vec*(c.offset);
-            setX(getX() + offset.getX());
-            setY(getY() + offset.getY());
+            // LOGI("off(%.2f)", c.offset);
+            // Point2D offset = c.unit_vec*(c.offset);
+            // setX(getX() + offset.getX());
+            // setY(getY() + offset.getY());
         }
         _running_unit_vector = c.unit_vec;
     }
-    else {
-        float t = Game::getElapsedTime();
-        hori_motion.setTime(t);
-        vert_motion.setTime(t);
-    }
+    // else {
+    //     float t = Game::getElapsedTime();
+    //     hori_motion.setTime(t);
+    //     vert_motion.setTime(t);
+    // }
 }
 
 void Player::drawStats(ObjRenderer* rend) {
@@ -128,6 +128,50 @@ void Player::drawStats(ObjRenderer* rend) {
                  Colour::getColour(RED),
                  0.0f,
                  GL_LINES);
+
+    // arrow representing the running direction of the player
+    if (_action == Action::RUNNING || _action == Action::STILL) {
+        vector<float> running_dir;
+        float arrow_length = 80.0f;
+        float arrow_off = 8.0f;
+
+        running_dir.push_back(getCentreX());
+        running_dir.push_back(getCentreY());
+        if (_facing == RIGHT) {
+            running_dir.push_back(getCentreX() + (arrow_length*-_running_unit_vector.getY()));
+            running_dir.push_back(getCentreY() + (arrow_length*_running_unit_vector.getX()));
+
+
+            running_dir.push_back(running_dir.at(2));
+            running_dir.push_back(running_dir.at(3));
+            running_dir.push_back(running_dir.at(2) + (arrow_off*_running_unit_vector.getX()) + (arrow_off*_running_unit_vector.getY()));
+            running_dir.push_back(running_dir.at(3) + (arrow_off*_running_unit_vector.getY()) + (-arrow_off*_running_unit_vector.getX()));
+
+            running_dir.push_back(running_dir.at(2));
+            running_dir.push_back(running_dir.at(3));
+            running_dir.push_back(running_dir.at(2) + (-arrow_off*_running_unit_vector.getX()) + (arrow_off*_running_unit_vector.getY()));
+            running_dir.push_back(running_dir.at(3) + (-arrow_off*_running_unit_vector.getY()) + (-arrow_off*_running_unit_vector.getX()));
+        }
+        else {
+            running_dir.push_back(getCentreX() + (arrow_length*_running_unit_vector.getY()));
+            running_dir.push_back(getCentreY() + (arrow_length*-_running_unit_vector.getX()));
+
+            running_dir.push_back(running_dir.at(2));
+            running_dir.push_back(running_dir.at(3));
+            running_dir.push_back(running_dir.at(2) + (arrow_off*_running_unit_vector.getX()) + (-arrow_off*_running_unit_vector.getY()));
+            running_dir.push_back(running_dir.at(3) + (arrow_off*_running_unit_vector.getY()) + (arrow_off*_running_unit_vector.getX()));
+
+            running_dir.push_back(running_dir.at(2));
+            running_dir.push_back(running_dir.at(3));
+            running_dir.push_back(running_dir.at(2) + (-arrow_off*_running_unit_vector.getX()) + (-arrow_off*_running_unit_vector.getY()));
+            running_dir.push_back(running_dir.at(3) + (-arrow_off*_running_unit_vector.getY()) + (arrow_off*_running_unit_vector.getX()));
+        }
+
+        rend->render(running_dir,
+                     Colour::getColour(PURPLE),
+                     0.0f,
+                     GL_LINES);
+    }
 }
 
 void Player::applyGravity() {

@@ -198,37 +198,11 @@ void Game::draw() {
 
     _player_rend->disableAttributes();
 
-    if (_user.getOnPlanet() != NULL) {
-        // Base Stat
-        vector<float> vertices;
-
-        Point2D circle_centre = Math::rotatePt(_user.getCentre(), _user.getOnPlanet()->getRotAngle());  // needs to be rotated to work with rotated polygons
-        Point2D unit_vec = _user.getRunningUnitVector();
-        Point2D pt = circle_centre - (unit_vec*-(_user.getHeight()/3));  // height is only needed for the offset here as the player always automatically rotates towards the planet so it is parrallel to the normal
-        Point2D unit_vec2 = Point2D(-unit_vec.getY(), unit_vec.getX());
-
-        vertices.push_back(pt.getX() + (unit_vec.getX()*(10)));
-        vertices.push_back(pt.getY() + (unit_vec.getY()*(10)));
-        vertices.push_back(pt.getX() - (unit_vec.getX()*(10)));
-        vertices.push_back(pt.getY() - (unit_vec.getY()*(10)));
-
-        vertices.push_back(pt.getX() + (unit_vec2.getX()*(10)));
-        vertices.push_back(pt.getY() + (unit_vec2.getY()*(10)));
-        vertices.push_back(pt.getX() - (unit_vec2.getX()*(10)));
-        vertices.push_back(pt.getY() - (unit_vec2.getY()*(10)));
-
-        _obj_rend->render(vertices,
-                          Colour::getColour(PURPLE),
-                          0.0f,
-                          GL_LINES);
-    }
-
     // Render planets
     for(int i=0; i<(int)_g_objs.size(); i++)
         _g_objs.at(i)->draw(_obj_rend);
 
     _obj_rend->disableAttributes();
-
     //-------------------------------------------------
 
     // Recentre player by slowly decresing offset

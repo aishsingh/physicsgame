@@ -8,7 +8,7 @@ const int GravObject::_GRAV_SIDES(45);
 const float GravObject::_GRAV_OPACITY(0.5f);
 
 GravObject::GravObject(float x, float y, float width, float height, float rot_angle) : Object(x,y,width,height,rot_angle) {
-    _rot_speed = 0;//powf(0.4f, (getWidth()/200));
+    _rot_speed = 0.1f;//powf(0.4f, (getWidth()/200));
     _grav_radius_offset = 120.0f;
     _grav_speed = 5.5f;
 

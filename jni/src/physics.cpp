@@ -76,8 +76,10 @@ void PhysicsEngine::updatePhysics(Object *obj, const vector<GravObject*> *g_objs
         obj->vert_motion.setTime(vert_comp.getTime());
         obj->vert_motion.setVel(vert_comp.getVel());
     }
-    else if (data)  // if data was generated
+    else if (data) {  // if data was generated
         data->planet = collided_planet;
+        data->unit_vec = Math::rotatePt(data->unit_vec, -data->planet->getRotAngle());  // rotate to account for planets rotation
+    }
 }
 
 void PhysicsEngine::genInitVel(Object &obj, float rot_angle, float min, float max, float offset) {

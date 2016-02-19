@@ -10,7 +10,7 @@ const bool Planet::_RAND_SIDES(true);
 const bool Planet::_DRAW_NORMALS(true);
 
 Planet::Planet(float x, float y, float d) : GravObject(x,y,d,d), _action(STILL) {
-    _colour = Colour(0.9294f, 0.898f, 0.88627f, 1.0f);
+    _colour = Colour(0.9294f, 0.898f, 0.88627f, 0.3f);
 
     // Gen initial vert data
     int vertex_count = _SIDES * getWidth()/400;
