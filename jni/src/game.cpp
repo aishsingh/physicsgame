@@ -15,7 +15,7 @@ int Game::_screen_width(0);
 float Game::_elapsed_time(0.0f);
 float Game::_time_speed(0.4f);
 
-Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/3) + 750, GRAY),
+Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/3) + 750, USER_THEME),
                                                                _cam(&_user),
                                                                input(true, VERT, &_user, &_cam) {
     // Init values
@@ -38,6 +38,10 @@ Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2
     _scr_rend = NULL;
     _player_rend = NULL;
     _back_rend = NULL;
+
+    // Unzip apk using libzip
+    LOGI("Unziping assets");
+    _tex.loadAPK(_package_name.c_str());
 
     setupObjs();
 }
@@ -100,10 +104,6 @@ void Game::setupGLContext(int screen_w, int screen_h) {
         printGLString("Renderer", GL_RENDERER);
         printGLString("Extensions", GL_EXTENSIONS);
     }
-
-    // Unzip apk using libzip
-    LOGI("Unziping assets");
-    _tex.loadAPK(_package_name.c_str());
 
     // Load textures here
     _tex.loadTextures();

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <cmath>
 #include "background_renderer.h"
+#include "config.h"
 #include "log.h"
 #include "game.h"
 
@@ -139,10 +140,10 @@ void BackgroundRenderer::render() {
     checkGlError("glUniform2fv");
 
     float vertices[] {
-        -5000,5000, 
-         5000,5000, 
-        -5000,-5000, 
-         5000,-5000
+        -GALAXY_RANGE_X,GALAXY_RANGE_Y, 
+         GALAXY_RANGE_X,GALAXY_RANGE_Y, 
+        -GALAXY_RANGE_X,-GALAXY_RANGE_Y, 
+         GALAXY_RANGE_X,-GALAXY_RANGE_Y
     };
 
     glVertexAttribPointer(_vPos_handle, 2, GL_FLOAT, GL_FALSE, 0, &vertices[0]);

@@ -1,11 +1,12 @@
 #include "galaxy.h"
+#include "config.h"
 #include "math.h"
 #include "game.h"
 #include "log.h"
 
 Galaxy::Galaxy() {
     // Populate the screen
-    populate_stars(4000);
+    populate_stars(GALAXY_STARS);
 }
 
 void Galaxy::draw(ObjRenderer *rend) {
@@ -23,8 +24,10 @@ void Galaxy::draw(ObjRenderer *rend) {
 }
 
 void Galaxy::populate_stars(int count) {
-    float pos_range = 5000;  // 10,000x10,000 area
     for (int i=0; i<=count; i++) {
-        _stars.push_back(new Star(Math::genRand(-pos_range, pos_range), Math::genRand(-pos_range, pos_range), Math::genRand(0.0f, 360.0f), Math::genRand(5.0f, 25.0f)));
+        _stars.push_back(new Star(Math::genRand(-GALAXY_RANGE_X, GALAXY_RANGE_X), 
+                                  Math::genRand(-GALAXY_RANGE_Y, GALAXY_RANGE_Y), 
+                                  Math::genRand(0.0f, 360.0f), 
+                                  Math::genRand(5.0f, 25.0f)));
     }
 }

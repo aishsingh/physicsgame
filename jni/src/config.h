@@ -4,17 +4,30 @@
 
 #ifndef CONFIG_H
 #define CONFIG_H
-/**************************************************/
+/******************************************/
 
 // --- GAME CONFIG ------------------------
-#define STATS_DISABLE false
+#define STATS_DISABLE true
 #define STATS_COLOUR Colour::getColour(PURPLE)
 #define USER_UPDATE_INTERVAL 0.6f
 #define USER_UPDATE_PER_INTERVAL 1
+#define USER_THEME GRAY
 #define OUT_OPENGL_VER false
+
+// --- RENDERER CONFIG --------------------
+#define BG_COLOUR Colour(0.918f, 0.629f, 0.512f, 1.0f)
+
+// --- TEXTURE CONFIG ---------------------
+#define OUT_TEX_APK_CONTENTS false
+#define OUT_TEX_ANIMATION_CELL false
 
 // --- SPACEMAN CONFIG --------------------
 #define SPACEMAN_TRAIL_LENGTH 22
+
+// --- GALAXY CONFIG ----------------------
+#define GALAXY_STARS 4000
+#define GALAXY_RANGE_X 5000  // 10,000x10,000 area
+#define GALAXY_RANGE_Y 5000  
 
 // --- PLAYER CONFIG ----------------------
 #define STATS_PLAYER_CLOSEST_GOBJ true
@@ -45,5 +58,5 @@
 #define TRAIL_SHRINK_DEC 0.6f
 #define OUT_TRAIL_SHAPE_COUNT false
 
-/**************************************************/
+/******************************************/
 #endif /* CONFIG_H */

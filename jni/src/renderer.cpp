@@ -1,4 +1,5 @@
 #include "renderer.h"
+#include "config.h"
 #include "log.h"
 #include "jni.h"
 #include "game.h"
@@ -86,7 +87,7 @@ GLuint Renderer::createProgram(const char *pVertexSource, const char *pFragmentS
 }
 
 void Renderer::clearScreen() {
-    Colour bg = Colour(0.918f, 0.629f, 0.512f, 1.0f);
+    Colour bg = BG_COLOUR;
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
     // bg = Colour::transformHue(bg, 0.1f);
     glClearColor(bg.r, bg.g, bg.b, bg.a);

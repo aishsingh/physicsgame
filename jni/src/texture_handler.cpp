@@ -1,9 +1,8 @@
 #include "texture_handler.h"
+#include "config.h"
 #include "log.h"
 
 #define TEXTURE_LOAD_ERROR 0
-#define OUT_print_apk_contents false
-#define OUT_sprite_animation false
 
 zip_file* TextureHandler::_tmp_file(0);
 
@@ -22,7 +21,7 @@ void TextureHandler::loadAPK(const char *package_name) {
         return;
     }
 
-    if (OUT_print_apk_contents) {
+    if (OUT_TEX_APK_CONTENTS) {
         int numFiles = zip_get_num_files(_APK);
         for (int i=0; i<numFiles; i++) {
             const char* name = zip_get_name(_APK, i, 0);
@@ -217,7 +216,7 @@ std::vector<float> TextureHandler::calcTexVerticesFromSpritesheet(float spritesh
         cell_x = index - ((sprite_hori_count-cell_y)*sprite_hori_count);
     }
 
-    if (OUT_sprite_animation)
+    if (OUT_TEX_ANIMATION_CELL)
         LOGI("Sprite cell (%i, %i), index %i", cell_x, cell_y, index);
 
     // convert to actual coordinates
