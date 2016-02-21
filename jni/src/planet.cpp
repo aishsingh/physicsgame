@@ -25,10 +25,6 @@ Planet::~Planet() { }
 
 void Planet::draw(ObjRenderer *rend) {
     // Render circle
-    int vertex_count = PLANET_AVERAGE_SIDES * getWidth()/400;
-    vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()/2, getRotAngle(), vertex_count);
-    _vertices = (PLANET_RAND_SIDES) ?  Math::offsetDataByData(vert, _vertex_offsets) : vert;
-
     rend->render(_vertices,
                  _colour, 
                  getRotAngle(), 
@@ -36,6 +32,11 @@ void Planet::draw(ObjRenderer *rend) {
 
     // Rotate
     setRotAngle(getRotAngle() + _rot_speed);
+
+    // update vertices from updated values (eg rotation, pos)
+    int vertex_count = PLANET_AVERAGE_SIDES * getWidth()/400;
+    vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()/2, getRotAngle(), vertex_count);
+    _vertices = (PLANET_RAND_SIDES) ?  Math::offsetDataByData(vert, _vertex_offsets) : vert;
 }
 
 void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {

@@ -40,7 +40,7 @@
 #define OUT_PLAYER_ACTION false
 
 // --- PLANET CONFIG ----------------------
-#define STATS_PLANET_NORMALS false
+#define STATS_PLANET_NORMALS true
 #define STATS_PLANET_FIRST_NORMAL true
 #define STATS_PLANET_VR true
 #define PLANET_AVERAGE_SIDES 15      // The more sides (or vertices) the more round the object looks
