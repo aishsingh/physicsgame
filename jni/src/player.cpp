@@ -82,7 +82,7 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
             _running_unit_vector = c.unit_vec;
         }
     }
-    else if (_action == Action::RUNNING || _action == Action::STILL) {
+    else if (_action == Action::RUNNING) {
         // rotate player along with the planet's rotation
         _on_planet->anchorObject(this);
 
@@ -104,11 +104,14 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
         }
         _running_unit_vector = c.unit_vec;
     }
-    // else {
-    //     float t = Game::getElapsedTime();
-    //     hori_motion.setTime(t);
-    //     vert_motion.setTime(t);
-    // }
+    else {
+        // rotate player along with the planet's rotation
+        _on_planet->anchorObject(this);
+
+        float t = Game::getElapsedTime();
+        hori_motion.setTime(t);
+        vert_motion.setTime(t);
+    }
 
     // display actions
     if (OUT_PLAYER_ACTION)
@@ -135,7 +138,7 @@ void Player::drawStats(ObjRenderer* rend) {
     }
 
     // arrow representing the running direction of the player
-    if (STATS_PLAYER_RUNNING_DIR && (_action == Action::RUNNING || _action == Action::STILL)) {
+    if (STATS_PLAYER_RUNNING_DIR && _action == Action::RUNNING) {
         vector<float> running_dir;
         float arrow_length = 80.0f;
         float arrow_off = 8.0f;
