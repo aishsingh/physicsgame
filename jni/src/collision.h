@@ -12,13 +12,13 @@
 #include "direction.h"
 
 struct CollisionData {
-    GravObject* planet;
-    int region;
-    Point2D unit_vec;
-    float offset;
+    GravObject *planet;
     Dir facing;
+    Point2D unit_vec;
+    int region;
+    float offset;
 
-    CollisionData() : planet(NULL), region(-1), offset(0.0f), facing(RIGHT) { }
+    CollisionData(GravObject* p =NULL, Dir f =RIGHT) : planet(p), facing(f), region(-1), offset(0.0f) { }
 };
 
 class Collision {
@@ -32,7 +32,8 @@ class Collision {
 
         /* Circle and Polygon collision detection which also works while both shapes are rotating
          * rot_angle is needed to get the polygons current rotation angle */
-        static bool isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vertices, CollisionData *data = NULL);//, int *collided_region = NULL, Point2D *collided_unit_vector = NULL);
+        static bool isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vert);
+        static void genCollisionData(Rect circle, CollisionData *data);
 };
 
 #endif /* COLLISION_H */

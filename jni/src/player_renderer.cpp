@@ -30,8 +30,7 @@ PlayerRenderer::PlayerRenderer(Camera *cam) : AssetRenderer(cam) {
         "    gl_FragColor = vColor;\n"
         "  } else {\n"
         "    gl_FragColor = vec4(0.9294, 0.898, 0.88627, vTexColor.a);\n";
-        if (PLAYER_SHADE_BG && !STATS_DISABLE) _shad_fragment += 
-        "    gl_FragColor += vec4(1.0, 1.0, 1.0, 0.25);\n";
+        if (PLAYER_SHADE && !STATS_DISABLE) _shad_fragment += "gl_FragColor " + std::string(PLAYER_SHADE_COLOUR);
         _shad_fragment += 
         "  }\n"
         "}\n";

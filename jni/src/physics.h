@@ -24,16 +24,16 @@ class PhysicsEngine {
         static Motion calcMotion(const Motion &motion);
 
     public:
-        /* Updates all motion and returns true if the object landed on a planet.
-           data param: Non-complex objects such as the boxes in a players trail only need to know if a collision occured, so this param is optional */
-        static void updatePhysics(Object *obj, const vector<GravObject*> *g_objs, CollisionData *data = NULL);
+        /* Updates all physics motion values and returns a gravobject if the obj collided with it */
+        static GravObject* updatePhysicsForCollisions(Object *obj, const vector<GravObject*> *g_objs);
 
         /* Generated a suitable initial velocity using based on the angle the object is rotated in */
         static void genInitVel(Object &obj, float rot_angle, float min, float max, float offset);
 
+        static unsigned getQuadOfPtAroundRect(Point2D pt, Rect rect);
         /* Gets an angle calculated from the distance to a point inside of an object. 
            Angle starts at the middle-top (0*C) and increases anti-clockwise */
-        static float getAngleOfPtFromRectCentre(Point2D pt, Rect rect);
+        static float getAngleOfPtAroundRect(Point2D pt, Rect rect);
 
         /* Split vertical and horizontal component values based on an angle. 
            The split needs to know the min & max values that should occur for both components */

@@ -12,7 +12,7 @@
 class Planet: public GravObject {
     private:
         vector<float> _vertices;
-        vector<float> _vertex_offsets;
+        vector<float> _vertices_offsets;
 
         enum Action {
             STILL, 
@@ -30,6 +30,7 @@ class Planet: public GravObject {
 
         // Accessors
         vector<float> getVertices() const;
+        float getRegionAngleOffset(int region) const;
 
         /* Ctor */
         Planet(float x, float y, float d);

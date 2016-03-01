@@ -12,6 +12,7 @@ Player::Player(float x, float y, float width, float height) : Object(x,y,width,h
     _running_speed = 9.0f;
     _on_planet = NULL;
     _last_visited_planet = NULL;
+    _closest_planet_disp = 0;
     _facing = LEFT;
     _on_planet_region = -1;
 }
@@ -68,16 +69,17 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
     if (_action == Action::FLYING || _action == Action::LANDING) {
         PhysicsEngine::updatePlayerOrbittingPlanets(*this, g_objs);
 
-        CollisionData c;
-        PhysicsEngine::updatePhysics(this, g_objs, &c);
+        _on_planet = PhysicsEngine::updatePhysicsForCollisions(this, g_objs);
 
-        _on_planet = c.planet;
         // if there actually was a collision
-        if (c.planet != NULL) {
+        if (_on_planet != NULL) {
             _action = Action::STILL;
             _orbiting_planets.clear(); // only keep track of the planet the player is on
             _orbiting_planets.push_back(_on_planet); // only keep track of the planet the player is on
             _last_visited_planet = _on_planet;
+
+            CollisionData c = CollisionData(_on_planet, _facing);
+            Collision::genCollisionData(*this, &c);
             _on_planet_region = c.region;
             _running_unit_vector = c.unit_vec;
         }
@@ -86,27 +88,23 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
         // rotate player along with the planet's rotation
         _on_planet->anchorObject(this);
 
-        // physics funcs only need the current planet info
+        // physics funcs only need the current planet
         vector<GravObject*> p; p.push_back(_on_planet);
 
-        CollisionData c;
-        c.facing = _facing;
-        PhysicsEngine::updatePhysics(this, &p, &c);
+        PhysicsEngine::updatePhysicsForCollisions(this, &p);
+        CollisionData c = CollisionData(_on_planet, _facing);
+        Collision::genCollisionData(*this, &c);
 
-        // entered new region
-        if (_on_planet_region != c.region) {
+        // apply collision data if on a valid region
+        if (c.region != -1) {
             _on_planet_region = c.region;
-
-            // LOGI("off(%.2f)", c.offset);
-            // Point2D offset = c.unit_vec*(c.offset);
-            // setX(getX() + offset.getX());
-            // setY(getY() + offset.getY());
+            _running_unit_vector = c.unit_vec;
         }
-        _running_unit_vector = c.unit_vec;
     }
     else {
         // rotate player along with the planet's rotation
         _on_planet->anchorObject(this);
+        _running_unit_vector = Math::rotatePt(_running_unit_vector, -_on_planet->getRotSpeed());
 
         float t = Game::getElapsedTime();
         hori_motion.setTime(t);
@@ -138,7 +136,7 @@ void Player::drawStats(ObjRenderer* rend) {
     }
 
     // arrow representing the running direction of the player
-    if (STATS_PLAYER_RUNNING_DIR && _action == Action::RUNNING) {
+    if (STATS_PLAYER_RUNNING_DIR && (_action == Action::RUNNING || _action == Action::STILL)) {
         vector<float> running_dir;
         float arrow_length = 80.0f;
         float arrow_off = 8.0f;
@@ -146,9 +144,22 @@ void Player::drawStats(ObjRenderer* rend) {
         running_dir.push_back(getCentreX());
         running_dir.push_back(getCentreY());
         if (_facing == RIGHT) {
-            running_dir.push_back(getCentreX() + (arrow_length*-_running_unit_vector.getY()));
-            running_dir.push_back(getCentreY() + (arrow_length*_running_unit_vector.getX()));
+            running_dir.push_back(getCentreX() + (arrow_length*_running_unit_vector.getX()));
+            running_dir.push_back(getCentreY() + (arrow_length*_running_unit_vector.getY()));
 
+            running_dir.push_back(running_dir.at(2));
+            running_dir.push_back(running_dir.at(3));
+            running_dir.push_back(running_dir.at(2) + (-arrow_off*_running_unit_vector.getX()) + (arrow_off*_running_unit_vector.getY()));
+            running_dir.push_back(running_dir.at(3) + (-arrow_off*_running_unit_vector.getY()) + (-arrow_off*_running_unit_vector.getX()));
+
+            running_dir.push_back(running_dir.at(2));
+            running_dir.push_back(running_dir.at(3));
+            running_dir.push_back(running_dir.at(2) + (-arrow_off*_running_unit_vector.getX()) + (-arrow_off*_running_unit_vector.getY()));
+            running_dir.push_back(running_dir.at(3) + (-arrow_off*_running_unit_vector.getY()) + (arrow_off*_running_unit_vector.getX()));
+        }
+        else {
+            running_dir.push_back(getCentreX() + (arrow_length*-_running_unit_vector.getX()));
+            running_dir.push_back(getCentreY() + (arrow_length*-_running_unit_vector.getY()));
 
             running_dir.push_back(running_dir.at(2));
             running_dir.push_back(running_dir.at(3));
@@ -157,25 +168,34 @@ void Player::drawStats(ObjRenderer* rend) {
 
             running_dir.push_back(running_dir.at(2));
             running_dir.push_back(running_dir.at(3));
-            running_dir.push_back(running_dir.at(2) + (-arrow_off*_running_unit_vector.getX()) + (arrow_off*_running_unit_vector.getY()));
-            running_dir.push_back(running_dir.at(3) + (-arrow_off*_running_unit_vector.getY()) + (-arrow_off*_running_unit_vector.getX()));
-        }
-        else {
-            running_dir.push_back(getCentreX() + (arrow_length*_running_unit_vector.getY()));
-            running_dir.push_back(getCentreY() + (arrow_length*-_running_unit_vector.getX()));
-
-            running_dir.push_back(running_dir.at(2));
-            running_dir.push_back(running_dir.at(3));
             running_dir.push_back(running_dir.at(2) + (arrow_off*_running_unit_vector.getX()) + (-arrow_off*_running_unit_vector.getY()));
             running_dir.push_back(running_dir.at(3) + (arrow_off*_running_unit_vector.getY()) + (arrow_off*_running_unit_vector.getX()));
-
-            running_dir.push_back(running_dir.at(2));
-            running_dir.push_back(running_dir.at(3));
-            running_dir.push_back(running_dir.at(2) + (-arrow_off*_running_unit_vector.getX()) + (-arrow_off*_running_unit_vector.getY()));
-            running_dir.push_back(running_dir.at(3) + (-arrow_off*_running_unit_vector.getY()) + (arrow_off*_running_unit_vector.getX()));
         }
 
         rend->render(running_dir,
+                     STATS_COLOUR,
+                     0.0f,
+                     GL_LINES);
+    }
+
+    // Point where the current planet uses to find the region its on
+    if (STATS_PLAYER_REGION_PT && _on_planet) {
+        vector<float> cross;
+        float off = 100;
+
+        Point2D unit_vec = Point2D(getRunningUnitVector().getY(), -getRunningUnitVector().getX());
+        Point2D pt = getCentre() - (unit_vec*(getHeight()/2));
+        cross.push_back(pt.getX() + off);
+        cross.push_back(pt.getY() + off);
+        cross.push_back(pt.getX() - off);
+        cross.push_back(pt.getY() - off);
+
+        cross.push_back(pt.getX() - off);
+        cross.push_back(pt.getY() + off);
+        cross.push_back(pt.getX() + off);
+        cross.push_back(pt.getY() - off);
+
+        rend->render(cross,
                      STATS_COLOUR,
                      0.0f,
                      GL_LINES);

@@ -4,6 +4,7 @@
 #include "config.h"
 #include "game.h"
 #include "math.h"
+#include "log.h"
 
 Motion PhysicsEngine::calcMotion(const Motion &motion) {
     // Physics equations of constant acceleration used to find new displacement
@@ -22,7 +23,7 @@ Motion PhysicsEngine::calcMotion(const Motion &motion) {
     return calc;
 }
 
-void PhysicsEngine::updatePhysics(Object *obj, const vector<GravObject*> *g_objs, CollisionData *data) {
+GravObject* PhysicsEngine::updatePhysicsForCollisions(Object *obj, const vector<GravObject*> *g_objs) {
     Motion vert_comp = calcMotion(obj->vert_motion);
     Motion hori_comp = calcMotion(obj->hori_motion);
     GravObject* collided_planet = NULL; // NULL means no collision
@@ -36,21 +37,7 @@ void PhysicsEngine::updatePhysics(Object *obj, const vector<GravObject*> *g_objs
     // Check all planet collisions
     for (int i=0; i<(int)g_objs->size(); i++) {
         if (Collision::isBoundingBox(post_rect, *g_objs->at(i))) {
-            bool collided = false;
-            if (!data) {
-                if (Collision::isCircleIntersPolygon(post_rect, g_objs->at(i)->getRotAngle(), g_objs->at(i)->getVertices()))
-                    collided = true;
-            }
-            else {
-                CollisionData tmp;
-                tmp.facing = data->facing;
-                if (Collision::isCircleIntersPolygon(post_rect, g_objs->at(i)->getRotAngle(), g_objs->at(i)->getVertices(), &tmp)) {
-                    collided = true;
-                    *data = tmp;
-                }
-            }
-
-            if (collided) {
+            if (Collision::isCircleIntersPolygon(post_rect, g_objs->at(i)->getRotAngle(), g_objs->at(i)->getVertices())) {
                 obj->hori_motion.setTime(hori_comp.getTime());
                 obj->vert_motion.setTime(vert_comp.getTime());
                 obj->hori_motion.setVel(0.0f);
@@ -66,16 +53,14 @@ void PhysicsEngine::updatePhysics(Object *obj, const vector<GravObject*> *g_objs
     // So actually update physics attributes
     if (!collided_planet) {
         obj->setX(post_rect.getX());
+        obj->setY(post_rect.getY());
         obj->hori_motion.setTime(hori_comp.getTime());
         obj->hori_motion.setVel(hori_comp.getVel());
-        obj->setY(post_rect.getY());
         obj->vert_motion.setTime(vert_comp.getTime());
         obj->vert_motion.setVel(vert_comp.getVel());
     }
-    else if (data) {  // if data was generated
-        data->planet = collided_planet;
-        data->unit_vec = Math::rotatePt(data->unit_vec, -data->planet->getRotAngle());  // rotate to account for planets rotation
-    }
+
+    return collided_planet;
 }
 
 void PhysicsEngine::genInitVel(Object &obj, float rot_angle, float min, float max, float offset) {
@@ -89,7 +74,7 @@ void PhysicsEngine::genInitVel(Object &obj, float rot_angle, float min, float ma
     obj.vert_motion.setVel(obj.vert_motion.getVel() + init_v);
 }
 
-float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pt, Rect rect) {
+unsigned PhysicsEngine::getQuadOfPtAroundRect(Point2D pt, Rect rect) {
     /* Quadrants
           ---      
          1   4
@@ -97,6 +82,20 @@ float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pt, Rect rect) {
          2   3
           ---   */
 
+    float radius = rect.getWidth()/2;
+
+    // Find the quadrants
+    if (pt.getX() <= rect.getX() + radius && pt.getY() < rect.getY() + radius)
+        return 1;
+    else if (pt.getX() < rect.getX() + radius && pt.getY() >= rect.getY() + radius)
+        return 2;
+    else if (pt.getX() >= rect.getX() + radius && pt.getY() > rect.getY() + radius)
+        return 3;
+    else
+        return 4;
+}
+
+float PhysicsEngine::getAngleOfPtAroundRect(Point2D pt, Rect rect) {
     float angle = 0;
     float A = 0,
           O = 0;
@@ -108,31 +107,34 @@ float PhysicsEngine::getAngleOfPtFromRectCentre(Point2D pt, Rect rect) {
     float length_from_origin_y = abs(origin_y - pt.getY());
 
     // Find the quadrants
-    if (pt.getX() <= rect.getX() + radius && pt.getY() < rect.getY() + radius) {
-        // 1st Quad
-        A += length_from_origin_y;
-        O += length_from_origin_x;
-    }
-    else if (pt.getX() < rect.getX() + radius && pt.getY() >= rect.getY() + radius) {
-        // 2st Quad
-        angle += 90;
-        A += length_from_origin_x;
-        O += length_from_origin_y;
-    }
-    else if (pt.getX() >= rect.getX() + radius && pt.getY() > rect.getY() + radius) {
-        // 3st Quad
-        angle += 180;
-        A += length_from_origin_y;
-        O += length_from_origin_x;
-    }
-    else if (pt.getX() > rect.getX() + radius && pt.getY() <= rect.getY() + radius) {
-        // 4st Quad
-        angle += 270;
-        A += length_from_origin_x;
-        O += length_from_origin_y;
+    unsigned in_quad = getQuadOfPtAroundRect(pt, rect);
+
+    switch (in_quad) {
+        case 1:
+            A += length_from_origin_y;
+            O += length_from_origin_x;
+            break;
+            
+        case 2:
+            angle += 90;
+            A += length_from_origin_x;
+            O += length_from_origin_y;
+            break;
+
+        case 3:
+            angle += 180;
+            A += length_from_origin_y;
+            O += length_from_origin_x;
+            break;
+
+        case 4:
+            angle += 270;
+            A += length_from_origin_x;
+            O += length_from_origin_y;
+            break;
     }
 
-    angle += atanf(O/A) * 180/PI;
+    angle += atanf(O/A) * (180/PI);
     return angle;
 }
 
@@ -184,7 +186,7 @@ void PhysicsEngine::applyGravityTo(Object &obj, const vector<GravObject*> *g_obj
 
         // Make sure obj is inside of Planet
         if (Collision::isCircleIntersCircle(obj, grav_rect)) {
-            float rot_angle = getAngleOfPtFromRectCentre(obj.getCentre(), grav_rect);
+            float rot_angle = getAngleOfPtAroundRect(obj.getCentre(), grav_rect);
             float init_v;
             float init_h;
             splitCompValueFromAngle(&init_h, &init_v, rot_angle, 0, 0, 0, 3);
@@ -212,12 +214,24 @@ void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_
                        plan->getY() - g_radius,
                        plan->getWidth() + (g_radius*2),
                        plan->getWidth() + (g_radius*2));
-        float angle_new = getAngleOfPtFromRectCentre(player.getCentre(), grav_rect);
+
+        float angle_new;
+        if (player.getOnPlanetRegion() != -1) {  // Sit flat on a regions surface
+            Point2D unit_vec = player.getRunningUnitVector();
+            angle_new = atanf(-unit_vec.getY()/unit_vec.getX()) * (180/PI);
+
+            // Allow player to flipping upside down when the running dir is upside down
+            if (unit_vec.getX() < 0 || (unit_vec.getX() < 0 && unit_vec.getY() < 0))
+                angle_new += (angle_new > 0) ? 180: -180;
+        }
+        else
+            angle_new = getAngleOfPtAroundRect(player.getCentre(), grav_rect);
+
         player.setRotAngle(-angle_new);
     }
     else {
         for (int i=0; i<(int)g_objs->size(); i++) {
-            Object *plan = g_objs->at(i);
+            GravObject *plan = g_objs->at(i);
 
             // Create rect to rep the planets gravity area
             float g_radius = plan->getWidth();
@@ -227,7 +241,7 @@ void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_
                            plan->getWidth() + (g_radius*2));
 
             // Rotate obj relative to planet
-            float angle_new = getAngleOfPtFromRectCentre(player.getCentre(), grav_rect);
+            float angle_new = getAngleOfPtAroundRect(player.getCentre(), grav_rect);
 
             // If player not on any planet or on different planet
             if (player.getOnPlanet() != plan) {

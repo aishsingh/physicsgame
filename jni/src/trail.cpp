@@ -43,9 +43,8 @@ void Trail::draw(ObjRenderer *rend, vector<GravObject*> *g_objs) {
 
         // Update physics attributes only if box is moving
         if (shapes.at(i).vert_motion.getVel() != 0.0f || shapes.at(i).hori_motion.getVel() != 0.0f) {
-            PhysicsEngine::updatePhysics(&shapes.at(i), g_objs);
+            PhysicsEngine::updatePhysicsForCollisions(&shapes.at(i), g_objs);
         }
-
 
         // Remove shape if no longer needed
         if ((shapes.at(i).getAlpha() <= 0 && (int)shapes.size() > 0 && shapes.at(i).vert_motion.getVel() == 0)

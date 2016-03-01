@@ -39,17 +39,6 @@ bool Collision::isPtInCircle(Point2D pt, Rect circ) {
 }
 
 bool Collision::isPtInRotatedRect(Point2D pt, Point2D A, Point2D B, Point2D D) {
-    // Source: http://www.gamedev.net/topic/142526-checking-if-a-point-is-inside-a-rotated-rectangle
-    // Point2D diff_hori = B - A;
-    // Point2D diff_vert = D - A;
-    //
-    // if (((pt.getX()-A.getX())*diff_hori.getX())+((pt.getY()-A.getY())*diff_hori.getY()) < 0.0f) return false;
-    // if (((pt.getX()-B.getX())*diff_hori.getX())+((pt.getY()-B.getY())*diff_hori.getY()) > 0.0f) return false;
-    // if (((pt.getX()-A.getX())*diff_vert.getX())+((pt.getY()-A.getY())*diff_vert.getY()) < 0.0f) return false;
-    // if (((pt.getX()-D.getX())*diff_vert.getX())+((pt.getY()-D.getY())*diff_vert.getY()) > 0.0f) return false;
-    //
-    // return true;
-
     float ex,ey,fx,fy;
 
     ex=B.getX()-A.getX(); ey=B.getY()-A.getY();
@@ -63,21 +52,13 @@ bool Collision::isPtInRotatedRect(Point2D pt, Point2D A, Point2D B, Point2D D) {
     return true;
 }
 
-bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vertices, CollisionData *data) {
-    /* If we dont care about the collided region or uv, simplify the algorithm to speed things up.
-       This is used for non-complex objects such as the boxes in a players trail */
-    bool simple_mode = (data == NULL);
-    bool collided_region_found = false;
-
-    // Keep searching for furthest region or the closest depending on which way the user is facing at the time of collision
-    bool keep_searching = (simple_mode) ? false : (data->facing == LEFT);
-
-    for (int i=0; i<(int)vertices.size(); i+=2) {
+bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vert) {
+    for (int i=0; i<(int)vert.size(); i+=2) {
         // Vertices A,B represent both vertex ends of the current edge
-        Point2D A = Point2D(vertices.at(i), vertices.at(i+1));
-        Point2D B = (i+2 < (int)vertices.size()) ? 
-                    Point2D(vertices.at(i+2), vertices.at(i+3)) :
-                    Point2D(vertices.at(0), vertices.at(1));
+        Point2D A = Point2D(vert.at(i), vert.at(i+1));
+        Point2D B = (i+2 < (int)vert.size()) ? 
+                    Point2D(vert.at(i+2), vert.at(i+3)) :
+                    Point2D(vert.at(0), vert.at(1));
 
         // Calc unit vector with axis parallel to the normal vector (normal is perpendicular to AB)
         Point2D unit_vec = Math::getUnitVector(Math::getNormal(A, B));
@@ -97,27 +78,45 @@ bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<
         // allowing for a faster fail outcome from the collision algorithm
         if (d*unit_vec.getX() > d || d*unit_vec.getY() > d)
             return false;
-
-        if (!simple_mode && !collided_region_found) {
-            // Calc if this edge is the collided region of the polygon
-            Point2D pt = circle_centre - (unit_vec*-(circle.getHeight()/3));
-            if (isPtInRotatedRect(pt, A, B, A + (unit_vec*110))) {
-                data->region = i/2;
-                data->unit_vec = unit_vec;
-
-                if (!keep_searching)
-                    collided_region_found = true;
-
-                float off;
-                for (off=0.0f; !isPtInRotatedRect(base, A, B, A + (unit_vec*110)); off+=0.5f) {
-                    base = circle_centre - (unit_vec*((circle.getHeight()/2) - off));
-                }
-
-                data->offset = off;
-            }
-        }
     }
 
     // We reach here only if the circle's centre is intersecting with all edges of the polygon
     return true;
+}
+
+void Collision::genCollisionData(Rect circle, CollisionData *data) {
+    vector<float> vert = data->planet->getVertices();
+    float rot_angle = data->planet->getRotAngle();
+    bool left = (data->facing == LEFT);
+
+    for (int i=(left) ? 0:vert.size()-2;            // <- This crazy for loop is needed
+               (left) ? i<(int)vert.size():i>=0;    // <- in order to work for both LEFT or RIGHT
+            i+=(left) ? 2:-2) {                     // <- directions that the use user is facing.
+        // Vertices A,B represent both vertex ends of the current region edge
+        Point2D A = Point2D(vert.at(i), vert.at(i+1));
+        Point2D B = (i+2 < (int)vert.size()) ? 
+                    Point2D(vert.at(i+2), vert.at(i+3)) :
+                    Point2D(vert.at(0), vert.at(1));
+
+        // Calc unit vector with axis parallel to the normal vector (normal is perpendicular to AB)
+        Point2D unit_vec = Math::getUnitVector(Math::getNormal(A, B));
+
+        // Calc base of the circle
+        Point2D circle_centre = Math::rotatePt(circle.getCentre(), rot_angle);  // needs to be rotated to work with rotated polygons
+        Point2D base = circle_centre - (unit_vec*(circle.getHeight()/2));  // height is only needed for the offset here as the player always automatically rotates towards the planet so it is parrallel to the normal
+
+        // Calc if this edge is the collided region of the polygon
+        if (isPtInRotatedRect(circle_centre, A, B, A + (unit_vec*150))) {
+            data->region = i/2;
+            data->unit_vec = Math::rotatePt(Point2D(-unit_vec.getY(), unit_vec.getX()), -rot_angle);  // rotate to account for planets rotation
+
+            // Calc offset from region edge
+            float off;
+            for (off=0.0f; !isPtInRotatedRect(base, A, B, A + (unit_vec*150)); off+=0.5f)
+                base = circle_centre - (unit_vec*((circle.getHeight()/2) - off));
+
+            data->offset = off;
+            return;
+        }
+    }
 }

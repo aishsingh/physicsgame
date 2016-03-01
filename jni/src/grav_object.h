@@ -21,8 +21,10 @@ class GravObject: public Object {
         void drawGrav(ObjRenderer *rend);
 
         virtual vector<float> getVertices() const = 0;
+        virtual float getRegionAngleOffset(int region) const = 0;
         void anchorObject(Object *obj);
         float getRadiusOffset() const;
+        float getRotSpeed() const;
 
         /* Ctor / Dtor */
         GravObject(float x, float y, float width, float height, float rot_angle=0.0f);

@@ -6,7 +6,7 @@
 #include "log.h"
 
 GravObject::GravObject(float x, float y, float width, float height, float rot_angle) : Object(x,y,width,height,rot_angle) {
-    _rot_speed = powf(0.4f, (getWidth()/200));
+    _rot_speed = (GOBJ_ROTATE) ? powf(0.4f, (getWidth()/200)) : 0.0f;
     _grav_radius_offset = 120.0f;
     _grav_speed = 5.5f;
 
@@ -55,4 +55,8 @@ void GravObject::anchorObject(Object *obj) {
 
 float GravObject::getRadiusOffset() const {
     return _grav_radius_offset;
+}
+
+float GravObject::getRotSpeed() const {
+    return _rot_speed;
 }

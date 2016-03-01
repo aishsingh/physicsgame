@@ -21,35 +21,41 @@ Colour Shape::getColour() const {
 
 void Shape::useTheme(Theme &theme) {
     switch(theme) {
-        case GRAY:
-        _colour.r = (125 - (rand() % 100)) / 256.0f;
-        _colour.g = _colour.r;
-        _colour.b = _colour.r;
-        break;
+        case BLACK:
+            _colour.r = (125 - (rand() % 100)) / 256.0f;
+            _colour.g = _colour.r;
+            _colour.b = _colour.r;
+            break;
+
+        case GREY:
+            _colour.r = (200 - (rand() % 100)) / 256.0f;
+            _colour.g = _colour.r;
+            _colour.b = _colour.r;
+            break;
 
         case RED:
-        _colour.r = (rand() % 256) / 256.0f;
-        _colour.g = _colour.r/2.6f;
-        _colour.b = _colour.g;
-        break;
+            _colour.r = (rand() % 256) / 256.0f;
+            _colour.g = _colour.r/2.6f;
+            _colour.b = _colour.g;
+            break;
 
         case PURPLE:
-        _colour.b = (rand() % 256) / 256.0f;
-        _colour.r = _colour.b/4;
-        _colour.g = _colour.b/5.2f;
-        break;
+            _colour.b = (rand() % 256) / 256.0f;
+            _colour.r = _colour.b/4;
+            _colour.g = _colour.b/5.2f;
+            break;
 
         case BLUE:
-        _colour.b = (rand() % 256) / 256.0f;
-        _colour.r = _colour.b/4;
-        _colour.g = _colour.b/1.5f;
-        break;
+            _colour.b = (rand() % 256) / 256.0f;
+            _colour.r = _colour.b/4;
+            _colour.g = _colour.b/1.5f;
+            break;
 
         case RAINBOW:
-        _colour.r = (rand() % 256) / 256.0f;
-        _colour.g = (rand() % 256) / 256.0f;
-        _colour.b = (rand() % 256) / 256.0f;
-        break;
+            _colour.r = (rand() % 256) / 256.0f;
+            _colour.g = (rand() % 256) / 256.0f;
+            _colour.b = (rand() % 256) / 256.0f;
+            break;
     }
 
     // Reset Alpha value

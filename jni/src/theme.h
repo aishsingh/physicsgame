@@ -6,7 +6,8 @@
 #define THEME_H
 
 enum Theme {
-    GRAY=1, 
+    BLACK, 
+    GREY,
     RED, 
     PURPLE, 
     BLUE, 

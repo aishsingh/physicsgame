@@ -21,8 +21,11 @@ vector<float> Colour::getColourData(int vertex_count, Colour colour) {
 
 Colour Colour::getColour(Theme theme) {
     switch (theme) {
-        case GRAY:
+        case BLACK:
             return Colour(0.3f, 0.3f, 0.3f, 1.0f);
+
+        case GREY:
+            return Colour(0.41176, 0.40392f, 0.45098f, 1.0f);
 
         case RED:
             return Colour(1.0f, 0.39f, 0.39f, 1.0f);

@@ -14,8 +14,8 @@ Planet::Planet(float x, float y, float d) : GravObject(x,y,d,d), _action(STILL) 
     int vertex_count = PLANET_AVERAGE_SIDES * getWidth()/400;
     vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()/2, getRotAngle(), vertex_count);
     if (PLANET_RAND_SIDES) {
-        _vertex_offsets = Math::genRandData(vertex_count*2, 0, PLANET_RAND_SIDES_OFFSET);
-        _vertices = Math::removeConcaveVertices(Math::offsetDataByData(vert, _vertex_offsets), &_vertex_offsets);
+        _vertices_offsets = Math::genRandData(vertex_count*2, 0, PLANET_RAND_SIDES_OFFSET);
+        _vertices = Math::removeConcaveVertices(Math::offsetDataByData(vert, _vertices_offsets), &_vertices_offsets);
     }
     else {
         _vertices = vert;
@@ -36,7 +36,7 @@ void Planet::draw(ObjRenderer *rend) {
     // update vertices from updated values (eg rotation, pos)
     int vertex_count = PLANET_AVERAGE_SIDES * getWidth()/400;
     vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()/2, getRotAngle(), vertex_count);
-    _vertices = (PLANET_RAND_SIDES) ?  Math::offsetDataByData(vert, _vertex_offsets) : vert;
+    _vertices = (PLANET_RAND_SIDES) ?  Math::offsetDataByData(vert, _vertices_offsets) : vert;
 }
 
 void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
@@ -57,24 +57,24 @@ void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
 
             normal_vert.push_back(mid.getX());
             normal_vert.push_back(mid.getY());
-            normal_vert.push_back(mid.getX() + 50*unit_vec.getX());
-            normal_vert.push_back(mid.getY() + 50*unit_vec.getY());
+            normal_vert.push_back(mid.getX() + 25*unit_vec.getX());
+            normal_vert.push_back(mid.getY() + 25*unit_vec.getY());
 
             if (on_planet) {
                 vr_vert.push_back(A.getX());
                 vr_vert.push_back(A.getY());
-                vr_vert.push_back(A.getX() + 110*unit_vec.getX());
-                vr_vert.push_back(A.getY() + 110*unit_vec.getY());
+                vr_vert.push_back(A.getX() + 150*unit_vec.getX());
+                vr_vert.push_back(A.getY() + 150*unit_vec.getY());
                 vr_vert.push_back(B.getX());
                 vr_vert.push_back(B.getY());
-                vr_vert.push_back(B.getX() + 110*unit_vec.getX());
-                vr_vert.push_back(B.getY() + 110*unit_vec.getY());
+                vr_vert.push_back(B.getX() + 150*unit_vec.getX());
+                vr_vert.push_back(B.getY() + 150*unit_vec.getY());
             }
         }
     }
 
     Colour c = STATS_COLOUR;
-    c.a = 0.3f;
+    c.a = 0.2f;
 
     if (STATS_PLANET_NORMALS) {
         // draw normals
@@ -133,4 +133,9 @@ void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
 
 vector<float> Planet::getVertices() const {
     return _vertices;
+}
+
+float Planet::getRegionAngleOffset(int region) const {
+    region *= 2;
+    return atanf(_vertices_offsets.at(region+1) / _vertices_offsets.at(region)) * (180/PI);
 }

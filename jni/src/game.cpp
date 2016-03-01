@@ -239,7 +239,7 @@ void Game::respondToInput() {
         }
     }
     else {
-        if (_user.getAction() == Action::RUNNING)
+        if (_user.getAction() == Action::RUNNING && !_user.vert_motion.getVel() && !_user.hori_motion.getVel())
             _user.setAction(Action::STILL);
     }
 

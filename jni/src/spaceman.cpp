@@ -32,11 +32,11 @@ void Spaceman::setFrame(int frame) {
 }
 
 void Spaceman::changeTheme(Theme &old_theme) {
-    Theme new_theme(GRAY);
+    Theme new_theme(GREY);
     do {
         int rand_val = rand() % 250;
         if (rand_val >= 0 && rand_val < 50)
-            new_theme = GRAY;
+            new_theme = BLACK;
         else if (rand_val >= 50  && rand_val < 100)
             new_theme = RED;
         else if (rand_val >= 100 && rand_val < 150)
@@ -76,20 +76,22 @@ void Spaceman::update() {
 
         case Action::RUNNING: {
             if (_on_planet_region == -1) {
-                float speed = ((_facing == RIGHT) ? _running_speed : -_running_speed)/((_on_planet->getWidth()/150)*2);
-                Point2D pt = Math::rotatePtAroundPt(_on_planet->getCentre(), getCentre(), speed);
+                // FIXME
+                // float speed = ((_facing == RIGHT) ? _running_speed : -_running_speed)/((_on_planet->getWidth()/150)*2);
+                // Point2D pt = Math::rotatePtAroundPt(_on_planet->getCentre(), getCentre(), speed);
+                //
+                // setX(pt.getX() - (getWidth()/2));
+                // setY(pt.getY() - (getHeight()/2));
 
-                setX(pt.getX() - (getWidth()/2));
-                setY(pt.getY() - (getHeight()/2));
             }
             else {
                 if (_facing == RIGHT) {
-                    setX(getX() + (_running_speed*-_running_unit_vector.getY()));
-                    setY(getY() + (_running_speed*_running_unit_vector.getX()));
+                    setX(getX() + (_running_speed*_running_unit_vector.getX()));
+                    setY(getY() + (_running_speed*_running_unit_vector.getY()));
                 }
                 else {
-                    setX(getX() + (_running_speed*_running_unit_vector.getY()));
-                    setY(getY() + (_running_speed*-_running_unit_vector.getX()));
+                    setX(getX() + (_running_speed*-_running_unit_vector.getX()));
+                    setY(getY() + (_running_speed*-_running_unit_vector.getY()));
                 }
             }
             break;
