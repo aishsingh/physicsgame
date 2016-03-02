@@ -63,18 +63,31 @@ void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
             if (on_planet) {
                 vr_vert.push_back(A.getX());
                 vr_vert.push_back(A.getY());
-                vr_vert.push_back(A.getX() + 150*unit_vec.getX());
-                vr_vert.push_back(A.getY() + 150*unit_vec.getY());
+                vr_vert.push_back(A.getX() + GOBJ_REGION_HEIGHT*unit_vec.getX());
+                vr_vert.push_back(A.getY() + GOBJ_REGION_HEIGHT*unit_vec.getY());
                 vr_vert.push_back(B.getX());
                 vr_vert.push_back(B.getY());
-                vr_vert.push_back(B.getX() + 150*unit_vec.getX());
-                vr_vert.push_back(B.getY() + 150*unit_vec.getY());
+                vr_vert.push_back(B.getX() + GOBJ_REGION_HEIGHT*unit_vec.getX());
+                vr_vert.push_back(B.getY() + GOBJ_REGION_HEIGHT*unit_vec.getY());
             }
         }
     }
 
     Colour c = STATS_COLOUR;
     c.a = 0.2f;
+
+    if (STATS_PLANET_GRAV_AREA) {
+        vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()*1.5, getRotAngle(), 50);
+        rend->render(vert,
+                     Colour(1.0f, 1.0f, 1.0f, 0.03f),
+                     getRotAngle(), 
+                     GL_TRIANGLE_FAN);
+
+        rend->render(vert,
+                     Colour(1.0f, 1.0f, 1.0f, 0.15f),
+                     getRotAngle(), 
+                     GL_LINE_LOOP);
+    }
 
     if (STATS_PLANET_NORMALS) {
         // draw normals

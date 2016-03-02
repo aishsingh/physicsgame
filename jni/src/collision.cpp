@@ -1,5 +1,6 @@
 #include <cmath>
 #include "collision.h"
+#include "config.h"
 #include "physics.h"
 #include "math.h"
 
@@ -106,13 +107,13 @@ void Collision::genCollisionData(Rect circle, CollisionData *data) {
         Point2D base = circle_centre - (unit_vec*(circle.getHeight()/2));  // height is only needed for the offset here as the player always automatically rotates towards the planet so it is parrallel to the normal
 
         // Calc if this edge is the collided region of the polygon
-        if (isPtInRotatedRect(circle_centre, A, B, A + (unit_vec*150))) {
+        if (isPtInRotatedRect(circle_centre, A, B, A + (unit_vec*GOBJ_REGION_HEIGHT))) {
             data->region = i/2;
             data->unit_vec = Math::rotatePt(Point2D(-unit_vec.getY(), unit_vec.getX()), -rot_angle);  // rotate to account for planets rotation
 
             // Calc offset from region edge
             float off;
-            for (off=0.0f; !isPtInRotatedRect(base, A, B, A + (unit_vec*150)); off+=0.5f)
+            for (off=0.0f; !isPtInRotatedRect(base, A, B, A + (unit_vec*GOBJ_REGION_HEIGHT)); off+=0.5f)
                 base = circle_centre - (unit_vec*((circle.getHeight()/2) - off));
 
             data->offset = off;

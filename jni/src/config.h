@@ -9,6 +9,7 @@
 // --- GAME CONFIG ------------------------
 #define STATS_DISABLE false
 #define STATS_COLOUR Colour::getColour(PURPLE)
+#define TIME_DEFAULT_SPEED 0.4f
 #define USER_UPDATE_INTERVAL 0.6f
 #define USER_UPDATE_PER_INTERVAL 1
 #define USER_THEME GREY
@@ -31,7 +32,7 @@
 #define GALAXY_RANGE_Y 5000  
 
 // --- PLAYER CONFIG ----------------------
-#define STATS_PLAYER_REGION_PT true
+#define STATS_PLAYER_REGION_PT false
 #define STATS_PLAYER_CLOSEST_GOBJ true
 #define STATS_PLAYER_RUNNING_DIR true
 #define STATS_PLAYER_TRAIL true
@@ -46,6 +47,7 @@
 #define STATS_PLANET_NORMALS true
 #define STATS_PLANET_FIRST_NORMAL true
 #define STATS_PLANET_VR true
+#define STATS_PLANET_GRAV_AREA true
 #define PLANET_AVERAGE_SIDES 15      // The more sides (or vertices) the more round the object looks
 #define PLANET_RAND_SIDES true       // The sides will not be symetrical if true
 #define PLANET_RAND_SIDES_OFFSET 15.0f
@@ -56,6 +58,7 @@
 #define GOBJ_AVERAGE_SIDES 45
 #define GOBJ_OPACITY 0.5f
 #define GOBJ_ROTATE true
+#define GOBJ_REGION_HEIGHT 150
 
 // --- TRAIL CONFIG -----------------------
 #define TRAIL_FADE_DEC 0.1f

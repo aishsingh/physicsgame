@@ -205,7 +205,7 @@ void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_
     float netg_h = 0;
     float netg_v = 0;
 
-    if (player.getAction() == Action::STILL) {
+    if (player.getAction() == Action::STILL || player.getAction() == Action::RUNNING) {
         GravObject *plan = player.getOnPlanet();
 
         // Create rect to rep the planets gravity area
@@ -222,7 +222,16 @@ void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_
 
             // Allow player to flipping upside down when the running dir is upside down
             if (unit_vec.getX() < 0 || (unit_vec.getX() < 0 && unit_vec.getY() < 0))
-                angle_new += (angle_new > 0) ? 180: -180;
+                angle_new -= (angle_new > 0) ? 180: -180;
+                
+            /* Normalize angle
+             * Source: http://stackoverflow.com/a/2323034/3270542 */
+            angle_new = fmod(angle_new, 360);       // reduce the angle  
+            angle_new = fmod(angle_new + 360, 360); // force it to be the positive remainder, so that 0 <= angle < 360  
+
+            // Determine planet gravity from new rot angle
+            if (player.getAction() == Action::RUNNING)
+                splitCompValueFromAngle(&netg_h, &netg_v, angle_new, 0, 0, 0, 2.5f);
         }
         else
             angle_new = getAngleOfPtAroundRect(player.getCentre(), grav_rect);
@@ -249,7 +258,6 @@ void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_
                 player.setAction(Action::LANDING);
             }
 
-
             player.setRotAngle(-angle_new);
 
             // Determine planet gravity from new rot angle
@@ -261,12 +269,13 @@ void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_
             netg_h += init_h;
             netg_v += init_v;
         }
+    }
 
-        if (player.getAction() != Action::STILL){
-            // Or apply gravity to obj
-            player.hori_motion.setAccel(netg_h);
-            player.vert_motion.setAccel(netg_v);
-        }
+    if (player.getAction() != Action::STILL) {
+        // Or apply gravity to obj
+        player.hori_motion.setAccel(netg_h);
+        player.vert_motion.setAccel(netg_v);
+        // LOGI("ah: %.2f, av: %.2f, angle: %.2f", netg_h, netg_v, player.getRotAngle());
     }
 }
 
