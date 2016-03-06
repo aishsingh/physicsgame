@@ -32,7 +32,7 @@
 #define GALAXY_RANGE_Y 5000  
 
 // --- PLAYER CONFIG ----------------------
-#define STATS_PLAYER_REGION_PT false
+#define STATS_PLAYER_REGION_PT true
 #define STATS_PLAYER_CLOSEST_GOBJ true
 #define STATS_PLAYER_RUNNING_DIR true
 #define STATS_PLAYER_TRAIL true
@@ -40,19 +40,19 @@
 #define PLAYER_THRUST_MIN_INIT_V 1.5f // up is neg, down is pos, left is neg, right is pos
 #define PLAYER_THRUST_OFFSET 0.0f
 #define PLAYER_SHADE true
-#define PLAYER_SHADE_COLOUR "+= vec4(0.1, 0.1, 0.1, 0.25);\n"
+#define PLAYER_SHADE_COLOUR "-= vec4(0.1, 0.1, 0.1, 0.25);\n"
 #define OUT_PLAYER_ACTION false
+#define OUT_PLAYER_SURFACE_OFFSET true
 
 // --- PLANET CONFIG ----------------------
 #define STATS_PLANET_NORMALS true
 #define STATS_PLANET_FIRST_NORMAL true
 #define STATS_PLANET_VR true
-#define STATS_PLANET_GRAV_AREA true
 #define PLANET_AVERAGE_SIDES 15      // The more sides (or vertices) the more round the object looks
 #define PLANET_RAND_SIDES true       // The sides will not be symetrical if true
 #define PLANET_RAND_SIDES_OFFSET 15.0f
 #define PLANET_COLOUR Colour(0.9294f, 0.898f, 0.88627f, 0.3f)
-#define OUT_PLANET_REGION false
+#define OUT_PLANET_REGION true
 
 // --- GRAV OBJECT CONFIG -----------------
 #define GOBJ_AVERAGE_SIDES 45

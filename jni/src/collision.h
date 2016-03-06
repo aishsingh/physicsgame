@@ -13,12 +13,12 @@
 
 struct CollisionData {
     GravObject *planet;
-    Dir facing;
     Point2D unit_vec;
+    Point2D pt;
     int region;
     float offset;
 
-    CollisionData(GravObject* p =NULL, Dir f =RIGHT) : planet(p), facing(f), region(-1), offset(0.0f) { }
+    CollisionData(GravObject* p =NULL) : planet(p), region(-1), offset(0.0f) { }
 };
 
 class Collision {
@@ -33,7 +33,8 @@ class Collision {
         /* Circle and Polygon collision detection which also works while both shapes are rotating
          * rot_angle is needed to get the polygons current rotation angle */
         static bool isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vert);
-        static void genCollisionData(Rect circle, CollisionData *data);
+        static bool isCircleInRegion(Rect circle, float region, CollisionData *data, Point2D cur_unit_vec =Point2D(0,0));
+        static void genCollisionData(Rect circle, CollisionData *data, Dir facing, int cur_region =-1, Point2D cur_unit_vec =Point2D(0,0));
 };
 
 #endif /* COLLISION_H */

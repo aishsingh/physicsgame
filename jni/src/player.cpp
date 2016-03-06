@@ -15,6 +15,7 @@ Player::Player(float x, float y, float width, float height) : Object(x,y,width,h
     _closest_planet_disp = 0;
     _facing = LEFT;
     _on_planet_region = -1;
+    _on_planet_region_prev = -1;
 }
 Player::~Player() { }
 
@@ -78,10 +79,13 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
             _orbiting_planets.push_back(_on_planet); // only keep track of the planet the player is on
             _last_visited_planet = _on_planet;
 
-            CollisionData c = CollisionData(_on_planet, _facing);
-            Collision::genCollisionData(*this, &c);
+            CollisionData c = CollisionData(_on_planet);
+            Collision::genCollisionData(*this, &c, _facing);
             _on_planet_region = c.region;
             _running_unit_vector = c.unit_vec;
+
+            if (OUT_PLAYER_SURFACE_OFFSET)
+                LOGI("Surface offset: (%.2f)", c.offset);
         }
     }
     else if (_action == Action::RUNNING) {
@@ -92,19 +96,45 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
         vector<GravObject*> p; p.push_back(_on_planet);
 
         PhysicsEngine::updatePhysicsForCollisions(this, &p);
-        CollisionData c = CollisionData(_on_planet, _facing);
-        Collision::genCollisionData(*this, &c);
+        CollisionData c = CollisionData(_on_planet);
+        Collision::genCollisionData(*this, 
+                                    &c, 
+                                    _facing, 
+                                    _on_planet_region, 
+                                    Point2D(getRunningUnitVector().getY(), -getRunningUnitVector().getX()));
 
         // apply collision data if on a valid region
         if (c.region != -1) {
-            _on_planet_region = c.region;
-            _running_unit_vector = c.unit_vec;
+            if (c.region != _on_planet_region) {
+                if (c.region != _on_planet_region_prev) {
+                    _on_planet_region_prev = _on_planet_region;
+                    _on_planet_region = c.region;
+                    _running_unit_vector = c.unit_vec;
+                }
+            }
+            _on_planet_collision_pt = c.pt;
         }
+        else {
+            // Point2D pt = Math::rotateObj(this);
+            // float x = pt.getX();
+            // float y = pt.getY();
+            //
+            // Point2D A = Point2D(x, y);
+            // Point2D B = Point2D(x, y + getHeight());
+            // _running_unit_vector = Math::getUnitVector(Math::getNormal(A, B));
+
+            // Point2D unit_vec = Point2D(getRunningUnitVector().getY(), -getRunningUnitVector().getX());
+            // _on_planet_collision_pt = getCentre() - (unit_vec*(getHeight()/2));
+        }
+
+        if (OUT_PLAYER_SURFACE_OFFSET)
+            LOGI("Surface offset: (%.2f)", c.offset);
     }
     else {
         // rotate player along with the planet's rotation
         _on_planet->anchorObject(this);
         _running_unit_vector = Math::rotatePt(_running_unit_vector, -_on_planet->getRotSpeed());
+        // _on_planet_collision_pt = Math::rotatePt(_on_planet_collision_pt, -_on_planet->getRotSpeed());
 
         float t = Game::getElapsedTime();
         hori_motion.setTime(t);
@@ -120,19 +150,19 @@ void Player::drawStats(ObjRenderer* rend) {
 
     // closest planet tracking
     if (STATS_PLAYER_CLOSEST_GOBJ) {
-    vector<float> closest_planet;
-    for (int i=0; i<(int)_orbiting_planets.size(); i++) {
-        GravObject *p = _orbiting_planets.at(i);
-        closest_planet.push_back(getCentreX());
-        closest_planet.push_back(getCentreY());
-        closest_planet.push_back(p->getCentreX());
-        closest_planet.push_back(p->getCentreY());
-    }
+        vector<float> closest_planet;
+        for (int i=0; i<(int)_orbiting_planets.size(); i++) {
+            GravObject *p = _orbiting_planets.at(i);
+            closest_planet.push_back(getCentreX());
+            closest_planet.push_back(getCentreY());
+            closest_planet.push_back(p->getCentreX());
+            closest_planet.push_back(p->getCentreY());
+        }
 
-    rend->render(closest_planet,
-                 STATS_COLOUR,
-                 0.0f,
-                 GL_LINES);
+        rend->render(closest_planet,
+                     STATS_COLOUR,
+                     0.0f,
+                     GL_LINES);
     }
 
     // arrow representing the running direction of the player
@@ -181,10 +211,10 @@ void Player::drawStats(ObjRenderer* rend) {
     // Point where the current planet uses to find the region its on
     if (STATS_PLAYER_REGION_PT && _on_planet) {
         vector<float> cross;
-        float off = 100;
+        float off = 50;
 
-        Point2D unit_vec = Point2D(getRunningUnitVector().getY(), -getRunningUnitVector().getX());
-        Point2D pt = getCentre() - (unit_vec*(getHeight()/2));
+        // Point2D unit_vec = Point2D(getRunningUnitVector().getY(), -getRunningUnitVector().getX());
+        Point2D pt = _on_planet_collision_pt;//getCentre() - (unit_vec*(getHeight()/2));
         cross.push_back(pt.getX() + off);
         cross.push_back(pt.getY() + off);
         cross.push_back(pt.getX() - off);

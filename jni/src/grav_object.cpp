@@ -20,18 +20,30 @@ GravObject::GravObject(float x, float y, float width, float height, float rot_an
 GravObject::~GravObject() { }
 
 void GravObject::drawGrav(ObjRenderer *rend) {
+    // Render gravity area
+    vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()*1.5, getRotAngle(), 50);
+    rend->render(vert,
+                 Colour(1.0f, 1.0f, 1.0f, 0.03f),
+                 getRotAngle(), 
+                 GL_TRIANGLE_FAN);
+
+    rend->render(vert,
+                 Colour(1.0f, 1.0f, 1.0f, 0.15f),
+                 getRotAngle(), 
+                 GL_LINE_LOOP);
+
+
+    // Render all gravity rings
     int grav_vertex_count = GOBJ_AVERAGE_SIDES * (getWidth()/400);
     int vertex_count = 15 * (getWidth()/400);
     int lines = (vertex_count <= 7) ? 2:3;
 
-    // Render Gravity area with rings
     for (int i=0; i<lines; i++) {
         _grav_rings_off[i] = (_grav_rings_off[i] <=0) ? getWidth() : _grav_rings_off[i]-=_grav_speed;
 
         float alpha = (_grav_rings_off[i] > getWidth()/2) ? 2 - _grav_rings_off[i]/(getWidth()/2) : _grav_rings_off[i]/(getWidth()/2);
         alpha *= GOBJ_OPACITY;
 
-        // Render Gravity ring
         if (_grav_rings_off[i] > 0) {
             float radius = (getWidth()/2) + _grav_rings_off[i];
             vector<float> vert = Shape::genCircleVertices(getCentre(), radius, getRotAngle(), grav_vertex_count);

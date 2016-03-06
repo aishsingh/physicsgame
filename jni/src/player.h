@@ -24,6 +24,8 @@ class Player: public Object {
         GravObject* _last_visited_planet;
         float _closest_planet_disp;
         int _on_planet_region;  // Region of the planet that the player is on
+        int _on_planet_region_prev;
+        Point2D _on_planet_collision_pt;
         Point2D _running_unit_vector;
         vector<GravObject*> _orbiting_planets;
 

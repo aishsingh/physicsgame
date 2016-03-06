@@ -25,6 +25,8 @@ class Point2D {
         Point2D operator*(const float &in)   { return Point2D(_x * in, _y * in); }
         Point2D operator/(const Point2D &in) { return Point2D(_x / in.getX(), _y / in.getY()); }
         Point2D operator/(const float &in)   { return Point2D(_x / in, _y / in); }
+        bool operator==(const Point2D &in)   { return (_x == in.getX() && _y == in.getY()); }
+        bool operator!=(const Point2D &in)   { return !(*this == in); }
 
         /* Ctor */
         Point2D() {_x=0.0f, _y=0.0f;};

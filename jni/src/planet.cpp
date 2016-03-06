@@ -76,19 +76,6 @@ void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
     Colour c = STATS_COLOUR;
     c.a = 0.2f;
 
-    if (STATS_PLANET_GRAV_AREA) {
-        vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()*1.5, getRotAngle(), 50);
-        rend->render(vert,
-                     Colour(1.0f, 1.0f, 1.0f, 0.03f),
-                     getRotAngle(), 
-                     GL_TRIANGLE_FAN);
-
-        rend->render(vert,
-                     Colour(1.0f, 1.0f, 1.0f, 0.15f),
-                     getRotAngle(), 
-                     GL_LINE_LOOP);
-    }
-
     if (STATS_PLANET_NORMALS) {
         // draw normals
         rend->render(normal_vert,
