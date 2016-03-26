@@ -22,8 +22,8 @@ void Camera::setRotAngleOffset(float offset) {
 
 void Camera::setScaleFromDisp(float d) {
     float max = 2500.0f;
-    float min_s = 0.35f;
-    float max_s = 1.3f;
+    float min_s = 0.60f;
+    float max_s = 1.70f;
     float scale = 0.0f;
 
     scale = max_s*(1-(d/max));
