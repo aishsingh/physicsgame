@@ -62,8 +62,8 @@ float Math::genRand(float min, float max) {
 }
 
 
-vector<float> Math::getUnitVectors(vector<float> vertices) {
-    vector<float> unit_vectors;
+vector<Point2D> Math::getUnitVectors(vector<float> vertices) {
+    vector<Point2D> unit_vectors;
     for (int i=0; i<(int)vertices.size(); i+=2) {
         Point2D A = Point2D(vertices.at(i), vertices.at(i+1));
         Point2D B, uv;
@@ -77,9 +77,7 @@ vector<float> Math::getUnitVectors(vector<float> vertices) {
             uv = getUnitVector(getNormal(A, B));
         }
 
-
-        unit_vectors.push_back(uv.getX());
-        unit_vectors.push_back(uv.getY());
+        unit_vectors.push_back(uv);
     }
 
     return unit_vectors;

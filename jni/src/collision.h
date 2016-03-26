@@ -29,12 +29,18 @@ class Collision {
         static bool isCircleIntersCircle(Rect circ1, Rect circ2);
         static bool isPtInCircle(Point2D pt, Rect circ);
         static bool isPtInRotatedRect(Point2D pt, Point2D A, Point2D B, Point2D D);
+        static bool isPtInTriangle(Point2D pt, Point2D A, Point2D B, Point2D C);
 
         /* Circle and Polygon collision detection which also works while both shapes are rotating
          * rot_angle is needed to get the polygons current rotation angle */
         static bool isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vert);
-        static bool isCircleInRegion(Rect circle, float region, CollisionData *data, Point2D cur_unit_vec =Point2D(0,0));
-        static void genCollisionData(Rect circle, CollisionData *data, Dir facing, int cur_region =-1, Point2D cur_unit_vec =Point2D(0,0));
+
+        /* Can check either flat regions or corner regions */
+        static bool isCircleInRegion(Rect circle, unsigned region, CollisionData *data);
+
+        /* Called when a collision has occured. Determines collision data such as the region.
+         * If this isnt the first collision the current region can be passed to search the most likely regions first. */
+        static void genCollisionData(Rect circle, CollisionData *data, Dir facing, int cur_region =-1);
 };
 
 #endif /* COLLISION_H */

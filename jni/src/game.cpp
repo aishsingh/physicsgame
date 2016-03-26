@@ -260,7 +260,7 @@ void Game::drawStats() {
 
     // planet stats
     for(int i=0; i<(int)_g_objs.size(); i++)
-        _g_objs.at(i)->drawStats(_obj_rend, (_g_objs.at(i) == _user.getOnPlanet()), _user.getOnPlanetRegion());
+        _g_objs.at(i)->drawStats(_obj_rend, (_g_objs.at(i) == _user.getOnPlanet()), _user.getOnPlanetRegion()); // 2 even showing as 4 even
 }
 
 /* Static Members */

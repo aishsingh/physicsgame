@@ -3,7 +3,6 @@
 #include "config.h"
 #include "math.h"
 #include "shape.h"
-#include "log.h"
 
 GravObject::GravObject(float x, float y, float width, float height, float rot_angle) : Object(x,y,width,height,rot_angle) {
     _rot_speed = (GOBJ_ROTATE) ? powf(0.4f, (getWidth()/200)) : 0.0f;
@@ -22,16 +21,18 @@ GravObject::~GravObject() { }
 void GravObject::drawGrav(ObjRenderer *rend) {
     // Render gravity area
     vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()*1.5, getRotAngle(), 50);
-    rend->render(vert,
-                 Colour(1.0f, 1.0f, 1.0f, 0.03f),
-                 getRotAngle(), 
-                 GL_TRIANGLE_FAN);
 
-    rend->render(vert,
-                 Colour(1.0f, 1.0f, 1.0f, 0.15f),
-                 getRotAngle(), 
-                 GL_LINE_LOOP);
+    if (!STATS_DISABLE && STATS_GOBJ_BORDER) {
+        // rend->render(vert,
+        //              Colour(1.0f, 1.0f, 1.0f, 0.03f),
+        //              getRotAngle(), 
+        //              GL_TRIANGLE_FAN);
 
+        rend->render(vert,
+                     Colour(1.0f, 1.0f, 1.0f, 0.35f),
+                     getRotAngle(), 
+                     GL_LINE_LOOP);
+    }
 
     // Render all gravity rings
     int grav_vertex_count = GOBJ_AVERAGE_SIDES * (getWidth()/400);
@@ -71,4 +72,8 @@ float GravObject::getRadiusOffset() const {
 
 float GravObject::getRotSpeed() const {
     return _rot_speed;
+}
+
+Point2D GravObject::getUnitVectorAt(unsigned region) const {
+    return _unit_vectors.at(region); 
 }

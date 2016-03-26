@@ -15,6 +15,8 @@ class GravObject: public Object {
         float _grav_speed;         // The speed the rings shrink inwards
         float _grav_rings_off[3];  // The current radius offset for each of the gravity rings
 
+        vector<Point2D> _unit_vectors; 
+
     public:
         virtual void draw(ObjRenderer *rend) = 0;
         virtual void drawStats(ObjRenderer *rend, bool on_planet, int collided_region) = 0;
@@ -25,6 +27,7 @@ class GravObject: public Object {
         void anchorObject(Object *obj);
         float getRadiusOffset() const;
         float getRotSpeed() const;
+        Point2D getUnitVectorAt(unsigned region) const;
 
         /* Ctor / Dtor */
         GravObject(float x, float y, float width, float height, float rot_angle=0.0f);

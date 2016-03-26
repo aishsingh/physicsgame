@@ -20,6 +20,8 @@ Planet::Planet(float x, float y, float d) : GravObject(x,y,d,d), _action(STILL) 
     else {
         _vertices = vert;
     }
+
+    _unit_vectors = Math::getUnitVectors(_vertices);
 }
 Planet::~Planet() { }
 
@@ -32,11 +34,14 @@ void Planet::draw(ObjRenderer *rend) {
 
     // Rotate
     setRotAngle(getRotAngle() + _rot_speed);
+    for (int i=0; i<(int)_unit_vectors.size(); i++)
+        _unit_vectors.at(i) = Math::rotatePt(_unit_vectors.at(i), -_rot_speed);
 
     // update vertices from updated values (eg rotation, pos)
     int vertex_count = PLANET_AVERAGE_SIDES * getWidth()/400;
     vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()/2, getRotAngle(), vertex_count);
     _vertices = (PLANET_RAND_SIDES) ?  Math::offsetDataByData(vert, _vertices_offsets) : vert;
+    _unit_vectors = Math::getUnitVectors(_vertices);
 }
 
 void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
@@ -50,7 +55,8 @@ void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
                     Point2D(_vertices.at(0), _vertices.at(1));
 
             // Calc unit vector with axis parallel to the normal vector (normal is perpendicular to AB)
-            Point2D unit_vec = Math::getUnitVector(Math::getNormal(A, B));
+            // Point2D unit_vec = Math::getUnitVector(Math::getNormal(A, B));
+            Point2D unit_vec = _unit_vectors.at(i/2);
 
             // Calc mid point of the current edge
             Point2D mid = A + ((B - A)/2);
@@ -97,12 +103,8 @@ void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
                 getRotAngle(), 
                 GL_LINES);
     }
-
-    if (STATS_PLANET_VR) {
-        if (on_planet) {
-            if (OUT_PLANET_REGION)
-                LOGI("Region %i", collided_region);
-
+    if (on_planet) {
+        if (STATS_PLANET_VR) {
             // voronoi regions
             rend->render(vr_vert,
                     c,
@@ -112,14 +114,36 @@ void Planet::drawStats(ObjRenderer *rend, bool on_planet, int collided_region) {
             // Highlight colliding region
             if (collided_region > -1) {
                 vector<float> vr_area_vert;
-                vr_area_vert.push_back(vr_vert.at(0+(8*collided_region)));
-                vr_area_vert.push_back(vr_vert.at(1+(8*collided_region)));
-                vr_area_vert.push_back(vr_vert.at(2+(8*collided_region)));
-                vr_area_vert.push_back(vr_vert.at(3+(8*collided_region)));
-                vr_area_vert.push_back(vr_vert.at(4+(8*collided_region)));
-                vr_area_vert.push_back(vr_vert.at(5+(8*collided_region)));
-                vr_area_vert.push_back(vr_vert.at(6+(8*collided_region)));
-                vr_area_vert.push_back(vr_vert.at(7+(8*collided_region)));
+                
+                // Flat region (even)
+                if ((collided_region % 2) == 0) {
+                    vr_area_vert.push_back(vr_vert.at(0+(4*collided_region)));
+                    vr_area_vert.push_back(vr_vert.at(1+(4*collided_region)));
+                    vr_area_vert.push_back(vr_vert.at(2+(4*collided_region)));
+                    vr_area_vert.push_back(vr_vert.at(3+(4*collided_region)));
+                    vr_area_vert.push_back(vr_vert.at(4+(4*collided_region)));
+                    vr_area_vert.push_back(vr_vert.at(5+(4*collided_region)));
+                    vr_area_vert.push_back(vr_vert.at(6+(4*collided_region)));
+                    vr_area_vert.push_back(vr_vert.at(7+(4*collided_region)));
+                }
+                else {  // Corner region (odd)
+                    Point2D unit_vec_a = _unit_vectors.at((collided_region-1)/2);
+                    Point2D unit_vec_b;
+
+                    if (collided_region < (int)_vertices.size()-1)
+                        unit_vec_b = _unit_vectors.at(((collided_region-1)/2)+1);
+                    else {  // Needed for the index iterations below to get the first vertex
+                        unit_vec_b = _unit_vectors.at(0);
+                        collided_region=-1;
+                    }
+
+                    vr_area_vert.push_back(_vertices.at(collided_region+1));
+                    vr_area_vert.push_back(_vertices.at(collided_region+2));
+                    vr_area_vert.push_back(vr_area_vert.at(0) + GOBJ_REGION_HEIGHT*unit_vec_a.getX());
+                    vr_area_vert.push_back(vr_area_vert.at(1) + GOBJ_REGION_HEIGHT*unit_vec_a.getY());
+                    vr_area_vert.push_back(vr_area_vert.at(0) + GOBJ_REGION_HEIGHT*unit_vec_b.getX());
+                    vr_area_vert.push_back(vr_area_vert.at(1) + GOBJ_REGION_HEIGHT*unit_vec_b.getY());
+                }
 
                 // first vr
                 rend->render(vr_area_vert,

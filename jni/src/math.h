@@ -35,7 +35,7 @@ class Math {
 
         static float genRand(float min, float max);
 
-        static vector<float> getUnitVectors(vector<float> vertices);
+        static vector<Point2D> getUnitVectors(vector<float> vertices);
 
         static vector<float> genRandData(int count, float min, float max);
 

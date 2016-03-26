@@ -228,6 +228,7 @@ void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_
              * Source: http://stackoverflow.com/a/2323034/3270542 */
             angle_new = fmod(angle_new, 360);       // reduce the angle  
             angle_new = fmod(angle_new + 360, 360); // force it to be the positive remainder, so that 0 <= angle < 360  
+            // Point2D unit_vec_next = plan->getUnitVectorAt(player.getOnPlanetRegion());
 
             // Determine planet gravity from new rot angle
             if (player.getAction() == Action::RUNNING)
@@ -275,7 +276,6 @@ void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_
         // Or apply gravity to obj
         player.hori_motion.setAccel(netg_h);
         player.vert_motion.setAccel(netg_v);
-        // LOGI("ah: %.2f, av: %.2f, angle: %.2f", netg_h, netg_v, player.getRotAngle());
     }
 }
 

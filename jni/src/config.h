@@ -41,8 +41,8 @@
 #define PLAYER_THRUST_OFFSET 0.0f
 #define PLAYER_SHADE true
 #define PLAYER_SHADE_COLOUR "-= vec4(0.1, 0.1, 0.1, 0.25);\n"
-#define OUT_PLAYER_ACTION false
-#define OUT_PLAYER_SURFACE_OFFSET true
+#define OUT_PLAYER_ACTION true
+#define OUT_PLAYER_SURFACE_OFFSET false
 
 // --- PLANET CONFIG ----------------------
 #define STATS_PLANET_NORMALS true
@@ -52,9 +52,9 @@
 #define PLANET_RAND_SIDES true       // The sides will not be symetrical if true
 #define PLANET_RAND_SIDES_OFFSET 15.0f
 #define PLANET_COLOUR Colour(0.9294f, 0.898f, 0.88627f, 0.3f)
-#define OUT_PLANET_REGION true
 
 // --- GRAV OBJECT CONFIG -----------------
+#define STATS_GOBJ_BORDER true
 #define GOBJ_AVERAGE_SIDES 45
 #define GOBJ_OPACITY 0.5f
 #define GOBJ_ROTATE true

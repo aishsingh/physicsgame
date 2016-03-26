@@ -97,20 +97,17 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
 
         PhysicsEngine::updatePhysicsForCollisions(this, &p);
         CollisionData c = CollisionData(_on_planet);
-        Collision::genCollisionData(*this, 
-                                    &c, 
-                                    _facing, 
-                                    _on_planet_region, 
-                                    Point2D(getRunningUnitVector().getY(), -getRunningUnitVector().getX()));
+        Collision::genCollisionData(*this, &c, _facing, _on_planet_region);
 
         // apply collision data if on a valid region
         if (c.region != -1) {
             if (c.region != _on_planet_region) {
-                if (c.region != _on_planet_region_prev) {
+                // if (c.region != _on_planet_region_prev) {
                     _on_planet_region_prev = _on_planet_region;
                     _on_planet_region = c.region;
-                    _running_unit_vector = c.unit_vec;
-                }
+                    if (c.region % 2 == 0)  // flat region
+                        _running_unit_vector = c.unit_vec;
+                // }
             }
             _on_planet_collision_pt = c.pt;
         }
@@ -134,7 +131,6 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
         // rotate player along with the planet's rotation
         _on_planet->anchorObject(this);
         _running_unit_vector = Math::rotatePt(_running_unit_vector, -_on_planet->getRotSpeed());
-        // _on_planet_collision_pt = Math::rotatePt(_on_planet_collision_pt, -_on_planet->getRotSpeed());
 
         float t = Game::getElapsedTime();
         hori_motion.setTime(t);
@@ -143,11 +139,10 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
 
     // display actions
     if (OUT_PLAYER_ACTION)
-        LOGI("%s", Action::toString(_action).c_str());
+        LOGI("Player %s on region %i", Action::toString(_action).c_str(), _on_planet_region);
 }
 
 void Player::drawStats(ObjRenderer* rend) {
-
     // closest planet tracking
     if (STATS_PLAYER_CLOSEST_GOBJ) {
         vector<float> closest_planet;

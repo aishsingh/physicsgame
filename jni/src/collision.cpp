@@ -3,6 +3,7 @@
 #include "config.h"
 #include "physics.h"
 #include "math.h"
+#include "log.h"
 
 bool Collision::isBoundingBox(Rect box1, Rect box2) {
     return (box1.getX() < box2.getX() + box2.getWidth() &&
@@ -53,6 +54,24 @@ bool Collision::isPtInRotatedRect(Point2D pt, Point2D A, Point2D B, Point2D D) {
     return true;
 }
 
+bool Collision::isPtInTriangle(Point2D pt, Point2D A, Point2D B, Point2D C) {
+    // Source: http://stackoverflow.com/a/20861130
+    float s = A.getY() * C.getX() - A.getX() * C.getY() + (C.getY() - A.getY()) * pt.getX() + (A.getX() - C.getX()) * pt.getY();
+    float t = A.getX() * B.getY() - A.getY() * B.getX() + (A.getY() - B.getY()) * pt.getX() + (B.getX() - A.getX()) * pt.getY();
+
+    if ((s < 0) != (t < 0))
+        return false;
+
+    float d = -B.getY() * C.getX() + A.getY() * (C.getX() - B.getX()) + A.getX() * (B.getY() - C.getY()) + B.getX() * C.getY();
+    if (d < 0.0)
+    {
+        s = -s;
+        t = -t;
+        d = -d;
+    }
+    return s > 0 && t > 0 && (s + t) <= d;
+}
+
 bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vert) {
     for (int i=0; i<(int)vert.size(); i+=2) {
         // Vertices A,B represent both vertex ends of the current edge
@@ -85,67 +104,89 @@ bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<
     return true;
 }
 
-bool Collision::isCircleInRegion(Rect circle, float region, CollisionData *data, Point2D cur_unit_vec) {
+bool Collision::isCircleInRegion(Rect circle, unsigned region, CollisionData *data) {
     vector<float> vert = data->planet->getVertices();
     float rot_angle = data->planet->getRotAngle();
-    int i = region*2;
 
-    // Vertices A,B represent both vertex ends of the current region edge
-    Point2D A = Point2D(vert.at(i), vert.at(i+1));
-    Point2D B = (i+2 < (int)vert.size()) ? 
-                Point2D(vert.at(i+2), vert.at(i+3)) :
-                Point2D(vert.at(0), vert.at(1));
-
-    // Calc unit vector with axis parallel to the normal vector (normal is perpendicular to AB)
-    Point2D unit_vec = Math::getUnitVector(Math::getNormal(A, B));
+    Point2D uv_a = data->planet->getUnitVectorAt(region/2);
 
     // Calc base of the circle
     Point2D circle_centre = Math::rotatePt(circle.getCentre(), rot_angle);  // needs to be rotated to work with rotated polygons
-    Point2D base;
-    if (cur_unit_vec == Point2D(0,0))
-        base = circle_centre - unit_vec*(circle.getHeight()/2);  // height is only needed for the offset here as the player always automatically rotates towards the planet so it is parrallel to the normal
-    else
-        base = circle_centre - cur_unit_vec*(circle.getHeight()/2);  // height is only needed for the offset here as the player always automatically rotates towards the planet so it is parrallel to the normal
+    Point2D base = circle_centre - uv_a*(circle.getHeight()/2);  // height is only needed for the offset here as the player always automatically rotates towards the planet so it is parrallel to the normal
 
-    // Calc if this edge is the collided region of the polygon
-    if (isPtInRotatedRect(base, A, B, A + (unit_vec*GOBJ_REGION_HEIGHT))) {
-        data->region = region;
-        data->unit_vec = Math::rotatePt(Point2D(-unit_vec.getY(), unit_vec.getX()), -rot_angle);  // rotate to account for planets rotation
-        data->pt = Math::rotatePt(base, -rot_angle);
+    if (region % 2 == 0) {  // Flat edge region
+        Point2D A, B;
+        if (region < vert.size()-1) {
+            A = Point2D(vert.at(region), vert.at(region+1));
+            B = (region+2 < vert.size()-1) ? 
+                        Point2D(vert.at(region+2), vert.at(region+3)) :
+                        Point2D(vert.at(0), vert.at(1));
+        }
+        else {  // If checking the last region
+            A = Point2D(vert.at(region-1), vert.at(region));
+            B = Point2D(vert.at(0), vert.at(1));
+        }
 
-        // Calc offset from region edge
-        float off;
-        for (off=0.0f; !isPtInRotatedRect(base, A, B, A + (unit_vec*GOBJ_REGION_HEIGHT)); off+=0.25f)
-            base = circle_centre - (unit_vec*((circle.getHeight()/2) - off));
+        // Calc if collided with flat region of the polygon
+        if (isPtInRotatedRect(circle_centre, A, B, A + (uv_a*GOBJ_REGION_HEIGHT))) {
+            data->region = region;
+            data->unit_vec = Math::rotatePt(Point2D(-uv_a.getY(), uv_a.getX()), -rot_angle);  // rotate to account for planets rotation
+            data->pt = Math::rotatePt(base, -rot_angle);
 
-        data->offset = off;
-        return true;
+            // Calc offset from region edge
+            float off;
+            for (off=0.0f; !isPtInRotatedRect(base, A, B, A + (uv_a*GOBJ_REGION_HEIGHT)); off+=0.25f)
+                base = circle_centre - (uv_a*((circle.getHeight()/2) - off));
+
+            data->offset = off;
+            return true;
+        }
     }
+    else {  // Corner edge region
+        Point2D B = (region+1 < vert.size()-1) ? 
+                        Point2D(vert.at(region+1), vert.at(region+2)) :
+                        Point2D(vert.at(0), vert.at(1));
+
+        Point2D uv_b = (region+1 < vert.size()-1)? 
+                        data->planet->getUnitVectorAt((region/2)+1) : 
+                        data->planet->getUnitVectorAt(0);
+
+        // Calc if collided with corner edge
+        if (isPtInTriangle(circle_centre, B, B + (uv_a*GOBJ_REGION_HEIGHT), B + (uv_b*GOBJ_REGION_HEIGHT))) {
+            data->region = region;
+            data->unit_vec = Math::rotatePt(Point2D(-uv_a.getY(), uv_a.getX()), -rot_angle);  // rotate to account for planets rotation
+            data->pt = Math::rotatePt(base, -rot_angle);
+
+            return true;
+        }
+    }
+
     return false;
 }
 
-void Collision::genCollisionData(Rect circle, CollisionData *data, Dir facing, int cur_region, Point2D cur_unit_vec) {
+void Collision::genCollisionData(Rect circle, CollisionData *data, Dir facing, int cur_region) {
     int vertex_count = data->planet->getVertices().size();
     bool left = (facing == LEFT);
 
-    // If we know the current region
+    // If we know the current region we check the most likely regions first
     if (cur_region > -1) {
-        // Check the most likely region first
+        // Check current first
         if (isCircleInRegion(circle, cur_region, data)) return;
 
-        int max_region = (vertex_count/2)-1;
-        if (isCircleInRegion(circle, (cur_region > 0) ? cur_region-1 : max_region, data)) return;
-        if (isCircleInRegion(circle, (cur_region < max_region) ? cur_region+1 : 0, data)) return;
-        if (isCircleInRegion(circle, (cur_region > 0) ? cur_region-1 : max_region, data, cur_unit_vec)) return;
-        if (isCircleInRegion(circle, (cur_region < max_region) ? cur_region+1 : 0, data, cur_unit_vec)) return;
-    }
-    else {
-        // Check all regions
-        for (int i=(left) ? 0 : vertex_count-2;  // This crazy for loop is needed
-                (left) ? i<vertex_count : i>=0;  // in order to work for either LEFT or RIGHT
-                i+=(left) ? 2 : -2) {            // direction that the use user is facing.
+        // Check neighbouring regions
+        int max_region = vertex_count-1;
+        int left_region = (cur_region > 0) ? cur_region-1 : max_region;
+        int right_region = (cur_region < max_region) ? cur_region+1 : 0;
 
-            if (isCircleInRegion(circle, i/2, data)) return;
-        }
+        if (isCircleInRegion(circle, left_region, data)) return;
+        if (isCircleInRegion(circle, right_region, data)) return;
+    }
+
+    // Check all regions
+    for (int i=(left) ? 0 : vertex_count-1;    // This crazy for loop is needed
+            (left) ? i<vertex_count-1 : i>=0;  // in order to work for either LEFT or RIGHT
+            i+=(left) ? 1 : -1) {              // direction that the user is facing.
+
+        if (isCircleInRegion(circle, i, data)) return;
     }
 }
