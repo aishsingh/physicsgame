@@ -28,7 +28,7 @@ GravObject* PhysicsEngine::updatePhysicsForCollisions(Object *obj, const vector<
     Motion hori_comp = calcMotion(obj->hori_motion);
     GravObject* collided_planet = NULL; // NULL means no collision
 
-    // Genereate rect containing updated dimensions
+    // Generate rect containing updated dimensions
     Rect post_rect(obj->getX() + hori_comp.getDisp(),
                    obj->getY() + vert_comp.getDisp(),
                    obj->getWidth(),
@@ -216,11 +216,12 @@ void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_
                        plan->getWidth() + (g_radius*2));
 
         float angle_new;
-        if (player.getOnPlanetRegion() != -1) {  // Sit flat on a regions surface
+        int cur_region = player.getOnPlanetRegion();
+        if (cur_region % 2 == 0) {  // Sit flat on a regions surface
             Point2D unit_vec = player.getRunningUnitVector();
             angle_new = atanf(-unit_vec.getY()/unit_vec.getX()) * (180/PI);
 
-            // Allow player to flipping upside down when the running dir is upside down
+            // Allow player to flip upside down when the running dir is upside down
             if (unit_vec.getX() < 0 || (unit_vec.getX() < 0 && unit_vec.getY() < 0))
                 angle_new -= (angle_new > 0) ? 180: -180;
                 
@@ -228,14 +229,13 @@ void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_
              * Source: http://stackoverflow.com/a/2323034/3270542 */
             angle_new = fmod(angle_new, 360);       // reduce the angle  
             angle_new = fmod(angle_new + 360, 360); // force it to be the positive remainder, so that 0 <= angle < 360  
-            // Point2D unit_vec_next = plan->getUnitVectorAt(player.getOnPlanetRegion());
-
-            // Determine planet gravity from new rot angle
-            if (player.getAction() == Action::RUNNING)
-                splitCompValueFromAngle(&netg_h, &netg_v, angle_new, 0, 0, 0, 2.5f);
         }
         else
             angle_new = getAngleOfPtAroundRect(player.getCentre(), grav_rect);
+
+        // Determine planet gravity from new rot angle
+        if (player.getAction() == Action::RUNNING && cur_region != -1)
+            splitCompValueFromAngle(&netg_h, &netg_v, angle_new, 0, 0, 0, 2.5f);
 
         player.setRotAngle(-angle_new);
     }

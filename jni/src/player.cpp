@@ -102,26 +102,15 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
         // apply collision data if on a valid region
         if (c.region != -1) {
             if (c.region != _on_planet_region) {
-                // if (c.region != _on_planet_region_prev) {
-                    _on_planet_region_prev = _on_planet_region;
-                    _on_planet_region = c.region;
-                    if (c.region % 2 == 0)  // flat region
-                        _running_unit_vector = c.unit_vec;
-                // }
+                _on_planet_region_prev = _on_planet_region;
+                _on_planet_region = c.region;
+                if (c.region % 2 == 0)  // flat region
+                    _running_unit_vector = c.unit_vec;
             }
             _on_planet_collision_pt = c.pt;
-        }
-        else {
-            // Point2D pt = Math::rotateObj(this);
-            // float x = pt.getX();
-            // float y = pt.getY();
-            //
-            // Point2D A = Point2D(x, y);
-            // Point2D B = Point2D(x, y + getHeight());
-            // _running_unit_vector = Math::getUnitVector(Math::getNormal(A, B));
 
-            // Point2D unit_vec = Point2D(getRunningUnitVector().getY(), -getRunningUnitVector().getX());
-            // _on_planet_collision_pt = getCentre() - (unit_vec*(getHeight()/2));
+            // FIXME: Temp fix issue #1
+            setPos(getPos() - Point2D(-c.unit_vec.getY(), c.unit_vec.getX())*c.offset);
         }
 
         if (OUT_PLAYER_SURFACE_OFFSET)

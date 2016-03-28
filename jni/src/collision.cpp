@@ -73,22 +73,22 @@ bool Collision::isPtInTriangle(Point2D pt, Point2D A, Point2D B, Point2D C) {
 }
 
 bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<float> vert) {
-    for (int i=0; i<(int)vert.size(); i+=2) {
+    for (int i=0; i<(int)vert.size()-1; i+=2) {
         // Vertices A,B represent both vertex ends of the current edge
         Point2D A = Point2D(vert.at(i), vert.at(i+1));
-        Point2D B = (i+2 < (int)vert.size()) ? 
-                    Point2D(vert.at(i+2), vert.at(i+3)) :
-                    Point2D(vert.at(0), vert.at(1));
+        Point2D B = (i+2 < (int)vert.size()-1) ? 
+                        Point2D(vert.at(i+2), vert.at(i+3)) :
+                        Point2D(vert.at(0), vert.at(1));
 
         // Calc unit vector with axis parallel to the normal vector (normal is perpendicular to AB)
         Point2D unit_vec = Math::getUnitVector(Math::getNormal(A, B));
 
         // Calc mid point of the current edge
-        Point2D mid = A + ((B - A)/2);
+        Point2D mid = B - ((B - A)/2);
 
         // Calc base of the circle
         Point2D circle_centre = Math::rotatePt(circle.getCentre(), rot_angle);  // needs to be rotated to work with rotated polygons
-        Point2D base = circle_centre - (unit_vec*(circle.getHeight()/2));  // height is only needed for the offset here as the player always automatically rotates towards the planet so it is parrallel to the normal
+        Point2D base = circle_centre - (unit_vec*(circle.getHeight())/2);  // height is only needed for the offset here as the player always automatically rotates towards the planet so it is parrallel to the normal
 
         // Calc difference between current poly edge and the circle base
         Point2D diff = mid - base;
@@ -96,7 +96,7 @@ bool Collision::isCircleIntersPolygon(Rect circle, float rot_angle, std::vector<
 
         // See if the circle is not colliding with the edge
         // allowing for a faster fail outcome from the collision algorithm
-        if (d*unit_vec.getX() > d || d*unit_vec.getY() > d)
+        if (d*unit_vec.getX() > d && d*unit_vec.getY() > d)
             return false;
     }
 
