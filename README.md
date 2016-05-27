@@ -1,16 +1,26 @@
 Physics Game
 ============
-
 A poorly named game that will soon become a fully functional android app.  
-The physics environment was originally derived from one of my comp science assignment.  
 
-###Concept
-_<Ideas will be placed here soon>_
+## Aim
+The aim of this project was to experiment and develop a physics engine entirely from scratch.  
+The project covers the following areas:  
 
-###Development
-The android app is running **native c++** code using JNI with the _android-ndk_.  
-**OpenGL ES 2** is used for surface rendering.
+* Objects inherit motion attributes (velocity, acceleration, etc)  
+* Objects are effected by gravity from all angles  
+* Polygon collision detection logic  
 
+I also wanted to experience Graphical Programming with the use of OpenGL 2 and its rendering pipeline.  
 
-###Author
-Aishwarya Singh - (aishwarya_singh95@hotmail.com)  
+## Frameworks
+__AndroidNDK:__ Call native C++ through JNI  
+__OpenGL ES 2:__ Surface rendering (Bare-bones version for mobile devices)  
+__GLM:__ Provide OpenGL math functions  
+__libzip:__ Extract APK to make assets readable natively  
+__libpng:__ Read image assets natively  
+
+## Disclamer
+The techniques I've used may not be optimal or performance focused as this project is developed entirely out of my own curiosity.
+
+## Contact
+Aishwarya Singh (contact@aishsingh.com)
