@@ -2,13 +2,15 @@ Physics Game
 ============
 A poorly named game that will soon become a fully functional android app.  
 
+![alt tag](http://aishsingh.com/images/preview1_physicsgame.gif "Gameplay preview")  
+
 ## Aim
 The aim of this project was to experiment and develop a physics engine entirely from scratch.  
 The project covers the following areas:  
 
 * Objects inherit motion attributes (velocity, acceleration, etc)  
 * Objects are effected by gravity from all angles  
-* Polygon collision detection logic  
+* Polygon collision detection  
 
 I also wanted to experience Graphical Programming with the use of OpenGL 2 and its rendering pipeline.  
 
