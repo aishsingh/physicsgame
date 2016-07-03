@@ -7,9 +7,8 @@ LOCAL_MODULE := libopengl
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../glm \
 				    $(LOCAL_PATH)/../libzip \
 					$(LOCAL_PATH)/../libpng
-					# $(LOCAL_PATH)/../soil/include/SOIL
 
-LOCAL_STATIC_LIBRARIES := libzip libpng soil
+LOCAL_STATIC_LIBRARIES := libzip libpng
 
 LOCAL_SRC_FILES := app_glue.cpp \
 					   game.cpp \
@@ -45,4 +44,3 @@ LOCAL_LDLIBS    := -llog -lGLESv2 -ldl -lz
 LOCAL_CFLAGS    := -fexceptions -std=c++98
 
 include $(BUILD_SHARED_LIBRARY)
-# $(call import-module,soil)

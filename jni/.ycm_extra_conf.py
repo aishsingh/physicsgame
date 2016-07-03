@@ -22,8 +22,7 @@ flags = [
 '/usr/include/SDL2',
 '-isystem',
 'libzip',
-'-isystem',
-'soil/include/SOIL',
+
 
 
 # '-llog',
