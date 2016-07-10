@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.view.MotionEvent;
 import android.view.GestureDetector;
-import android.support.v4.view.GestureDetectorCompat;
 
 import java.io.File;
 
@@ -14,14 +13,14 @@ import java.io.File;
 public class OpenGLActivity extends Activity {
 
     OpenGLView mView;
-    private GestureDetectorCompat mDetector;
+    private GestureDetector mDetector;
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         mView = new OpenGLView(getApplication());
 
         setContentView(mView);
-        mDetector = new GestureDetectorCompat(this, new MyGestureListener());
+        mDetector = new GestureDetector(this, new MyGestureListener());
     }
 
     @Override protected void onPause() {

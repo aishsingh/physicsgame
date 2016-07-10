@@ -176,17 +176,17 @@ vector<float> Math::removeConcaveVertices(vector<float> vertices, vector<float> 
         float *indexes;
         Point2D mid_index;
         if (i+2 >= (int)vertices.size()) {
-            indexes = (float[6]){i, i+1,
+            indexes = (float*)(const float[6]){i, i+1,
                                  0, 1,
                                  2, 3};
         } 
         else if (i+4 >= (int)vertices.size()) {
-            indexes = (float[6]){i,   i+1,
+            indexes = (float*)(const float[6]){i,   i+1,
                                  i+2, i+3,
                                  0,   1};
         }
         else {
-            indexes = (float[6]){i,   i+1,
+            indexes = (float*)(const float[6]){i,   i+1,
                                  i+2, i+3,
                                  i+4, i+5};
             backwards = false;
