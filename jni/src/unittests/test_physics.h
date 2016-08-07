@@ -9,9 +9,11 @@
 #include "../physics.h"
 
 class TestPhysicsEngine {
+    private:
+        int testSplitValueFromAngle();
+
     public:
-        void runTests();
-        void testSplitValueFromAngle();
+        bool runTests();
 };
 
 #endif /* TEST_PHYSICS_H */

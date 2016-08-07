@@ -8,6 +8,7 @@
 #include <jni.h>
 #include "game.h"
 #include "log.h"
+#include "unittests/tests.h"
 
 extern "C" {
     JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_init(JNIEnv * env, jobject obj, jint width, jint height);
@@ -27,6 +28,8 @@ char package_name;
 /* NOTE: This is also run when screen sleeps then awakes */
 JNIEXPORT void JNICALL Java_com_aishsingh_physics_OpenGLLib_init(JNIEnv * env, jobject obj, jint width, jint height) {
     if (game == NULL) {
+        runTests();
+
         // Create game instance if none have been created
         game = new Game(std::string(&package_name), width, height);
     }
