@@ -49,7 +49,7 @@
 #define STATS_PLANET_FIRST_NORMAL true
 #define STATS_PLANET_VR true
 #define PLANET_AVERAGE_SIDES 15      // The more sides (or vertices) the more round the object looks
-#define PLANET_RAND_SIDES true       // The sides will not be symetrical if true
+#define PLANET_RAND_SIDES false       // The sides will not be symetrical if true
 #define PLANET_RAND_SIDES_OFFSET 15.0f
 #define PLANET_COLOUR Colour(0.9294f, 0.898f, 0.88627f, 0.3f)
 
