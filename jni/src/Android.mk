@@ -6,7 +6,8 @@ LOCAL_MODULE := libopengl
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../glm \
 				    $(LOCAL_PATH)/../libzip \
-					$(LOCAL_PATH)/../libpng
+					$(LOCAL_PATH)/../libpng \
+					$(LOCAL_PATH)/../googletest
 
 LOCAL_STATIC_LIBRARIES := libzip libpng googletest_main
 
@@ -40,10 +41,9 @@ LOCAL_SRC_FILES := \
 					camera.cpp \
 					colour.cpp \
 					log.cpp \
-					./unittests/test_physics.cpp \
-					./unittests/tests.cpp
+					unittests/physics_test.cc
 
 LOCAL_LDLIBS := -llog -lGLESv2 -ldl -lz
-LOCAL_CFLAGS := -fexceptions -std=c++98
+LOCAL_CPPFLAGS := -fexceptions -std=gnu++98
 
 include $(BUILD_SHARED_LIBRARY)

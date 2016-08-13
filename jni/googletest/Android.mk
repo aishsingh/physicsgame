@@ -53,13 +53,13 @@ LOCAL_C_INCLUDES := $(googletest_includes)
 LOCAL_EXPORT_C_INCLUDES := $(googletest_includes)
 include $(BUILD_STATIC_LIBRARY)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := googletest_shared
-LOCAL_SRC_FILES := $(googletest_sources)
-LOCAL_C_INCLUDES := $(googletest_includes)
-LOCAL_CFLAGS := -DGTEST_CREATE_SHARED_LIBRARY
-LOCAL_EXPORT_C_INCLUDES := $(googletest_includes)
-include $(BUILD_SHARED_LIBRARY)
+# include $(CLEAR_VARS)
+# LOCAL_MODULE := googletest_shared
+# LOCAL_SRC_FILES := $(googletest_sources)
+# LOCAL_C_INCLUDES := $(googletest_includes)
+# LOCAL_CFLAGS := -DGTEST_CREATE_SHARED_LIBRARY
+# LOCAL_EXPORT_C_INCLUDES := $(googletest_includes)
+# include $(BUILD_SHARED_LIBRARY)
 
 # GoogleTest 'main' helper modules.
 
@@ -69,11 +69,11 @@ LOCAL_SRC_FILES := $(googletest_main_sources)
 LOCAL_STATIC_LIBRARIES := googletest_static
 include $(BUILD_STATIC_LIBRARY)
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := googletest_main_shared
-LOCAL_SRC_FILES := $(googletest_main_sources)
-LOCAL_SHARED_LIBRARIES := googletest_shared
-include $(BUILD_STATIC_LIBRARY)
+# include $(CLEAR_VARS)
+# LOCAL_MODULE := googletest_main_shared
+# LOCAL_SRC_FILES := $(googletest_main_sources)
+# LOCAL_SHARED_LIBRARIES := googletest_shared
+# include $(BUILD_STATIC_LIBRARY)
 
 # The GoogleTest test programs.
 #
