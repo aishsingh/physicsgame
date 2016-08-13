@@ -99,5 +99,32 @@
             <arg value="-n"/>
             <arg value="com.aishsingh.physics/.OpenGLActivity"/>
         </exec>
-</target>
+    </target>
+
+    <target name="test">
+        <exec executable="adb">
+            <arg value="push"/>
+            <arg value="libs/armeabi/libopengl.so"/>
+            <arg value="/data/local/tmp/"/>
+        </exec>
+
+        <exec executable="adb">
+            <arg value="push"/>
+            <arg value="libs/armeabi/unittests"/>
+            <arg value="/data/local/tmp/"/>
+        </exec>
+
+        <exec executable="adb">
+            <arg value="shell"/>
+            <arg value="chmod"/>
+            <arg value="775"/>
+            <arg value="/data/local/tmp/unittests"/>
+        </exec>
+
+        <exec executable="adb">
+            <arg value="shell"/>
+            <arg value="LD_LIBRARY_PATH=/data/local/tmp"/>
+            <arg value="/data/local/tmp/unittests"/>
+        </exec>
+    </target>
 </project>
