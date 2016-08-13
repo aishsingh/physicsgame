@@ -1,4 +1,4 @@
-Physics Game  [![Build Status](https://travis-ci.org/aishsingh/physicsgame.svg?branch=master)](https://travis-ci.org/aishsingh/physicsgame)
+Physics Game  [![Build Status](https://travis-ci.org/aishsingh/physicsgame.svg?branch=master)](https://travis-ci.org/aishsingh/physicsgame) [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 ============
 A poorly named game that will soon become a fully functional android app.  
 
@@ -20,6 +20,7 @@ __OpenGL ES 2:__ Surface rendering (Bare-bones version for mobile devices)
 __GLM:__ Provide OpenGL math functions  
 __libzip:__ Extract APK to make assets readable natively  
 __libpng:__ Read image assets natively  
+__googletest:__ Unit testing natively
 
 ## Disclamer
 The techniques I've used may not be optimal or performance focused as this project is developed entirely out of my own curiosity.
