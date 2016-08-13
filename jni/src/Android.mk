@@ -8,7 +8,7 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/../glm \
 				    $(LOCAL_PATH)/../libzip \
 					$(LOCAL_PATH)/../libpng
 
-LOCAL_STATIC_LIBRARIES := libzip libpng
+LOCAL_STATIC_LIBRARIES := libzip libpng googletest_main
 
 LOCAL_SRC_FILES := \
 					app_glue.cpp \
