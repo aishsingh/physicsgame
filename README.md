@@ -1,4 +1,4 @@
-Physics Game
+Physics Game  [![Build Status](https://travis-ci.org/aishsingh/physicsgame.svg?branch=master)](https://travis-ci.org/aishsingh/physicsgame)
 ============
 A poorly named game that will soon become a fully functional android app.  
 
