@@ -1,0 +1,35 @@
+language: android
+android:
+  components:
+    - platform-tools
+    - tools
+
+    # The BuildTools version used by your project
+    - build-tools-24
+
+      # The SDK version used to compile your project
+    - android-24
+
+      # Specify at least one system image,
+      # if you need to run emulator(s) during your tests
+    - sys-img-armeabi-v7a-android-24
+
+# env:
+#   global:
+#     #install timeout in minutes (2 minutes by default)
+#     - ADB_INSTALL_TIMEOUT=8
+
+before_install:
+  - git clone https://github.com/urho3d/android-ndk.git $HOME/android-ndk-root
+  - export ANDROID_NDK=$HOME/android-ndk-root
+
+# Emulator Management: Create, Start and Wait
+before_script:
+  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
+  - emulator -avd test -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+
+script:
+  - $ANDROID_NDK/ndk-build
+  - ant test
