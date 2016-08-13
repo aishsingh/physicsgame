@@ -6,13 +6,11 @@ LOCAL_MODULE := libopengl
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../glm \
 				    $(LOCAL_PATH)/../libzip \
-					$(LOCAL_PATH)/../libpng \
-					$(LOCAL_PATH)/../googletest
+					$(LOCAL_PATH)/../libpng
 
-LOCAL_STATIC_LIBRARIES := libzip libpng googletest_main
+LOCAL_STATIC_LIBRARIES := libzip libpng
 
-LOCAL_SRC_FILES := \
-					app_glue.cpp \
+LOCAL_SRC_FILES :=  app_glue.cpp \
 					game.cpp \
 					renderer.cpp \
 					obj_renderer.cpp \
@@ -40,10 +38,26 @@ LOCAL_SRC_FILES := \
 					motion.cpp \
 					camera.cpp \
 					colour.cpp \
-					log.cpp \
-					unittests/physics_test.cc
+					log.cpp
 
 LOCAL_LDLIBS := -llog -lGLESv2 -ldl -lz
 LOCAL_CPPFLAGS := -fexceptions -std=gnu++98
 
 include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := unittests
+
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../glm \
+				    $(LOCAL_PATH)/../libzip \
+					$(LOCAL_PATH)/../libpng \
+					$(LOCAL_PATH)/../googletest
+
+LOCAL_SRC_FILES := unittests/physics_test.cc
+
+LOCAL_SHARED_LIBRARIES := libopengl
+LOCAL_STATIC_LIBRARIES := googletest_main
+LOCAL_LDLIBS := -llog -lGLESv2 -ldl -lz
+
+include $(BUILD_EXECUTABLE)
