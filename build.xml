@@ -121,10 +121,11 @@
             <arg value="/data/local/tmp/unittests"/>
         </exec>
 
-        <exec executable="adb">
-            <arg value="shell"/>
-            <arg value="LD_LIBRARY_PATH=/data/local/tmp"/>
-            <arg value="/data/local/tmp/unittests"/>
+        <echo></echo>
+        <exec executable="/bin/sh" failonerror="true">
+            <arg value="-c"/>
+            <!-- Workaround to get adb to detect error codes -->
+            <arg value="adb shell LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/unittests \|\| echo __ADB_FAIL__ | tee adb.log; ! grep __ADB_FAIL__ adb.log > /dev/null"/>
         </exec>
     </target>
 </project>
