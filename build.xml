@@ -104,13 +104,13 @@
     <target name="test">
         <exec executable="adb">
             <arg value="push"/>
-            <arg value="libs/armeabi/libopengl.so"/>
+            <arg value="libs/armeabi-v7a/libopengl.so"/>
             <arg value="/data/local/tmp/"/>
         </exec>
 
         <exec executable="adb">
             <arg value="push"/>
-            <arg value="libs/armeabi/unittests"/>
+            <arg value="libs/armeabi-v7a/unittests"/>
             <arg value="/data/local/tmp/"/>
         </exec>
 
