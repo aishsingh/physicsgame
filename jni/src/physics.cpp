@@ -4,7 +4,6 @@
 #include "config.h"
 #include "game.h"
 #include "math.h"
-#include "log.h"
 
 Motion PhysicsEngine::calcMotion(const Motion &motion) {
     // Physics equations of constant acceleration used to find new displacement
