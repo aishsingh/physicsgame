@@ -23,6 +23,9 @@ before_install:
   - rm android-ndk-r10e-linux-x86_64.bin
 
 install:
+  - sudo apt-cache showpkg lcov
+  - sudo apt-get update
+  - sudo apt-cache showpkg lcov
   - sudo apt-get install lcov
   - gem install coveralls-lcov
 
