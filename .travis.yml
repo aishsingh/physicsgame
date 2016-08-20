@@ -33,6 +33,8 @@ before_install:
   # Install latest lcov package inside precise dist
   - gcov -v
   - gcc -v
+  - ls /usr/bin/gcc*
+  - ls /usr/bin/gcov*
   - sudo update-alternatives --config gcc
   - gcov -v
   - gcc -v
