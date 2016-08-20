@@ -7,7 +7,6 @@ env:
     - ANDROID_BUILD_TOOLS_VERSION=24.0.1
     - ANDROID_ABI=armeabi-v7a
     - ANDROID_NDK=android-ndk-r10e
-    - COMPILER=gcc-6
 
 android:
   components:
@@ -17,13 +16,17 @@ android:
     - android-$ANDROID_API_LEVEL
     - sys-img-$ANDROID_ABI-android-$ANDROID_API_LEVEL
 
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    # Latest GCC for gcov
-    - gcc-6
+matrix:
+  include:
+    - compiler: gcc-6
+      addons:
+        apt:
+          sources:
+          - ubuntu-toolchain-r-test
+          packages:
+          # Latest GCC for gcov
+          - gcc-6
+      env: COMPILER=gcc-6
 
 before_install:
   - curl -L http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin -O
