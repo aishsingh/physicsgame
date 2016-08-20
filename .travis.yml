@@ -22,7 +22,6 @@ before_install:
   - ./android-ndk-r10e-linux-x86_64.bin > /dev/null
   - rm android-ndk-r10e-linux-x86_64.bin
   - git clone https://github.com/linux-test-project/lcov.git
-  - (cd lcov && make install)
   - gem install coveralls-lcov
 
 # Emulator Management: Create, Start and Wait
@@ -37,5 +36,5 @@ script:
 
 after_success:
   - adb pull /data/local/tmp/$TRAVIS_BUILD_DIR/obj/local/$ANDROID_ABI/objs-debug/unittests/ obj/local/$ANDROID_ABI/objs-debug/unittests/
-  - lcov --capture --directory obj/local/$ANDROID_ABI/objs-debug/unittests/ --output-file coverage.info -b jni/src/ --no-external
+  - lcov/bin/lcov --capture --directory obj/local/$ANDROID_ABI/objs-debug/unittests/ --output-file coverage.info -b jni/src/ --no-external
   - coveralls-lcov -t $COVERALLS_REPO_TOKEN coverage.info
