@@ -22,6 +22,14 @@ before_install:
   - ./android-ndk-r10e-linux-x86_64.bin > /dev/null
   - rm android-ndk-r10e-linux-x86_64.bin
 
+addons:
+  apt:
+    packages:
+    - lcov
+
+install:
+  - gem install coveralls-lcov
+
 # Emulator Management: Create, Start and Wait
 before_script:
   - echo no | android create avd --force -n test -t android-$ANDROID_API_LEVEL --abi $ANDROID_ABI
@@ -31,3 +39,8 @@ before_script:
 script:
   - $ANDROID_NDK/ndk-build APP_ABI=$ANDROID_ABI
   - ant test
+
+after_success:
+  - adb pull /data/local/tmp/$TRAVIS_BUILD_DIR/obj/local/$ANDROID_ABI/objs-debug/unittests/ obj/local/$ANDROID_ABI/objs-debug/unittests/
+  - lcov --capture --directory obj/local/$ANDROID_ABI/objs-debug/unittests/ --output-file coverage.info -b jni/src/ --no-external
+  - coveralls-lcov -t $COVERALLS_REPO_TOKEN coverage.info
