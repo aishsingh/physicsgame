@@ -1,5 +1,5 @@
 language: android
-sudo: required
+sudo: false
 env:
   global:
     - ADB_INSTALL_TIMEOUT=20
@@ -21,12 +21,8 @@ before_install:
   - chmod u+x android-ndk-r10e-linux-x86_64.bin
   - ./android-ndk-r10e-linux-x86_64.bin > /dev/null
   - rm android-ndk-r10e-linux-x86_64.bin
-
-install:
-  - sudo apt-cache showpkg lcov
-  - sudo apt-get update
-  - sudo apt-cache showpkg lcov
-  - sudo apt-get install lcov
+  - git clone https://github.com/linux-test-project/lcov.git
+  - (cd lcov && make install)
   - gem install coveralls-lcov
 
 # Emulator Management: Create, Start and Wait
