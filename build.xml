@@ -125,7 +125,7 @@
         <exec executable="/bin/sh" failonerror="true">
             <arg value="-c"/>
             <!-- Workaround to get adb to detect error codes -->
-            <arg value="adb shell LD_LIBRARY_PATH=/data/local/tmp /data/local/tmp/unittests \|\| echo __ADB_FAIL__ | tee adb.log; ! grep __ADB_FAIL__ adb.log > /dev/null"/>
+            <arg value="adb shell LD_LIBRARY_PATH=/data/local/tmp GCOV_PREFIX=/data/local/tmp /data/local/tmp/unittests \|\| echo __ADB_FAIL__ | tee adb.log; ! grep __ADB_FAIL__ adb.log > /dev/null"/>
         </exec>
     </target>
 </project>
