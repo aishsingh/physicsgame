@@ -22,7 +22,7 @@ addons:
     - ubuntu-toolchain-r-test
     packages:
     # Latest GCC for gcov
-    - gcc-6.1.1
+    - gcc-6
 
 before_install:
   - curl -L http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin -O
@@ -31,6 +31,7 @@ before_install:
   - rm android-ndk-r10e-linux-x86_64.bin
   # Install latest lcov package inside precise dist
   - gcov -v
+  - gcc -v
   - git clone https://github.com/linux-test-project/lcov.git
   - gem install coveralls-lcov
 
