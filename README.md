@@ -1,4 +1,4 @@
-Physics Game  [![Build Status](https://travis-ci.org/aishsingh/physicsgame.svg?branch=master)](https://travis-ci.org/aishsingh/physicsgame) [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
+Physics Game  [![Build Status](https://travis-ci.org/aishsingh/physicsgame.svg?branch=master)](https://travis-ci.org/aishsingh/physicsgame) [![Coverage Status](https://coveralls.io/repos/github/aishsingh/physicsgame/badge.svg?branch=master)](https://coveralls.io/github/aishsingh/physicsgame?branch=master) [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 ============
 A poorly named game that will soon become a fully functional android app.  
 
