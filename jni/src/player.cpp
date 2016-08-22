@@ -68,9 +68,9 @@ vector<float> Player::getVerticeData() {
 void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHandler *tex) {
     // Update physics attributes only if box is moving
     if (_action == Action::FLYING || _action == Action::LANDING) {
-        PhysicsEngine::updatePlayerOrbittingPlanets(*this, g_objs);
+        Physics::updatePlayerOrbittingPlanets(*this, g_objs);
 
-        _on_planet = PhysicsEngine::updatePhysicsForCollisions(this, g_objs);
+        _on_planet = Physics::updatePhysicsForCollisions(this, g_objs, Game::getElapsedTime());
 
         // if there actually was a collision
         if (_on_planet != NULL) {
@@ -95,7 +95,7 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
         // physics funcs only need the current planet
         vector<GravObject*> p; p.push_back(_on_planet);
 
-        PhysicsEngine::updatePhysicsForCollisions(this, &p);
+        Physics::updatePhysicsForCollisions(this, &p, Game::getElapsedTime());
         CollisionData c = CollisionData(_on_planet);
         Collision::genCollisionData(*this, &c, _facing, _on_planet_region);
 
@@ -217,7 +217,7 @@ void Player::drawStats(ObjRenderer* rend) {
 }
 
 void Player::applyGravity() {
-    PhysicsEngine::applyGravityTo(*this, &_orbiting_planets);
+    Physics::applyGravityTo(*this, &_orbiting_planets);
 }
 
 void Player::resetTime(float t) {

@@ -43,7 +43,7 @@ void Trail::draw(ObjRenderer *rend, vector<GravObject*> *g_objs) {
 
         // Update physics attributes only if box is moving
         if (shapes.at(i).vert_motion.getVel() != 0.0f || shapes.at(i).hori_motion.getVel() != 0.0f) {
-            PhysicsEngine::updatePhysicsForCollisions(&shapes.at(i), g_objs);
+            Physics::updatePhysicsForCollisions(&shapes.at(i), g_objs, Game::getElapsedTime());
         }
 
         // Remove shape if no longer needed
@@ -65,7 +65,7 @@ void Trail::buildTrail(float x, float y, float rot_angle, Theme theme) {
     _cur_colour = box.getColour();
 
     // Apply initial velocity using player rotation
-    PhysicsEngine::genInitVel(box, rot_angle, 20, 18, 5);
+    Physics::genInitVel(box, rot_angle, 20, 18, 5);
 
     /* Increase size of array and check for exceptions */
     try {
@@ -102,7 +102,7 @@ void Trail::removeBox(int index) {
 
 void Trail::applyGravity(const vector<GravObject*> *g_objs) {
     for (int i=0; i<(int)shapes.size(); i++)
-        PhysicsEngine::applyGravityTo(shapes.at(i), g_objs);
+        Physics::applyGravityTo(shapes.at(i), g_objs);
 }
 
 void Trail::resetTime(float t) {

@@ -5,11 +5,11 @@
 #include "game.h"
 #include "math.h"
 
-Motion PhysicsEngine::calcMotion(const Motion &motion) {
+Motion Physics::calcMotion(const Motion &motion, float elapsed_time) {
     // Physics equations of constant acceleration used to find new displacement
     // d = (final velocity * change in time) - (1/2 * acceleration * current time^2)
 
-    float tFinal = Game::getElapsedTime();
+    float tFinal = elapsed_time;
     float ct = tFinal - motion.getTime();
     float vFinal = motion.getVel() + (motion.getAccel() * ct);
     float d = (vFinal * ct) - (0.5 * motion.getAccel() * powf(ct, 2.0));
@@ -22,9 +22,9 @@ Motion PhysicsEngine::calcMotion(const Motion &motion) {
     return calc;
 }
 
-GravObject* PhysicsEngine::updatePhysicsForCollisions(Object *obj, const vector<GravObject*> *g_objs) {
-    Motion vert_comp = calcMotion(obj->vert_motion);
-    Motion hori_comp = calcMotion(obj->hori_motion);
+GravObject* Physics::updatePhysicsForCollisions(Object *obj, const vector<GravObject*> *g_objs, float elapsed_time) {
+    Motion vert_comp = calcMotion(obj->vert_motion, elapsed_time);
+    Motion hori_comp = calcMotion(obj->hori_motion, elapsed_time);
     GravObject* collided_planet = NULL; // NULL means no collision
 
     // Generate rect containing updated dimensions
@@ -62,7 +62,7 @@ GravObject* PhysicsEngine::updatePhysicsForCollisions(Object *obj, const vector<
     return collided_planet;
 }
 
-void PhysicsEngine::genInitVel(Object &obj, float rot_angle, float min, float max, float offset) {
+void Physics::genInitVel(Object &obj, float rot_angle, float min, float max, float offset) {
     float init_h = 0;
     float init_v = 0;
 
@@ -73,7 +73,7 @@ void PhysicsEngine::genInitVel(Object &obj, float rot_angle, float min, float ma
     obj.vert_motion.setVel(obj.vert_motion.getVel() + init_v);
 }
 
-unsigned PhysicsEngine::getQuadOfPtAroundRect(Point2D pt, Rect rect) {
+unsigned Physics::getQuadOfPtAroundRect(Point2D pt, Rect rect) {
     /* Quadrants
           ---      
          1   4
@@ -94,7 +94,7 @@ unsigned PhysicsEngine::getQuadOfPtAroundRect(Point2D pt, Rect rect) {
         return 4;
 }
 
-float PhysicsEngine::getAngleOfPtAroundRect(Point2D pt, Rect rect) {
+float Physics::getAngleOfPtAroundRect(Point2D pt, Rect rect) {
     float angle = 0;
     float A = 0,
           O = 0;
@@ -137,7 +137,7 @@ float PhysicsEngine::getAngleOfPtAroundRect(Point2D pt, Rect rect) {
     return angle;
 }
 
-void PhysicsEngine::updatePlayerOrbittingPlanets(Player &player, const vector<GravObject*> *g_objs) {
+void Physics::updatePlayerOrbittingPlanets(Player &player, const vector<GravObject*> *g_objs) {
     vector<GravObject*> orbiting_planets;
     float closest_planet_disp = 0.0f;
 
@@ -171,7 +171,7 @@ void PhysicsEngine::updatePlayerOrbittingPlanets(Player &player, const vector<Gr
     }
 }
 
-void PhysicsEngine::applyGravityTo(Object &obj, const vector<GravObject*> *g_objs) {
+void Physics::applyGravityTo(Object &obj, const vector<GravObject*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
 
@@ -200,7 +200,7 @@ void PhysicsEngine::applyGravityTo(Object &obj, const vector<GravObject*> *g_obj
     obj.vert_motion.setAccel(netg_v);
 }
 
-void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_objs) {
+void Physics::applyGravityTo(Player &player, const vector<GravObject*> *g_objs) {
     float netg_h = 0;
     float netg_v = 0;
 
@@ -278,7 +278,7 @@ void PhysicsEngine::applyGravityTo(Player &player, const vector<GravObject*> *g_
     }
 }
 
-void PhysicsEngine::splitValueFromAngle(float value, float angle, float *hori, float *vert) {
+void Physics::splitValueFromAngle(float value, float angle, float *hori, float *vert) {
     float value_h = 0;
     float value_v = 0;
 
@@ -314,7 +314,7 @@ void PhysicsEngine::splitValueFromAngle(float value, float angle, float *hori, f
     *vert = value_v;
 }
 
-void PhysicsEngine::splitCompValueFromAngle(float *hori_comp, float *vert_comp, float angle, float min_hori, float max_hori, float min_vert, float max_vert) {
+void Physics::splitCompValueFromAngle(float *hori_comp, float *vert_comp, float angle, float min_hori, float max_hori, float min_vert, float max_vert) {
     // Gen random velocity magnitude
     float vel = min_vert + (float)(rand()) / (float)(RAND_MAX/(max_vert - min_vert));
     float offset1_v = min_hori + (float)(rand()) / (float)(RAND_MAX/(max_hori - min_hori));

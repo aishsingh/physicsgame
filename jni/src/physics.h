@@ -17,13 +17,13 @@
 
 using std::vector;
 
-namespace PhysicsEngine {
+namespace Physics {
     /* Recalculate the motion and return the new motion values.
        NOTE: Fn doesn't modify the motion passed through params, it only needs to be validated */
-    Motion calcMotion(const Motion &motion);
+    Motion calcMotion(const Motion &motion, float elapsed_time);
 
     /* Updates all physics motion values and returns a gravobject if the obj collided with it */
-    GravObject* updatePhysicsForCollisions(Object *obj, const vector<GravObject*> *g_objs);
+    GravObject* updatePhysicsForCollisions(Object *obj, const vector<GravObject*> *g_objs, float elapsed_time);
 
     /* Generated a suitable initial velocity using based on the angle the object is rotated in */
     void genInitVel(Object &obj, float rot_angle, float min, float max, float offset);

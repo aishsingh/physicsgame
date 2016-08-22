@@ -103,7 +103,7 @@ void Spaceman::update() {
             float angle = Math::normalizeAngle(180 - getRotAngle(), 0, 360);
 
             // Thrust up
-            PhysicsEngine::genInitVel(*this, angle, PLAYER_THRUST_MIN_INIT_V, PLAYER_THRUST_MAX_INIT_V, PLAYER_THRUST_OFFSET);
+            Physics::genInitVel(*this, angle, PLAYER_THRUST_MIN_INIT_V, PLAYER_THRUST_MAX_INIT_V, PLAYER_THRUST_OFFSET);
             resetTime(Game::getElapsedTime());
             _trail.buildTrail(_base.getX(), 
                               _base.getY(), 

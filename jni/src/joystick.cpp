@@ -47,11 +47,11 @@ vector<float> Joystick::getVerticeData() {
 }
 
 float Joystick::getJoystickAngle(int x, int y) {
-    return PhysicsEngine::getAngleOfPtAroundRect(Point2D(x, y), *this);
+    return Physics::getAngleOfPtAroundRect(Point2D(x, y), *this);
 }
 
 float Joystick::getJoystickAngle(Point2D pos, float obj_rot_angle) {
-    float angle = PhysicsEngine::getAngleOfPtAroundRect(pos, *this);
+    float angle = Physics::getAngleOfPtAroundRect(pos, *this);
     // angle += obj_rot_angle;
     // LOGI("angle %.2f", angle);
     return angle;

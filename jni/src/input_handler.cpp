@@ -110,7 +110,7 @@ void InputHandler::doubleTap(float x, float y) {
         float angle = Math::normalizeAngle(180 - _user->getRotAngle(), 0, 360);
 
         // thrust up
-        PhysicsEngine::genInitVel(*_user, angle, 30, 35, 0);
+        Physics::genInitVel(*_user, angle, 30, 35, 0);
     }
 }
 
