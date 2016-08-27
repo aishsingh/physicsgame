@@ -47,5 +47,5 @@ script:
 after_success:
   # Send coverage report
   - adb pull /data/local/tmp/$TRAVIS_BUILD_DIR/obj/local/$ANDROID_ABI/objs-debug/unittests/ obj/local/$ANDROID_ABI/objs-debug/unittests/
-  - lcov/bin/lcov --capture --directory obj/local/$ANDROID_ABI/objs-debug/unittests/ --output-file coverage.info -b jni/src/ --no-external --gcov-tool /usr/bin/gcov-6
+  - lcov/bin/lcov --capture --directory obj/local/$ANDROID_ABI/objs-debug/unittests/ --output-file coverage.info -b jni/src/ --gcov-tool /usr/bin/gcov-6 --no-external --no-recursion
   - coveralls-lcov -t $COVERALLS_REPO_TOKEN coverage.info
