@@ -7,6 +7,8 @@
 Galaxy::Galaxy() {
     // Populate the screen
     populate_stars(GALAXY_STARS);
+    _finish = Point2D(Math::genRand(-GALAXY_RANGE_X, GALAXY_RANGE_X), 
+                      Math::genRand(-GALAXY_RANGE_Y, GALAXY_RANGE_Y));
 }
 
 void Galaxy::draw(ObjRenderer *rend) {
@@ -30,4 +32,8 @@ void Galaxy::populate_stars(int count) {
                                   Math::genRand(0.0f, 360.0f), 
                                   Math::genRand(5.0f, 25.0f)));
     }
+}
+
+Point2D Galaxy::getFinish() const {
+    return _finish;
 }

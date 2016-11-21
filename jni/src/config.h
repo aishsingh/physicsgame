@@ -35,7 +35,7 @@
 #define STATS_PLAYER_REGION_PT true
 #define STATS_PLAYER_CLOSEST_GOBJ true
 #define STATS_PLAYER_RUNNING_DIR true
-#define STATS_PLAYER_TRAIL true
+#define STATS_PLAYER_TRAIL false
 #define PLAYER_THRUST_MAX_INIT_V 1.0f // Pushes new boxes out with some initial velocity
 #define PLAYER_THRUST_MIN_INIT_V 1.5f // up is neg, down is pos, left is neg, right is pos
 #define PLAYER_THRUST_OFFSET 0.0f

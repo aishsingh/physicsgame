@@ -172,6 +172,7 @@ void Game::draw() {
         _back_rend->render();
         _back_rend->disableAttributes();
 
+        drawGUI();
         drawStats();
     }
 
@@ -253,6 +254,10 @@ void Game::applyGravity() {
         _players.at(i)->applyGravity();
 }
 
+void Game::drawGUI() {
+
+}
+
 void Game::drawStats() {
     // player stats
     for(int i=0; i<(int)_players.size(); i++)
@@ -261,6 +266,19 @@ void Game::drawStats() {
     // planet stats
     for(int i=0; i<(int)_g_objs.size(); i++)
         _g_objs.at(i)->drawStats(_obj_rend, (_g_objs.at(i) == _user.getOnPlanet()), _user.getOnPlanetRegion()); // 2 even showing as 4 even
+
+    // show finish
+    vector<float> vertices;
+    vertices.push_back(_galaxy.getFinish().getX());
+    vertices.push_back(_galaxy.getFinish().getY());
+    vertices.push_back(_user.getCentreX());
+    vertices.push_back(_user.getCentreY());
+
+    // first norm
+    _obj_rend->render(vertices,
+            Colour::getColour(BLUE),
+            0.0f,
+            GL_LINES);
 }
 
 /* Static Members */

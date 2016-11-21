@@ -283,6 +283,7 @@ void Physics::splitValueFromAngle(float value, float angle, float *hori, float *
     float value_v = 0;
 
     // Determine velocity for both components after rotation
+    // TODO find a way to replace if statement blocks with trig
     float ratio = 0;
     if (angle >= 0 && angle < 90) {
         ratio = angle / 90;

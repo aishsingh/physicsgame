@@ -53,6 +53,7 @@ class Game {
         void applyGravity();
         void resetTime();
         void setupObjs();
+        void drawGUI();
         void drawStats();
 
     public:
