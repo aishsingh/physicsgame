@@ -2,6 +2,7 @@
 #include <time.h>
 #include <exception>
 #include <cstring>
+#include <cmath>
 
 #include "game.h"
 #include "config.h"
@@ -231,11 +232,11 @@ void Game::respondToInput() {
         float cur_update = getElapsedTime();
         float elapsedSinceUpdate = cur_update - _previous_trail_update;
         if (elapsedSinceUpdate >= USER_UPDATE_INTERVAL) {
-            // build the trail 
+            // Build the trail 
             for (int i=1; i<=USER_UPDATE_PER_INTERVAL; i++)
                 _user.update();
 
-            // update values for next input
+            // Update values for next input
             _previous_trail_update = cur_update;
         }
     }
@@ -244,7 +245,7 @@ void Game::respondToInput() {
             _user.setAction(Action::STILL);
     }
 
-    // update user's facing direction
+    // Update user's facing direction
     if (nav_active)
         _user.updateDir();
 }
@@ -255,26 +256,63 @@ void Game::applyGravity() {
 }
 
 void Game::drawGUI() {
+    if (!_cam.isPtInCam(_galaxy.getCheckpoint(), NAV_ICON_SIZE*2)) {
+        // Calc nav icon pos
+        float o = _user.getCentreX() - _galaxy.getCheckpoint().getX();
+        float a = _user.getCentreY() - _galaxy.getCheckpoint().getY();
+        float angle = std::atan(o/a);
+        a = Game::getScreenHeight()/2;
+        o = std::tan(angle)*a;
 
+        bool belowCheckpoint = false;
+        if (_galaxy.getCheckpoint().getY() < _user.getCentreY()) {
+            o *= -1;
+            belowCheckpoint = true;
+        }
+
+        // Set pos
+        Point2D nav;
+        if ((Game::getScreenWidth()/2) + o > Game::getScreenWidth()) {
+            a = (Game::getScreenWidth()/2) / (std::tan(angle));
+            nav = Point2D(Game::getScreenWidth() - NAV_ICON_SIZE, (Game::getScreenHeight()/2) + a);
+        }
+        else if ((Game::getScreenWidth()/2) + o < 0) {
+            a = (Game::getScreenWidth()/2) / (std::tan(angle));
+            nav = Point2D(NAV_ICON_SIZE, (Game::getScreenHeight()/2) - a);
+        }
+        else
+            nav = Point2D((Game::getScreenWidth()/2) + o, (belowCheckpoint) ? NAV_ICON_SIZE : Game::getScreenHeight() - NAV_ICON_SIZE);
+
+        // Filter pos value
+        if (nav.getX() < NAV_ICON_SIZE) nav.setX(NAV_ICON_SIZE);
+        else if (nav.getX() > Game::getScreenWidth() - NAV_ICON_SIZE) nav.setX(Game::getScreenWidth() - NAV_ICON_SIZE);
+        if (nav.getY() < NAV_ICON_SIZE) nav.setY(NAV_ICON_SIZE);
+        else if (nav.getY() > Game::getScreenHeight() - NAV_ICON_SIZE) nav.setY(Game::getScreenHeight() - NAV_ICON_SIZE);
+
+        // Show nav pos icon
+        _scr_rend->render(Shape::genCircleVertices(nav, NAV_ICON_SIZE, 0.0f, 10),
+                Colour::getColourData(10, Colour::getColour(GREY)),
+                0.0f,
+                GL_TRIANGLE_FAN);
+    }
 }
 
 void Game::drawStats() {
-    // player stats
+    // Player finishstats
     for(int i=0; i<(int)_players.size(); i++)
         _players.at(i)->drawStats(_obj_rend);
 
-    // planet stats
+    // Planet stats
     for(int i=0; i<(int)_g_objs.size(); i++)
         _g_objs.at(i)->drawStats(_obj_rend, (_g_objs.at(i) == _user.getOnPlanet()), _user.getOnPlanetRegion()); // 2 even showing as 4 even
 
-    // show finish
+    // Show checkpoint direction
     vector<float> vertices;
-    vertices.push_back(_galaxy.getFinish().getX());
-    vertices.push_back(_galaxy.getFinish().getY());
+    vertices.push_back(_galaxy.getCheckpoint().getX());
+    vertices.push_back(_galaxy.getCheckpoint().getY());
     vertices.push_back(_user.getCentreX());
     vertices.push_back(_user.getCentreY());
 
-    // first norm
     _obj_rend->render(vertices,
             Colour::getColour(BLUE),
             0.0f,

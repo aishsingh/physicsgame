@@ -32,7 +32,8 @@ class Camera {
         /* Ctor */
         Camera(const Object *anchor);
 
-        bool isObjectNearCam(Object *obj);
+        bool isObjectInCam(Object *obj);
+        bool isPtInCam(Point2D pt, float offset);
 };
 
 #endif /* CAMERA_H */

@@ -14,6 +14,7 @@
 #define USER_UPDATE_PER_INTERVAL 1
 #define USER_THEME GREY
 #define OUT_OPENGL_VER false
+#define NAV_ICON_SIZE 35
 
 // --- RENDERER CONFIG --------------------
 #define BG_COLOUR Colour(0.918f, 0.629f, 0.512f, 1.0f)
