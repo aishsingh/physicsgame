@@ -7,7 +7,7 @@
 #include "game.h"
 #include "log.h"
 
-Player::Player(float x, float y, float width, float height) : Object(x,y,width,height) {
+Player::Player(float x, float y, float width, float height, Theme theme) : Object(x,y,width,height), _trail(TRAIL_LENGTH) {
     _rot_offset_angle = 0.0f;
     _running_speed = 9.0f;
     _on_planet = NULL;
@@ -16,6 +16,7 @@ Player::Player(float x, float y, float width, float height) : Object(x,y,width,h
     _facing = LEFT;
     _on_planet_region = -1;
     _on_planet_region_prev = -1;
+    _colour_theme = theme;
 }
 Player::~Player() { }
 
@@ -65,7 +66,7 @@ vector<float> Player::getVerticeData() {
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }
 
-void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHandler *tex) {
+void Player::updatePhysics(vector<GravObject*> *g_objs) {
     // Update physics attributes only if box is moving
     if (_action == Action::FLYING || _action == Action::LANDING) {
         Physics::updatePlayerOrbittingPlanets(*this, g_objs);
@@ -129,6 +130,12 @@ void Player::draw(PlayerRenderer* rend, vector<GravObject*> *g_objs, TextureHand
     // display actions
     if (OUT_PLAYER_ACTION)
         LOGI("Player %s on region %i", Action::toString(_action).c_str(), _on_planet_region);
+}
+
+
+void Player::drawTrail(ObjRenderer* rend, vector<GravObject*> *g_objs) {
+    // Render
+    _trail.draw(rend, g_objs);
 }
 
 void Player::drawStats(ObjRenderer* rend) {
@@ -218,11 +225,14 @@ void Player::drawStats(ObjRenderer* rend) {
 
 void Player::applyGravity() {
     Physics::applyGravityTo(*this, &_orbiting_planets);
+    _trail.applyGravity(&_orbiting_planets);
 }
 
 void Player::resetTime(float t) {
     vert_motion.setTime(t);
     hori_motion.setTime(t);
+
+    _trail.resetTime(t);
 }
 
 float Player::getRotAngle() const {
@@ -293,4 +303,39 @@ void Player::updateDir() {
         else if (nav_angle < -45.0f && nav_angle > -90.0f)
             _facing = RIGHT;
     }
+}
+
+int Player::getFrame() {
+    return _frame;
+}
+
+void Player::setFrame(int frame) {
+    _frame = frame;
+}
+
+Dir Player::getFacing() {
+    return _facing;
+}
+
+void Player::setFacing(Dir dir) {
+    _facing = dir;
+}
+
+void Player::changeTheme() {
+    Theme new_theme(GREY);
+    do {
+        int rand_val = rand() % 250;
+        if (rand_val >= 0 && rand_val < 50)
+            new_theme = BLACK;
+        else if (rand_val >= 50  && rand_val < 100)
+            new_theme = RED;
+        else if (rand_val >= 100 && rand_val < 150)
+            new_theme = BLUE;
+        else if (rand_val >= 150 && rand_val < 200)
+            new_theme = PURPLE;
+        else if (rand_val >= 200 && rand_val < 250)
+            new_theme = RAINBOW;
+    } while (new_theme == 0 || new_theme == _colour_theme);
+
+    _colour_theme = new_theme;
 }

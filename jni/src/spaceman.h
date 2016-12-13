@@ -6,34 +6,19 @@
 #define SPACEMAN_H
 
 #include "player.h"
-#include "trail.h"
 #include "motion.h"
 #include "theme.h"
-#include "direction.h"
 #include "texture_handler.h"
 
 class Spaceman: public Player {
     private:
-        int _frame;
-        Theme _colour_theme; // Changes the colour scheme of the boxes and other UI
-        Trail _trail;
 
     public:
         // Render player and trail
-        void draw(PlayerRenderer *rend, vector<GravObject*> *g_objs, TextureHandler *tex);
-        void drawTrail(ObjRenderer *rend, vector<GravObject*> *g_objs);
+        void draw(PlayerRenderer *rend, TextureHandler *tex);
 
         // Do according to its current action, and update physics
-        void update();
-        void applyGravity();
-        void resetTime(float t);
-
-        /* Getters / Setters */
-        Dir getFacing();
-        void setFacing(Dir dir);
-        int getFrame();
-        void setFrame(int frame);
-        void changeTheme(Theme &old_theme);
+        void updateAction(vector<GravObject*> *g_objs);
 
         /* Ctor - Creates a new box instance and adds it to the array */
         Spaceman(float x, float y, Theme theme);

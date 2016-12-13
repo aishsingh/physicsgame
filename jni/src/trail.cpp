@@ -1,4 +1,5 @@
 #include "trail.h"
+#include "physics.h"
 #include "config.h"
 #include "log.h"
 #include "box.h"

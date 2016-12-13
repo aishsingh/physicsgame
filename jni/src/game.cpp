@@ -173,7 +173,6 @@ void Game::draw() {
         _back_rend->render();
         _back_rend->disableAttributes();
 
-        drawGUI();
         drawStats();
     }
 
@@ -191,8 +190,10 @@ void Game::draw() {
     _obj_rend->disableAttributes();
 
     // Render players
-    for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->draw(_player_rend, &_g_objs, &_tex);
+    for(int i=0; i<(int)_players.size(); i++) {
+        _players.at(i)->updatePhysics(&_g_objs);
+        _players.at(i)->draw(_player_rend, &_tex);
+    }
 
     _player_rend->disableAttributes();
 
@@ -201,6 +202,8 @@ void Game::draw() {
         _g_objs.at(i)->draw(_obj_rend);
 
     _obj_rend->disableAttributes();
+
+    drawGUI();
     //-------------------------------------------------
 
     // Recentre player by slowly decresing offset
@@ -226,15 +229,15 @@ void Game::respondToInput() {
     // Check if there is a touch that should cause an player action
     int touch_count = input.getCount();
     bool nav_active = input.isNavActive();
-    bool is_accelerating = ((!nav_active && touch_count > 0) || (nav_active && touch_count > 1));
-    if (is_accelerating) {
+    bool is_input = ((!nav_active && touch_count > 0) || (nav_active && touch_count > 1));
+    if (is_input) {
         // Only build player trail after time interval
         float cur_update = getElapsedTime();
         float elapsedSinceUpdate = cur_update - _previous_trail_update;
         if (elapsedSinceUpdate >= USER_UPDATE_INTERVAL) {
             // Build the trail 
             for (int i=1; i<=USER_UPDATE_PER_INTERVAL; i++)
-                _user.update();
+                _user.updateAction(&_g_objs);
 
             // Update values for next input
             _previous_trail_update = cur_update;
@@ -294,11 +297,14 @@ void Game::drawGUI() {
                 Colour::getColourData(10, Colour::getColour(GREY)),
                 0.0f,
                 GL_TRIANGLE_FAN);
+
+
+        _scr_rend->disableAttributes();
     }
 }
 
 void Game::drawStats() {
-    // Player finishstats
+    // Player collision stats
     for(int i=0; i<(int)_players.size(); i++)
         _players.at(i)->drawStats(_obj_rend);
 
@@ -306,17 +312,17 @@ void Game::drawStats() {
     for(int i=0; i<(int)_g_objs.size(); i++)
         _g_objs.at(i)->drawStats(_obj_rend, (_g_objs.at(i) == _user.getOnPlanet()), _user.getOnPlanetRegion()); // 2 even showing as 4 even
 
-    // Show checkpoint direction
-    vector<float> vertices;
-    vertices.push_back(_galaxy.getCheckpoint().getX());
-    vertices.push_back(_galaxy.getCheckpoint().getY());
-    vertices.push_back(_user.getCentreX());
-    vertices.push_back(_user.getCentreY());
-
-    _obj_rend->render(vertices,
-            Colour::getColour(BLUE),
-            0.0f,
-            GL_LINES);
+    // // Show checkpoint direction
+    // vector<float> vertices;
+    // vertices.push_back(_galaxy.getCheckpoint().getX());
+    // vertices.push_back(_galaxy.getCheckpoint().getY());
+    // vertices.push_back(_user.getCentreX());
+    // vertices.push_back(_user.getCentreY());
+    //
+    // _obj_rend->render(vertices,
+    //         Colour::getColour(BLUE),
+    //         0.0f,
+    //         GL_LINES);
 }
 
 /* Static Members */

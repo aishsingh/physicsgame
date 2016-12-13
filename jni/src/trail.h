@@ -7,7 +7,6 @@
 
 #include <vector>
 #include "shape.h"
-#include "physics.h"
 #include "grav_object.h"
 #include "obj_renderer.h"
 

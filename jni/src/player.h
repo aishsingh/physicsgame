@@ -12,6 +12,8 @@
 #include "planet.h"
 #include "action.h"
 #include "texture_handler.h"
+#include "theme.h"
+#include "trail.h"
 
 class Player: public Object {
     protected:
@@ -29,17 +31,22 @@ class Player: public Object {
         Point2D _running_unit_vector;
         vector<GravObject*> _orbiting_planets;
 
+        Trail _trail;
+        int _frame;
+        Theme _colour_theme; // Changes the colour scheme of the boxes and other UI
+
     public:
         // Render player and trail
-        virtual void draw(PlayerRenderer *rend, vector<GravObject*> *g_objs, TextureHandler *tex);
-        virtual void drawTrail(ObjRenderer *rend, vector<GravObject*> *g_objs) = 0;
+        virtual void draw(PlayerRenderer *rend, TextureHandler *tex) = 0;
+        void drawTrail(ObjRenderer *rend, vector<GravObject*> *g_objs);
         void drawStats(ObjRenderer *rend);
         vector<float> getVerticeData();
 
-        virtual void update() = 0; // Update player based on its current action
+
+        void updatePhysics(vector<GravObject*> *g_objs); // Do according to its current action, and update physics
         void updateDir();  // Update player facing direction
-        virtual void applyGravity();
-        virtual void resetTime(float t);
+        void applyGravity();
+        void resetTime(float t);
 
         /* Getters / Setters */
         Action::Action getAction();
@@ -57,9 +64,14 @@ class Player: public Object {
         float getRotAngleOffset() const;
         float getRealRotAngle() const;
         void setRotAngleOffset(float angle);
+        Dir getFacing();
+        void setFacing(Dir dir);
+        int getFrame();
+        void setFrame(int frame);
+        void changeTheme();
 
         /* Ctor - */
-        Player(float x, float y, float width, float height);
+        Player(float x, float y, float width, float height, Theme theme);
         virtual ~Player();
 };
 

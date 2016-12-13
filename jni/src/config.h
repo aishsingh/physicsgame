@@ -7,7 +7,7 @@
 /******************************************/
 
 // --- GAME CONFIG ------------------------
-#define STATS_DISABLE false
+#define STATS_DISABLE true
 #define STATS_COLOUR Colour::getColour(PURPLE)
 #define TIME_DEFAULT_SPEED 0.4f
 #define USER_UPDATE_INTERVAL 0.6f
@@ -23,9 +23,6 @@
 // --- TEXTURE CONFIG ---------------------
 #define OUT_TEX_APK_CONTENTS false
 #define OUT_TEX_ANIMATION_CELL false
-
-// --- SPACEMAN CONFIG --------------------
-#define SPACEMAN_TRAIL_LENGTH 22
 
 // --- GALAXY CONFIG ----------------------
 #define GALAXY_STARS 4000
@@ -62,6 +59,7 @@
 #define GOBJ_REGION_HEIGHT 150
 
 // --- TRAIL CONFIG -----------------------
+#define TRAIL_LENGTH 22
 #define TRAIL_FADE_DEC 0.1f
 #define TRAIL_SHRINK_DEC 0.6f
 #define OUT_TRAIL_SHAPE_COUNT false
