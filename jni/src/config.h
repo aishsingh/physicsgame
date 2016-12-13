@@ -25,9 +25,10 @@
 #define OUT_TEX_ANIMATION_CELL false
 
 // --- GALAXY CONFIG ----------------------
-#define GALAXY_STARS 4000
-#define GALAXY_RANGE_X 5000  // 10,000x10,000 area
-#define GALAXY_RANGE_Y 5000  
+#define GALAXY_STARS 2000
+#define GALAXY_PLANETS 10
+#define GALAXY_RANGE_X 10000  // 10,000x10,000 area
+#define GALAXY_RANGE_Y 10000  
 
 // --- PLAYER CONFIG ----------------------
 #define STATS_PLAYER_REGION_PT true
@@ -39,7 +40,8 @@
 #define PLAYER_THRUST_OFFSET 0.0f
 #define PLAYER_SHADE true
 #define PLAYER_SHADE_COLOUR "-= vec4(0.1, 0.1, 0.1, 0.25);\n"
-#define OUT_PLAYER_ACTION true
+#define OUT_PLAYER_ACTION false
+#define OUT_PLAYER_POS true
 #define OUT_PLAYER_SURFACE_OFFSET false
 
 // --- PLANET CONFIG ----------------------

@@ -66,7 +66,7 @@ vector<float> Player::getVerticeData() {
     return std::vector<float> (vec, vec + sizeof(vec) / sizeof(float));
 }
 
-void Player::updatePhysics(vector<GravObject*> *g_objs) {
+void Player::updatePhysics(const vector<GravObject*> *g_objs) {
     // Update physics attributes only if box is moving
     if (_action == Action::FLYING || _action == Action::LANDING) {
         Physics::updatePlayerOrbittingPlanets(*this, g_objs);
@@ -127,13 +127,15 @@ void Player::updatePhysics(vector<GravObject*> *g_objs) {
         vert_motion.setTime(t);
     }
 
-    // display actions
+    // Output data
     if (OUT_PLAYER_ACTION)
         LOGI("Player %s on region %i", Action::toString(_action).c_str(), _on_planet_region);
+    if (OUT_PLAYER_POS)
+        LOGI("Player pos=(%.2f, %.2f) angle=(%.2f, %.2f, %.2f)", getX(), getY(), getRotAngle(), getRotAngleOffset(), getRealRotAngle());
 }
 
 
-void Player::drawTrail(ObjRenderer* rend, vector<GravObject*> *g_objs) {
+void Player::drawTrail(ObjRenderer* rend, const vector<GravObject*> *g_objs) {
     // Render
     _trail.draw(rend, g_objs);
 }

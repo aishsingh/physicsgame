@@ -38,12 +38,12 @@ class Player: public Object {
     public:
         // Render player and trail
         virtual void draw(PlayerRenderer *rend, TextureHandler *tex) = 0;
-        void drawTrail(ObjRenderer *rend, vector<GravObject*> *g_objs);
+        void drawTrail(ObjRenderer *rend, const vector<GravObject*> *g_objs);
         void drawStats(ObjRenderer *rend);
         vector<float> getVerticeData();
 
 
-        void updatePhysics(vector<GravObject*> *g_objs); // Do according to its current action, and update physics
+        void updatePhysics(const vector<GravObject*> *g_objs); // Do according to its current action, and update physics
         void updateDir();  // Update player facing direction
         void applyGravity();
         void resetTime(float t);

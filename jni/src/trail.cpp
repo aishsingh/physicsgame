@@ -31,7 +31,7 @@ void Trail::shrink(Shape &shape) {
 }
 
 
-void Trail::draw(ObjRenderer *rend, vector<GravObject*> *g_objs) {
+void Trail::draw(ObjRenderer *rend, const vector<GravObject*> *g_objs) {
     // Draw every shape in shapes vector
     for (int i=0; i<(int)shapes.size(); i++) {
         // Effects

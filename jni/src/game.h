@@ -35,7 +35,6 @@ class Game {
         // All players that are in the game
         // player[0] is the user
         vector<Player*> _players;
-        vector<GravObject*> _g_objs;
 
         Spaceman _user;
         Galaxy _galaxy;

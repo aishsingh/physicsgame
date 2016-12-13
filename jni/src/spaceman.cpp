@@ -23,7 +23,7 @@ void Spaceman::draw(PlayerRenderer* rend, TextureHandler *tex) {
                  GL_TRIANGLE_STRIP);
 }
 
-void Spaceman::updateAction(vector<GravObject*> *g_objs) {
+void Spaceman::updateAction(const vector<GravObject*> *g_objs) {
     switch (_action) {
         case Action::STILL: {
             _action = Action::RUNNING;

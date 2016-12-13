@@ -16,7 +16,8 @@ int Game::_screen_width(0);
 float Game::_elapsed_time(0.0f);
 float Game::_time_speed(TIME_DEFAULT_SPEED);
 
-Game::Game(std::string pkg_name, int screen_w, int screen_h) : _user((screen_w/2) - 25, (screen_h/3) + 750, USER_THEME),
+Game::Game(std::string pkg_name, int screen_w, int screen_h) : _galaxy(GALAXY_STARS, GALAXY_PLANETS),
+                                                               _user((screen_w/2) - 25, (screen_h/3) + 750, USER_THEME),
                                                                _cam(&_user),
                                                                input(true, VERT, &_user, &_cam) {
     // Init values
@@ -51,8 +52,6 @@ Game::~Game() {
     // Clear all vectors
     for(int i=0; i<(int)_players.size(); i++)
         vector<Player*>().swap(_players);
-    for(int i=0; i<(int)_g_objs.size(); i++)
-        vector<GravObject*>().swap(_g_objs);
 }
 
 void Game::resetTime() {
@@ -70,17 +69,6 @@ void Game::setupObjs() {
     // Setup Player
     _players.push_back(&_user);
     // _players.push_back(new Spaceman((w/3), (h/2) + 700, RAINBOW));
-
-    // Setup planets
-    try {
-        _g_objs.push_back(new Planet((w/2) + 300, (h/2) - 150, 400));
-        _g_objs.push_back(new Planet((w/2) - 800, (h/2) - 150, 300));
-        _g_objs.push_back(new Planet((w/2) - 550, (h/2) - 1500, 550));
-        _g_objs.push_back(new Planet((w/2) - 50, (h/2) + 850, 150));
-    }
-    catch (std::exception &e) {
-        LOGE("Error creating planets: %s", e.what());
-    }
 
     glViewport(0, 0, w, h);
     checkGlError("glViewport");
@@ -180,26 +168,26 @@ void Game::draw() {
     _galaxy.draw(_obj_rend);
 
     // Render planets gravity area
-    for(int i=0; i<(int)_g_objs.size(); i++)
-        _g_objs.at(i)->drawGrav(_obj_rend);
+    for(int i=0; i<(int)_galaxy.getGravObjs()->size(); i++)
+        _galaxy.getGravObjs()->at(i)->drawGrav(_obj_rend);
 
     // Render player trails
     for(int i=0; i<(int)_players.size(); i++)
-        _players.at(i)->drawTrail(_obj_rend, &_g_objs);
+        _players.at(i)->drawTrail(_obj_rend, _galaxy.getGravObjs());
 
     _obj_rend->disableAttributes();
 
     // Render players
     for(int i=0; i<(int)_players.size(); i++) {
-        _players.at(i)->updatePhysics(&_g_objs);
+        _players.at(i)->updatePhysics(_galaxy.getGravObjs());
         _players.at(i)->draw(_player_rend, &_tex);
     }
 
     _player_rend->disableAttributes();
 
     // Render planets
-    for(int i=0; i<(int)_g_objs.size(); i++)
-        _g_objs.at(i)->draw(_obj_rend);
+    for(int i=0; i<(int)_galaxy.getGravObjs()->size(); i++)
+        _galaxy.getGravObjs()->at(i)->draw(_obj_rend);
 
     _obj_rend->disableAttributes();
 
@@ -237,7 +225,7 @@ void Game::respondToInput() {
         if (elapsedSinceUpdate >= USER_UPDATE_INTERVAL) {
             // Build the trail 
             for (int i=1; i<=USER_UPDATE_PER_INTERVAL; i++)
-                _user.updateAction(&_g_objs);
+                _user.updateAction(_galaxy.getGravObjs());
 
             // Update values for next input
             _previous_trail_update = cur_update;
@@ -309,8 +297,8 @@ void Game::drawStats() {
         _players.at(i)->drawStats(_obj_rend);
 
     // Planet stats
-    for(int i=0; i<(int)_g_objs.size(); i++)
-        _g_objs.at(i)->drawStats(_obj_rend, (_g_objs.at(i) == _user.getOnPlanet()), _user.getOnPlanetRegion()); // 2 even showing as 4 even
+    for(int i=0; i<(int)_galaxy.getGravObjs()->size(); i++)
+        _galaxy.getGravObjs()->at(i)->drawStats(_obj_rend, (_galaxy.getGravObjs()->at(i) == _user.getOnPlanet()), _user.getOnPlanetRegion()); // 2 even showing as 4 even
 
     // // Show checkpoint direction
     // vector<float> vertices;

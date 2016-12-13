@@ -23,7 +23,7 @@ class Trail {
         std::vector<Shape> shapes;
 
         /* Draw the shapes to the renderer */
-        void draw(ObjRenderer *rend, vector<GravObject*> *g_objs);
+        void draw(ObjRenderer *rend, const vector<GravObject*> *g_objs);
 
         /* Creates a new box with the given values
            1. Initializes a bew instanse  */

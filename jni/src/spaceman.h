@@ -18,7 +18,7 @@ class Spaceman: public Player {
         void draw(PlayerRenderer *rend, TextureHandler *tex);
 
         // Do according to its current action, and update physics
-        void updateAction(vector<GravObject*> *g_objs);
+        void updateAction(const vector<GravObject*> *g_objs);
 
         /* Ctor - Creates a new box instance and adds it to the array */
         Spaceman(float x, float y, Theme theme);
