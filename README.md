@@ -2,7 +2,7 @@ Physics Game  [![Build Status](https://travis-ci.org/aishsingh/physicsgame.svg?b
 ============
 A poorly named game that will soon become a fully functional android app.  
 
-![alt tag](http://aishsingh.com/images/preview1_physicsgame.gif "Gameplay preview")  
+![alt tag](http://i.imgur.com/ozDV9rD.gif "Gameplay preview")  
 
 ## Aim
 The aim of this project was to experiment and develop a physics engine entirely from scratch.  
