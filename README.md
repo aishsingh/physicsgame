@@ -21,9 +21,3 @@ __GLM:__ Provide OpenGL math functions
 __libzip:__ Extract APK to make assets readable natively  
 __libpng:__ Read image assets natively  
 __googletest:__ Unit testing natively
-
-## Disclamer
-The techniques I've used may not be optimal or performance focused as this project is developed entirely out of my own curiosity.
-
-## Contact
-Aishwarya Singh (contact@aishsingh.com)
