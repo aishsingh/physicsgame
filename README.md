@@ -24,7 +24,7 @@ __googletest:__ Unit testing natively
 
 ## Compile requirements
 Compiles successfully using the following versions:  
-__android-ndk-r10__ r15 gives errors when using stlport
-__android-sdk-25.2.5__ Newer versions remove ant build scripts  
+__android-ndk-r10__ r15 gives errors when using stlport  
+__android-sdk-25.2.5__ Newer version removes ant build scripts  
   
 Check travis-ci build logs for further details.
