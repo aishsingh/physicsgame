@@ -21,3 +21,10 @@ __GLM:__ Provide OpenGL math functions
 __libzip:__ Extract APK to make assets readable natively  
 __libpng:__ Read image assets natively  
 __googletest:__ Unit testing natively
+
+## Compile requirements
+Compiles successfully using the following versions:  
+__android-ndk-r10__ r15 gives errors when using stlport
+__android-sdk-25.2.5__ Newer versions remove ant build scripts  
+  
+Check travis-ci build logs for further details.

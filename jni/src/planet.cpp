@@ -11,7 +11,7 @@ Planet::Planet(float x, float y, float d) : GravObject(x,y,d,d), _action(STILL) 
         _colour.a = 1.0f;
 
     // Gen initial vert data
-    int vertex_count = PLANET_AVERAGE_SIDES * getWidth()/400;
+    int vertex_count = PLANET_AVERAGE_SIDES * getWidth()/200;
     vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()/2, getRotAngle(), vertex_count);
     if (PLANET_RAND_SIDES) {
         _vertices_offsets = Math::genRandData(vertex_count*2, 0, PLANET_RAND_SIDES_OFFSET);
@@ -38,7 +38,7 @@ void Planet::draw(ObjRenderer *rend) {
         _unit_vectors.at(i) = Math::rotatePt(_unit_vectors.at(i), -_rot_speed);
 
     // update vertices from updated values (eg rotation, pos)
-    int vertex_count = PLANET_AVERAGE_SIDES * getWidth()/400;
+    int vertex_count = PLANET_AVERAGE_SIDES * getWidth()/200;
     vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()/2, getRotAngle(), vertex_count);
     _vertices = (PLANET_RAND_SIDES) ?  Math::offsetDataByData(vert, _vertices_offsets) : vert;
     _unit_vectors = Math::getUnitVectors(_vertices);

@@ -164,12 +164,11 @@ void Game::draw() {
         drawStats();
     }
 
-    // draw galaxy full of stars
-    _galaxy.draw(_obj_rend);
+    _galaxy.drawStars(_obj_rend);
 
     // Render planets gravity area
-    for(int i=0; i<(int)_galaxy.getGravObjs()->size(); i++)
-        _galaxy.getGravObjs()->at(i)->drawGrav(_obj_rend);
+    //for(int i=0; i<(int)_galaxy.getGravObjs()->size(); i++)
+    //    _galaxy.getGravObjs()->at(i)->drawGrav(_obj_rend);
 
     // Render player trails
     for(int i=0; i<(int)_players.size(); i++)

@@ -18,7 +18,7 @@ Galaxy::~Galaxy() {
         vector<GravObject*>().swap(_g_objs);
 }
 
-void Galaxy::draw(ObjRenderer *rend) {
+void Galaxy::drawStars(ObjRenderer *rend) {
     for (int i=0; i<(int)_stars.size(); i++) {
         // Only draw inside the camera window
         if (rend->getCam()->isObjectInCam(_stars.at(i))) {

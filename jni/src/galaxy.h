@@ -20,7 +20,7 @@ class Galaxy {
         ~Galaxy();
         
         /* Draw all stars */
-        void draw(ObjRenderer *rend);
+        void drawStars(ObjRenderer *rend);
 
         const std::vector<GravObject*>* getGravObjs() const;
         Point2D getCheckpoint() const;
