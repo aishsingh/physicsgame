@@ -24,6 +24,9 @@ Colour Colour::getColour(Theme theme) {
         case BLACK:
             return Colour(0.3f, 0.3f, 0.3f, 1.0f);
 
+        case WHITE:
+            return Colour(1.0f, 1.0f, 1.0f, 1.0f);
+
         case GREY:
             return Colour(0.41176, 0.40392f, 0.45098f, 1.0f);
 

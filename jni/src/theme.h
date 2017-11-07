@@ -7,6 +7,7 @@
 
 enum Theme {
     BLACK, 
+    WHITE, 
     GREY,
     RED, 
     PURPLE, 

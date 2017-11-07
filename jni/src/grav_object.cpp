@@ -19,10 +19,10 @@ GravObject::GravObject(float x, float y, float width, float height, float rot_an
 GravObject::~GravObject() { }
 
 void GravObject::drawGrav(ObjRenderer *rend) {
-    // Render gravity area
-    vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()*1.5, getRotAngle(), 50);
-
     if (!STATS_DISABLE && STATS_GOBJ_BORDER) {
+        vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()*1.5, getRotAngle(), 50);
+
+        // Render gravity area
         // rend->render(vert,
         //              Colour(1.0f, 1.0f, 1.0f, 0.03f),
         //              getRotAngle(), 
@@ -51,7 +51,7 @@ void GravObject::drawGrav(ObjRenderer *rend) {
 
             Colour c = PLANET_COLOUR;
             c.a = fabs(alpha);
-            rend->render(Math::offsetDataByRand(vert, -8.0f, 8.0f),
+            rend->render(GOBJ_RING_SHAKE,
                          c,
                          getRotAngle(), 
                          GL_LINE_LOOP);

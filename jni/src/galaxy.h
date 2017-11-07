@@ -21,6 +21,7 @@ class Galaxy {
         
         /* Draw all stars */
         void drawStars(ObjRenderer *rend);
+        void drawGravObjs(ObjRenderer *rend);
 
         const std::vector<GravObject*>* getGravObjs() const;
         Point2D getCheckpoint() const;

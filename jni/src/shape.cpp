@@ -27,6 +27,12 @@ void Shape::useTheme(Theme &theme) {
             _colour.b = _colour.r;
             break;
 
+        case WHITE:
+            _colour.r = 256.0f;
+            _colour.g = 256.0f;
+            _colour.b = 256.0f;
+            break;
+
         case GREY:
             _colour.r = (200 - (rand() % 100)) / 256.0f;
             _colour.g = _colour.r;

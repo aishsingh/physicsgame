@@ -167,8 +167,8 @@ void Game::draw() {
     _galaxy.drawStars(_obj_rend);
 
     // Render planets gravity area
-    //for(int i=0; i<(int)_galaxy.getGravObjs()->size(); i++)
-    //    _galaxy.getGravObjs()->at(i)->drawGrav(_obj_rend);
+    for(int i=0; i<(int)_galaxy.getGravObjs()->size(); i++)
+       _galaxy.getGravObjs()->at(i)->drawGrav(_obj_rend);
 
     // Render player trails
     for(int i=0; i<(int)_players.size(); i++)
@@ -185,8 +185,7 @@ void Game::draw() {
     _player_rend->disableAttributes();
 
     // Render planets
-    for(int i=0; i<(int)_galaxy.getGravObjs()->size(); i++)
-        _galaxy.getGravObjs()->at(i)->draw(_obj_rend);
+    _galaxy.drawGravObjs(_obj_rend);
 
     _obj_rend->disableAttributes();
 

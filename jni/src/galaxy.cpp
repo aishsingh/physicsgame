@@ -14,7 +14,7 @@ Galaxy::Galaxy(int star_count, int gobj_count) {
 }
 
 Galaxy::~Galaxy() {
-    for(int i=0; i<(int)_g_objs.size(); i++)
+    for (int i=0; i<(int)_g_objs.size(); i++)
         vector<GravObject*>().swap(_g_objs);
 }
 
@@ -31,12 +31,17 @@ void Galaxy::drawStars(ObjRenderer *rend) {
         }
     }
 
-    // Show checkpoint line
+    // Draw checkpoint
     vector<float> vertices = Shape::genCircleVertices(_checkpoint, 50, 0.0f, 10);
     rend->render(vertices,
             Colour::getColour(BLUE),
             0.0f,
             GL_TRIANGLE_FAN);
+}
+
+void Galaxy::drawGravObjs(ObjRenderer *rend) {
+    for (int i=0; i<(int)_g_objs.size(); i++)
+        _g_objs.at(i)->draw(rend);
 }
 
 void Galaxy::populateStars(int count) {

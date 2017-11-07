@@ -72,7 +72,7 @@ void ObjRenderer::render(vector<float> vertices, Colour colour, float angle, GLe
         colour.r,
         colour.g,
         colour.b,
-        colour.a,
+        colour.a
     };
     glUniform4fv(_vColor_handle, 1, col);
     checkGlError("glUniformMatrix4fv, vColour");
