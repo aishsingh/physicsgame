@@ -145,7 +145,7 @@ void Physics::updatePlayerOrbittingPlanets(Player &player, const vector<GravObje
         GravObject *plan = g_objs->at(i);
 
         // Create rect to rep the planets gravity area
-        float g_radius = plan->getWidth();
+        float g_radius = plan->getGravRadiusOffset();
         Rect grav_rect(plan->getX() - g_radius,
                        plan->getY() - g_radius,
                        plan->getWidth() + (g_radius*2),

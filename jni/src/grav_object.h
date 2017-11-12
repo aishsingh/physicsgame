@@ -9,12 +9,15 @@
 #include "obj_renderer.h"
 
 class GravObject: public Object {
-    protected:
-        float _rot_speed;
-        float _grav_radius_offset; // The extra radius used by the gravity area
-        float _grav_speed;         // The speed the rings shrink inwards
+    private:
         float _grav_rings_off[3];  // The current radius offset for each of the gravity rings
 
+        float _rot_speed;
+        float _grav_ring_spacing;  // Space between gravity rings
+        float _grav_radius_offset; // Offset needed for grav radius
+        float _grav_ring_speed;         // The speed the rings shrink inwards
+
+    protected:
         vector<Point2D> _unit_vectors; 
 
     public:
@@ -25,7 +28,7 @@ class GravObject: public Object {
         virtual vector<float> getVertices() const = 0;
         virtual float getRegionAngleOffset(int region) const = 0;
         void anchorObject(Object *obj);
-        float getRadiusOffset() const;
+        float getGravRadiusOffset() const;
         float getRotSpeed() const;
         Point2D getUnitVectorAt(unsigned region) const;
 

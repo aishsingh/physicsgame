@@ -39,7 +39,7 @@
 #define PLAYER_THRUST_MIN_INIT_V 1.5f // up is neg, down is pos, left is neg, right is pos
 #define PLAYER_THRUST_OFFSET 0.0f
 #define PLAYER_SHADE true
-#define PLAYER_SHADE_COLOUR "-= vec4(0.1, 0.1, 0.1, 0.25);\n"
+#define PLAYER_SHADE_COLOUR "-= vec4(0.1, 0.1, 0.1, 1.0);\n"
 #define OUT_PLAYER_ACTION false
 #define OUT_PLAYER_POS true
 #define OUT_PLAYER_SURFACE_OFFSET false
@@ -48,17 +48,21 @@
 #define STATS_PLANET_NORMALS true
 #define STATS_PLANET_FIRST_NORMAL true
 #define STATS_PLANET_VR true
-#define PLANET_AVERAGE_SIDES 30 //30      // The more sides (or vertices) the more round the object looks
-#define PLANET_RAND_SIDES false       // The sides will not be symetrical if true
+#define PLANET_AVERAGE_SIDES 15 //30 // The more sides (or vertices) the more round the object looks
+#define PLANET_RAND_SIDES true       // The sides will not be symetrical if true
 #define PLANET_RAND_SIDES_OFFSET 15.0f
 #define PLANET_COLOUR Colour(0.9294f, 0.898f, 0.88627f, 0.3f)
 
 // --- GRAV OBJECT CONFIG -----------------
-#define STATS_GOBJ_BORDER true
+#define GOBJ_BORDER true
 #define GOBJ_AVERAGE_SIDES 35
+#define GOBJ_RING_SPACING 120.0f
+#define GOBJ_RING_SPEED 5.0f
+#define GOBJ_RADIUS_OFFSET width/2
 #define GOBJ_RING_SHAKE Math::offsetDataByRand(vert, -4.0f, 4.0f)
 #define GOBJ_OPACITY 0.5f
 #define GOBJ_ROTATE true
+#define GOBJ_ROT_SPEED powf(0.4f, (width/200)) 
 #define GOBJ_REGION_HEIGHT 150
 
 // --- TRAIL CONFIG -----------------------

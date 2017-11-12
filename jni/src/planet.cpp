@@ -33,9 +33,9 @@ void Planet::draw(ObjRenderer *rend) {
                  GL_TRIANGLE_FAN);
 
     // Rotate
-    setRotAngle(getRotAngle() + _rot_speed);
+    setRotAngle(getRotAngle() + getRotSpeed());
     for (int i=0; i<(int)_unit_vectors.size(); i++)
-        _unit_vectors.at(i) = Math::rotatePt(_unit_vectors.at(i), -_rot_speed);
+        _unit_vectors.at(i) = Math::rotatePt(_unit_vectors.at(i), -getRotSpeed());
 
     // update vertices from updated values (eg rotation, pos)
     int vertex_count = PLANET_AVERAGE_SIDES * getWidth()/200;

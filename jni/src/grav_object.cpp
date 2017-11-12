@@ -5,31 +5,33 @@
 #include "shape.h"
 
 GravObject::GravObject(float x, float y, float width, float height, float rot_angle) : Object(x,y,width,height,rot_angle) {
-    _rot_speed = (GOBJ_ROTATE) ? powf(0.4f, (getWidth()/200)) : 0.0f;
-    _grav_radius_offset = 120.0f;
-    _grav_speed = 5.5f;
+    _rot_speed = (GOBJ_ROTATE) ? GOBJ_ROT_SPEED : 0.0f;
+    _grav_ring_spacing = GOBJ_RING_SPACING;
+    _grav_radius_offset = GOBJ_RADIUS_OFFSET;
+    _grav_ring_speed = GOBJ_RING_SPEED;
 
     // Position grav rings
-    _grav_rings_off[0] = width;
+    _grav_rings_off[0] = _grav_radius_offset;
     for (int i=1; i<=2; i++) {
-        float offset = _grav_radius_offset / i;
-        _grav_rings_off[i] = width + offset;
+        float offset = _grav_ring_spacing / i;
+        _grav_rings_off[i] = _grav_radius_offset + offset;
     }
 }
 GravObject::~GravObject() { }
 
 void GravObject::drawGrav(ObjRenderer *rend) {
-    if (!STATS_DISABLE && STATS_GOBJ_BORDER) {
-        vector<float> vert = Shape::genCircleVertices(getCentre(), getWidth()*1.5, getRotAngle(), 50);
+    vector<float> vert = Shape::genCircleVertices(getCentre(), _grav_radius_offset*2, getRotAngle(), 50);
 
-        // Render gravity area
-        // rend->render(vert,
-        //              Colour(1.0f, 1.0f, 1.0f, 0.03f),
-        //              getRotAngle(), 
-        //              GL_TRIANGLE_FAN);
+    // Fill gravity area
+    rend->render(vert,
+                 Colour(1.0f, 1.0f, 1.0f, 0.03f),
+                 getRotAngle(), 
+                 GL_TRIANGLE_FAN);
 
+    if (GOBJ_BORDER) {
+        // Outline gravity area
         rend->render(vert,
-                     Colour(1.0f, 1.0f, 1.0f, 0.35f),
+                     Colour(1.0f, 1.0f, 1.0f, 0.5f),
                      getRotAngle(), 
                      GL_LINE_LOOP);
     }
@@ -40,9 +42,9 @@ void GravObject::drawGrav(ObjRenderer *rend) {
     int lines = (vertex_count <= 7) ? 2:3;
 
     for (int i=0; i<lines; i++) {
-        _grav_rings_off[i] = (_grav_rings_off[i] <=0) ? getWidth() : _grav_rings_off[i]-=_grav_speed;
+        _grav_rings_off[i] = (_grav_rings_off[i] <=0) ? getWidth()/2 : _grav_rings_off[i]-=_grav_ring_speed;
 
-        float alpha = (_grav_rings_off[i] > getWidth()/2) ? 2 - _grav_rings_off[i]/(getWidth()/2) : _grav_rings_off[i]/(getWidth()/2);
+        float alpha = (_grav_rings_off[i] > _grav_radius_offset) ? 2 - _grav_rings_off[i]/(getWidth()/2) : _grav_rings_off[i]/(getWidth()/2);
         alpha *= GOBJ_OPACITY;
 
         if (_grav_rings_off[i] > 0) {
@@ -51,7 +53,7 @@ void GravObject::drawGrav(ObjRenderer *rend) {
 
             Colour c = PLANET_COLOUR;
             c.a = fabs(alpha);
-            rend->render(GOBJ_RING_SHAKE,
+            rend->render(Math::offsetDataByRand(vert, -8.0f, 8.0f),
                          c,
                          getRotAngle(), 
                          GL_LINE_LOOP);
@@ -66,10 +68,9 @@ void GravObject::anchorObject(Object *obj) {
     obj->setY(pt.getY() - (obj->getHeight()/2));
 }
 
-float GravObject::getRadiusOffset() const {
+float GravObject::getGravRadiusOffset() const {
     return _grav_radius_offset;
 }
-
 float GravObject::getRotSpeed() const {
     return _rot_speed;
 }
