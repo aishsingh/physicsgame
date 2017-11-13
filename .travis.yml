@@ -7,6 +7,7 @@ env:
     - ANDROID_BUILD_TOOLS_VERSION=24.0.1
     - ANDROID_ABI=armeabi-v7a
     - ANDROID_NDK=android-ndk-r10e
+    - QEMU_AUDIO_DRV=none # QEMU2 doesnt support -noaudio flag (https://stackoverflow.com/a/40605323/3270542)
 
 android:
   components:
@@ -37,7 +38,7 @@ before_install:
 before_script:
   # Emulator Management: Create, Start and Wait
   - echo no | android create avd --force -n test -t android-$ANDROID_API_LEVEL --abi $ANDROID_ABI
-  - emulator -avd test -no-audio -no-window -no-boot-anim -cpu-delay 0 &
+  - emulator -avd test -no-window -no-boot-anim -cpu-delay 0 &
   - android-wait-for-emulator
 
 script:
