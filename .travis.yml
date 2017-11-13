@@ -38,7 +38,7 @@ before_install:
 before_script:
   # Emulator Management: Create, Start and Wait
   - echo no | android create avd --force -n test -t android-$ANDROID_API_LEVEL --abi $ANDROID_ABI
-  - emulator -avd test -no-window -no-boot-anim -cpu-delay 0 &
+  - emulator -avd test -no-window -no-boot-anim & # -cpu-delay 0 depricated
   - android-wait-for-emulator
 
 script:
