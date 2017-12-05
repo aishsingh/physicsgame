@@ -245,7 +245,7 @@ void Game::applyGravity() {
 }
 
 void Game::drawGUI() {
-    if (!_cam.isPtInCam(_galaxy.getCheckpoint(), NAV_ICON_SIZE*2)) {
+    if (NAV_ICON_ENABLED && !_cam.isPtInCam(_galaxy.getCheckpoint(), NAV_ICON_SIZE*2)) {
         // Calc nav icon pos
         float o = _user.getCentreX() - _galaxy.getCheckpoint().getX();
         float a = _user.getCentreY() - _galaxy.getCheckpoint().getY();

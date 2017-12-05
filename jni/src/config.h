@@ -7,13 +7,14 @@
 /******************************************/
 
 // --- GAME CONFIG ------------------------
-#define STATS_DISABLE true
+#define STATS_DISABLE false
 #define STATS_COLOUR Colour::getColour(PURPLE)
 #define TIME_DEFAULT_SPEED 0.4f
 #define USER_UPDATE_INTERVAL 0.6f
 #define USER_UPDATE_PER_INTERVAL 1
 #define USER_THEME GREY
 #define OUT_OPENGL_VER false
+#define NAV_ICON_ENABLED false
 #define NAV_ICON_SIZE 35
 
 // --- RENDERER CONFIG --------------------
