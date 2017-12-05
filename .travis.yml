@@ -24,6 +24,7 @@ addons:
     packages:
     # Latest GCC for gcov
     - gcc-6
+    - ant
 
 before_install:
   # Download and build android-ndk
@@ -31,8 +32,8 @@ before_install:
   - chmod u+x android-ndk-r10e-linux-x86_64.bin
   - ./android-ndk-r10e-linux-x86_64.bin > /dev/null
   - rm android-ndk-r10e-linux-x86_64.bin
-  - export ANDROID_NDK_HOME=`pwd`/${ANDROID_NDK}
-  - export PATH=${ANDROID_NDK_HOME}:${PATH}
+  # - export ANDROID_NDK_HOME=`pwd`/${ANDROID_NDK}
+  # - export PATH=${ANDROID_NDK_HOME}:${PATH}
   # Download latest lcov package inside precise dist
   - git clone https://github.com/linux-test-project/lcov.git
   - gem install coveralls-lcov
