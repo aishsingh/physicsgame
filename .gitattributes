@@ -1,0 +1,4 @@
+jni/glm/* linguist-vendored
+jni/googletest/* linguist-vendored
+jni/libpng/* linguist-vendored
+jni/libzip/* linguist-vendored
